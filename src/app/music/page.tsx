@@ -10,6 +10,7 @@ import type { Album, Track } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useMusicPlayer } from '@/context/music-player-context';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -256,4 +257,3 @@ export default function MusicPage() {
     </div>
   );
 }
-
