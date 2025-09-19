@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink } from 'lucide-react';
+import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink, Heart, Share2 } from 'lucide-react';
 
 const musicCategories = ['All', 'Cinematic', 'Orchestral', 'Gamelan', 'Ambient', 'Electronic'];
 
@@ -150,13 +150,6 @@ export default function MusicPage() {
                 variants={staggerContainer}
             >
                 <div className="container mx-auto">
-                    <motion.h2 className="text-3xl md:text-4xl font-headline font-bold text-center mb-4" variants={fadeInUp}>
-                        Explore My Music
-                    </motion.h2>
-                    <motion.p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto" variants={fadeInUp}>
-                       Browse through a diverse library of high-quality tracks. Use the filters to find the perfect sound for your project.
-                    </motion.p>
-                    
                     <motion.div className="flex justify-center flex-wrap gap-2 mb-12" variants={fadeInUp}>
                         {musicCategories.map(category => (
                             <Button
@@ -183,27 +176,35 @@ export default function MusicPage() {
                             const coverArt = PlaceHolderImages.find(p => p.id === album.coverArtId);
                             return (
                                 <motion.div layout key={album.id} variants={fadeInUp}>
-                                    <Card className="bg-card border-border/50 overflow-hidden group h-full flex flex-col">
-                                        <div className="relative">
-                                            {coverArt && (
+                                    <Card className="overflow-hidden group bg-card border-border/50 h-full flex flex-col">
+                                        {coverArt && (
+                                            <div className="overflow-hidden relative">
                                                 <Image
                                                     src={coverArt.imageUrl}
                                                     alt={`Cover for ${album.title}`}
-                                                    width={400}
+                                                    width={600}
                                                     height={400}
-                                                    className="w-full h-auto object-cover aspect-square group-hover:scale-105 transition-transform duration-300"
+                                                    className="object-cover w-full h-auto aspect-[16/9] group-hover:scale-105 transition-transform duration-300"
                                                     data-ai-hint={coverArt.imageHint}
                                                 />
-                                            )}
-                                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <Button size="icon" className="h-12 w-12 rounded-full" onClick={() => handlePlayAlbum(album)}>
-                                                    <PlayCircle className="h-6 w-6" />
+                                                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <Button size="icon" className="h-12 w-12 rounded-full" onClick={() => handlePlayAlbum(album)}>
+                                                        <PlayCircle className="h-6 w-6" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        <CardContent className="p-4 flex-grow flex flex-col">
+                                            <h3 className="font-bold text-lg truncate">{album.title}</h3>
+                                            <p className="text-sm text-primary mb-2">{album.category}</p>
+                                            <div className="flex justify-start items-center gap-2 text-muted-foreground mt-auto">
+                                                <Button variant="ghost" size="icon" className="w-8 h-8">
+                                                    <Heart className="h-4 w-4" />
+                                                </Button>
+                                                <Button variant="ghost" size="icon" className="w-8 h-8">
+                                                    <Share2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
-                                        </div>
-                                        <CardContent className="p-4 flex-grow flex flex-col">
-                                            <h3 className="font-bold text-lg truncate flex-grow">{album.title}</h3>
-                                            <p className="text-sm text-muted-foreground mt-1">{album.releaseYear} • <span className="text-primary">{album.category}</span></p>
                                         </CardContent>
                                     </Card>
                                 </motion.div>
@@ -422,3 +423,5 @@ export default function MusicPage() {
         </div>
     );
 }
+
+    
