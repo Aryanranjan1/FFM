@@ -287,7 +287,7 @@ export default function Home() {
 
       <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div><div className="divider-line"></div></div>
 
-      <section id="about" className="py-20 px-6 bg-card/50">
+      <section id="about" className="py-20 px-6 bg-transparent">
           <div className="max-w-7xl mx-auto">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                   <motion.div
