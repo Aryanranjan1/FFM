@@ -72,7 +72,7 @@ export default function Home() {
     <>
       <div className="relative h-[calc(100vh-80px)] w-full flex items-center justify-center overflow-hidden">
         <Particles />
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-background to-black"></div>
         <div className="absolute inset-0 floating-orbs" ref={orbsRef}></div>
         <div className="absolute inset-0 floating-notes" ref={notesRef}></div>
 
