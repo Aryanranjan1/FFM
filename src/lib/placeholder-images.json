@@ -72,8 +72,43 @@
       "description": "Portrait of the artist FFM",
       "imageUrl": "https://picsum.photos/seed/artist/500/600",
       "imageHint": "artist portrait"
+    },
+    {
+      "id": "blog-pub-1",
+      "description": "Blog post image 1",
+      "imageUrl": "https://picsum.photos/seed/blogpub1/600/338",
+      "imageHint": "culture music"
+    },
+    {
+      "id": "blog-pub-2",
+      "description": "Blog post image 2",
+      "imageUrl": "https://picsum.photos/seed/blogpub2/600/338",
+      "imageHint": "music production"
+    },
+    {
+      "id": "blog-pub-3",
+      "description": "Blog post image 3",
+      "imageUrl": "https://picsum.photos/seed/blogpub3/600/338",
+      "imageHint": "film score"
+    },
+    {
+      "id": "blog-pub-4",
+      "description": "Blog post image 4",
+      "imageUrl": "https://picsum.photos/seed/blogpub4/600/338",
+      "imageHint": "orchestra conductor"
+    },
+    {
+      "id": "blog-pub-5",
+      "description": "Blog post image 5",
+      "imageUrl": "https://picsum.photos/seed/blogpub5/600/338",
+      "imageHint": "creative process"
+    },
+    {
+      "id": "blog-pub-6",
+      "description": "Blog post image 6",
+      "imageUrl": "https://picsum.photos/seed/blogpub6/600/338",
+      "imageHint": "music notes"
     }
   ]
 }
-
     
