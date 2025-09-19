@@ -9,7 +9,7 @@ export function Particles() {
     // Create particles
     if (particlesRef.current) {
       particlesRef.current.innerHTML = '';
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < 20; i++) {
         const particle = document.createElement("div");
         particle.className = "particle";
         particle.style.left = `${Math.random() * 100}%`;
