@@ -12,7 +12,7 @@ const services = [
 
 export function Footer() {
   return (
-    <footer className="bg-card border-t border-border/40 py-12">
+    <footer className="bg-card py-12">
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
           <div className="md:col-span-1">
@@ -70,3 +70,5 @@ export function Footer() {
     </footer>
   );
 }
+
+    

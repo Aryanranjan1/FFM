@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Award, Play, Star, Music, Heart, Share2, PlayCircle, Mail, Phone, MapPin, Diamond, Youtube, Instagram, Headphones, Send, Newspaper, Link as LinkIcon, Music2 as SoundcloudIconLucide } from 'lucide-react';
+import { ArrowRight, Award, Play, Star, Music, Heart, Share2, PlayCircle, Mail, Phone, MapPin, Diamond, Youtube, Instagram, Headphones, Send, Newspaper, Link as LinkIcon, Music2 as SoundcloudIconLucide, Pause } from 'lucide-react';
 import { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useMusicPlayer } from '@/context/music-player-context';
@@ -217,7 +217,7 @@ export default function Home() {
       
       <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-       <section id="music-player" className="py-20 px-6 bg-transparent scroll-mt-20">
+       <section id="music-player" className="py-20 px-6 bg-card scroll-mt-20">
            <div className="max-w-7xl mx-auto">
                <div className="text-center mb-12">
                    <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Music Track</h2>
@@ -336,7 +336,7 @@ export default function Home() {
 
       <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-      <section id="about" className="py-20 px-6 bg-transparent">
+      <section id="about" className="py-20 px-6 bg-card">
           <div className="max-w-7xl mx-auto">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                   <motion.div
@@ -572,3 +572,5 @@ export default function Home() {
     </>
   );
 }
+
+    
