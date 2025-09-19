@@ -3,36 +3,73 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { albums, bio } from '@/lib/data';
-import type { Album, Track } from '@/lib/types';
+import type { Album, Track, Collaboration, Achievement } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useMusicPlayer } from '@/context/music-player-context';
 import { cn } from '@/lib/utils';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from "@/components/ui/separator";
-import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink } from 'lucide-react';
 
 const musicCategories = ['All', 'Cinematic', 'Orchestral', 'Gamelan', 'Ambient', 'Electronic'];
 
-const whyChooseMe = [
+const collaborations: Collaboration[] = [
     {
-        icon: Headphones,
-        title: "Emotionally Resonant",
-        description: "My music is crafted to evoke deep emotional responses, perfect for creating memorable moments in any project."
+      name: "Diane Allen",
+      role: "Violin Virtuoso",
+      description: "Collaborated on multiple orchestral projects for live keynote performances in the United States, creating powerful musical experiences that have deeply moved audiences.",
+      link: "https://dianeallen.com/",
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop"
     },
     {
-        icon: CheckCircle,
-        title: "High-Quality Production",
-        description: "Using industry-standard tools and techniques to deliver pristine, professional-grade audio files for any use case."
+      name: "GEMAWAN KISAS",
+      role: "Cultural Ensemble",
+      description: "Gema Gamelan Waqafan (GEMAWAN) from Kolej Islam Sultan Alam Shah (KISAS). Collaboration includes training the ensemble and composing original modern gamelan pieces.",
+      link: "http://www.youtube.com/@gemawankisas4271",
+      image: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=400&fit=crop"
+    }
+];
+  
+const achievements: Achievement[] = [
+    {
+      title: "1st Prize – National Gamelan Competition (HKSBP)",
+      description: "Awarded for outstanding composition and performance in the prestigious national competition",
+      year: "2023 & 2024",
+      icon: "🏆"
     },
     {
-        icon: Music,
-        title: "Unique Fusion Style",
-        description: "A rare blend of epic Western orchestral sounds and the rich, mystical traditions of Malay Gamelan music."
+      title: "1st Place – Ensemble of Gamelan Competition, UTP",
+      description: "Recognized as the best gamelan ensemble in the university competition",
+      year: "2023",
+      icon: "🥇"
+    },
+    {
+      title: "Featured in Ensemble of Gamelan Performance, UTP",
+      description: "Selected to showcase original compositions at the university's premier gamelan event",
+      year: "2025",
+      icon: "⭐"
+    },
+    {
+      title: "International Collaborations",
+      description: "Successful partnerships with renowned international artists and performers",
+      year: "2023-2024",
+      icon: "🤝"
+    },
+    {
+      title: "Growing Global Audience on YouTube",
+      description: "Expanding international reach with increasing subscribers and engagement",
+      year: "Ongoing",
+      icon: "📈"
+    },
+    {
+      title: "Music Licensed for Media, Games, and Online Creators",
+      description: "Compositions featured in various media productions and by content creators worldwide",
+      year: "Ongoing",
+      icon: "🎵"
     }
 ];
 
@@ -42,7 +79,6 @@ export default function MusicPage() {
     const heroImage = PlaceHolderImages.find(p => p.id === 'music-hero');
     const [filter, setFilter] = useState('All');
     
-    // In a real app, albums would have categories. We'll simulate for the UI.
     const getCategoryForAlbum = (albumId: string) => {
         const cats = ['Cinematic', 'Orchestral', 'Gamelan', 'Ambient', 'Electronic'];
         let hash = 0;
@@ -68,18 +104,18 @@ export default function MusicPage() {
         play(track, album.tracks);
     };
 
-    const fadeInUp = {
+    const fadeInUp: Variants = {
         hidden: { opacity: 0, y: 30 },
         visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
     };
 
-    const staggerContainer = {
+    const staggerContainer: Variants = {
         hidden: { opacity: 0 },
         visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
     };
 
     return (
-        <div className="bg-background text-foreground">
+        <div className="bg-transparent text-foreground">
             {/* Hero Section */}
             <motion.section
                 className="py-24 px-6 text-center relative overflow-hidden bg-card"
@@ -241,33 +277,87 @@ export default function MusicPage() {
                 </motion.section>
             )}
 
-            {/* Why Choose My Music Section */}
+            {/* Collaborations Section */}
             <motion.section
-                className="py-20 px-6"
+                className="py-20 px-6 bg-transparent"
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, amount: 0.2 }}
+                viewport={{ once: true, margin: "-100px" }}
                 variants={staggerContainer}
             >
                 <div className="container mx-auto">
-                    <motion.h2 className="text-3xl md:text-4xl font-headline font-bold text-center mb-12" variants={fadeInUp}>
-                        Why Choose My Music?
-                    </motion.h2>
-                    <div className="grid md:grid-cols-3 gap-8 text-center">
-                        {whyChooseMe.map((item, index) => (
-                            <motion.div key={index} variants={fadeInUp}>
-                                <Card className="bg-card border-border/50 p-8 h-full">
-                                    <div className="flex justify-center mb-4">
-                                        <div className="bg-primary/10 text-primary p-4 rounded-full">
-                                            <item.icon className="h-8 w-8" />
-                                        </div>
-                                    </div>
-                                    <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                                    <p className="text-muted-foreground">{item.description}</p>
-                                </Card>
-                            </motion.div>
+                    <motion.div className="text-center mb-12" variants={fadeInUp}>
+                        <h2 className="text-4xl font-bold mb-4">Collaborations</h2>
+                        <p className="text-lg text-muted-foreground">
+                        Working with talented artists and ensembles to create extraordinary music
+                        </p>
+                    </motion.div>
+                    <motion.div className="grid md:grid-cols-2 gap-8" variants={staggerContainer}>
+                        {collaborations.map((collab, index) => (
+                        <motion.div key={index} variants={fadeInUp}>
+                            <Card className="bg-card border-primary/20 hover:border-primary/40 transition-all h-full">
+                            <CardHeader>
+                                <div className="flex items-center space-x-4">
+                                <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-purple-500/10 rounded-lg overflow-hidden flex-shrink-0">
+                                    <Image src={collab.image} alt={collab.name} width={64} height={64} className="w-full h-full object-cover" />
+                                </div>
+                                <div className="flex-1">
+                                    <CardTitle className="text-xl">{collab.name}</CardTitle>
+                                    <CardDescription className="text-primary">{collab.role}</CardDescription>
+                                </div>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-muted-foreground mb-6 leading-relaxed">{collab.description}</p>
+                                {collab.link && collab.link !== "#" && (
+                                <Button variant="outline" className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground" asChild>
+                                    <a href={collab.link} target="_blank" rel="noopener noreferrer">
+                                    <ExternalLink className="w-4 h-4 mr-2" />
+                                    Visit {collab.name}
+                                    </a>
+                                </Button>
+                                )}
+                            </CardContent>
+                            </Card>
+                        </motion.div>
                         ))}
-                    </div>
+                    </motion.div>
+                </div>
+            </motion.section>
+
+            {/* Achievements Section */}
+            <motion.section
+                className="py-20 px-6 bg-transparent"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                variants={staggerContainer}
+            >
+                <div className="container mx-auto">
+                <motion.div className="text-center mb-12" variants={fadeInUp}>
+                    <h2 className="text-4xl font-bold mb-4">Achievements</h2>
+                    <p className="text-lg text-muted-foreground">
+                    Recognition and awards received throughout my musical journey
+                    </p>
+                </motion.div>
+                <motion.div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" variants={staggerContainer}>
+                    {achievements.map((achievement, index) => (
+                    <motion.div key={index} variants={fadeInUp}>
+                        <Card className="bg-card border-primary/20 text-center hover:border-primary/40 transition-colors h-full">
+                        <CardHeader>
+                            <div className="text-4xl mb-4">{achievement.icon}</div>
+                            <CardTitle className="text-lg">{achievement.title}</CardTitle>
+                            <CardDescription className="text-primary">
+                            {achievement.year}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground text-sm">{achievement.description}</p>
+                        </CardContent>
+                        </Card>
+                    </motion.div>
+                    ))}
+                </motion.div>
                 </div>
             </motion.section>
 
@@ -332,5 +422,3 @@ export default function MusicPage() {
         </div>
     );
 }
-
-    

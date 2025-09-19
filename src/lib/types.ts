@@ -33,3 +33,18 @@ export type Bio = {
     url: string;
   }[];
 };
+
+export interface Collaboration {
+    name: string;
+    role: string;
+    description: string;
+    link: string;
+    image: string;
+}
+  
+export interface Achievement {
+    title: string;
+    description: string;
+    year: string;
+    icon: string;
+}
