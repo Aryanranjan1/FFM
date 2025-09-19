@@ -60,7 +60,7 @@ export default function ContactPage() {
 
   return (
     <div className="container py-12 flex items-center justify-center">
-      <Card className="w-full max-w-2xl">
+      <Card className="w-full max-w-2xl bg-transparent">
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-5xl">Get In Touch</CardTitle>
           <CardDescription className="text-lg">

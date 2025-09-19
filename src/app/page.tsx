@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Award, Play, Star, Music, Heart, Share2, PlayCircle, Mail, Phone, MapPin, Diamond, Youtube, Instagram, Headphones } from 'lucide-react';
+import { ArrowRight, Award, Play, Star, Music, Heart, Share2, PlayCircle, Mail, Phone, MapPin, Diamond, Youtube, Instagram, Headphones, Send } from 'lucide-react';
 import { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useMusicPlayer } from '@/context/music-player-context';
@@ -13,6 +13,29 @@ import { albums, bio, projects } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FeaturedTrackClient } from '@/components/featured-track-client';
 import { SoundcloudIcon } from '@/components/icons';
+import { useFormState } from "react-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
+import { submitContactForm } from "@/app/actions";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
+const contactFormSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters."),
+  email: z.string().email("Please enter a valid email address."),
+  message: z.string().min(10, "Message must be at least 10 characters."),
+});
+
+type ContactFormValues = z.infer<typeof contactFormSchema>;
+
+const initialState = {
+  message: null,
+  errors: {},
+};
+
 
 export default function Home() {
   const heroImage = PlaceHolderImages.find(p => p.id === 'hero-background');
@@ -21,6 +44,36 @@ export default function Home() {
   const { play } = useMusicPlayer();
   const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
   const aboutImage = PlaceHolderImages.find(p => p.id === 'about-artist');
+
+  const [state, formAction] = useFormState(submitContactForm, initialState);
+  const { toast } = useToast();
+
+  const form = useForm<ContactFormValues>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      message: "",
+    },
+  });
+
+  useEffect(() => {
+    if (state.message) {
+      if (Object.keys(state.errors).length > 0) {
+        toast({
+          title: "Error",
+          description: state.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: state.message,
+        });
+        form.reset();
+      }
+    }
+  }, [state, toast, form]);
 
   useEffect(() => {
     if (orbsRef.current) {
@@ -329,6 +382,70 @@ export default function Home() {
                   ))}
               </div>
           </div>
+      </section>
+
+      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div><div className="divider-line"></div></div>
+      
+      <section id="contact" className="container py-20">
+        <Card className="w-full max-w-2xl mx-auto bg-transparent">
+          <CardHeader className="text-center">
+            <CardTitle className="font-headline text-5xl">Get In Touch</CardTitle>
+            <p className="text-muted-foreground text-lg mt-2">
+              For bookings, collaborations, or just to say hello.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form action={formAction} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Your Name" {...field} />
+                      </FormControl>
+                      <FormMessage>{state.errors?.name}</FormMessage>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="your.email@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage>{state.errors?.email}</FormMessage>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="message"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Message</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Your message..." {...field} rows={6} />
+                      </FormControl>
+                      <FormMessage>{state.errors?.message}</FormMessage>
+                    </FormItem>
+                  )}
+                />
+                <div className="text-right">
+                  <Button type="submit" size="lg">
+                    Send Message
+                    <Send className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
       </section>
     </>
   );

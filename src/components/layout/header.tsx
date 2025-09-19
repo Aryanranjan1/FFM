@@ -7,7 +7,8 @@ import { cn } from '@/lib/utils';
 import { Menu, Music, User, Mail, Newspaper, Home } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const navLinks = [
   { href: '/', label: 'Home', icon: Home },
@@ -20,59 +21,92 @@ const navLinks = [
 export function Header() {
   const pathname = usePathname();
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
+  const [hidden, setHidden] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const controlNavbar = () => {
+      if (typeof window !== 'undefined') {
+        if (window.scrollY > lastScrollY && window.scrollY > 80) { // if scroll down
+          setHidden(true);
+        } else { // if scroll up
+          setHidden(false);
+        }
+        setLastScrollY(window.scrollY);
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', controlNavbar);
+      return () => {
+        window.removeEventListener('scroll', controlNavbar);
+      };
+    }
+  }, [lastScrollY]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-20 items-center">
-        <Link href="/" className="mr-6 flex items-center space-x-2">
-          <Logo className="h-6 w-auto text-primary" />
-        </Link>
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                'transition-colors hover:text-primary',
-                pathname === link.href ? 'text-primary' : 'text-foreground/60'
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex flex-1 items-center justify-end md:hidden">
-          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Open Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left">
-              <nav className="grid gap-6 text-lg font-medium mt-10">
-                <Link href="/" className="flex items-center space-x-2 mb-4" onClick={() => setIsSheetOpen(false)}>
-                  <Logo className="h-6 w-auto text-primary" />
-                </Link>
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsSheetOpen(false)}
-                    className={cn(
-                      'flex items-center gap-4 px-2.5 transition-colors hover:text-primary',
-                      pathname === link.href ? 'text-primary' : 'text-foreground/70'
-                    )}
-                  >
-                    <link.icon className="h-5 w-5" />
-                    {link.label}
+    <AnimatePresence>
+      <motion.header
+        variants={{
+          visible: { y: 0 },
+          hidden: { y: "-100%" },
+        }}
+        initial="visible"
+        animate={hidden ? "hidden" : "visible"}
+        transition={{ duration: 0.35, ease: "easeInOut" }}
+        className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+      >
+        <div className="container flex h-20 items-center">
+          <Link href="/" className="mr-6 flex items-center space-x-2">
+            <Logo className="h-6 w-auto text-primary" />
+          </Link>
+          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  'transition-colors hover:text-primary',
+                  pathname === link.href ? 'text-primary' : 'text-foreground/60'
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="flex flex-1 items-center justify-end md:hidden">
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Open Menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left">
+                <nav className="grid gap-6 text-lg font-medium mt-10">
+                  <Link href="/" className="flex items-center space-x-2 mb-4" onClick={() => setIsSheetOpen(false)}>
+                    <Logo className="h-6 w-auto text-primary" />
                   </Link>
-                ))}
-              </nav>
-            </SheetContent>
-          </Sheet>
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setIsSheetOpen(false)}
+                      className={cn(
+                        'flex items-center gap-4 px-2.5 transition-colors hover:text-primary',
+                        pathname === link.href ? 'text-primary' : 'text-foreground/70'
+                      )}
+                    >
+                      <link.icon className="h-5 w-5" />
+                      {link.label}
+                    </Link>
+                  ))}
+                </nav>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
-      </div>
-    </header>
+      </motion.header>
+    </AnimatePresence>
   );
 }
