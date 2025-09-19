@@ -8,6 +8,12 @@
       "imageHint": "abstract dark"
     },
     {
+      "id": "music-hero",
+      "description": "Abstract background for music page hero",
+      "imageUrl": "https://picsum.photos/seed/music-hero/1920/1080",
+      "imageHint": "sound waves"
+    },
+    {
       "id": "album-cover-1",
       "description": "Album cover for 'Celestial Echoes'",
       "imageUrl": "https://picsum.photos/seed/album1/500/500",
@@ -69,3 +75,5 @@
     }
   ]
 }
+
+    

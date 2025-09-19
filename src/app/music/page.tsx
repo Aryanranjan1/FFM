@@ -1,11 +1,10 @@
-
 "use client";
 
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { albums } from '@/lib/data';
+import { albums, bio } from '@/lib/data';
 import type { Album, Track } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useMusicPlayer } from '@/context/music-player-context';
@@ -13,247 +12,324 @@ import { useMusicPlayer } from '@/context/music-player-context';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Separator } from "@/components/ui/separator";
-import { PlayCircle, ArrowRight, Music, Disc } from 'lucide-react';
+import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star } from 'lucide-react';
+
+const musicCategories = ['All', 'Cinematic', 'Orchestral', 'Gamelan', 'Ambient', 'Electronic'];
+
+const whyChooseMe = [
+    {
+        icon: Headphones,
+        title: "Emotionally Resonant",
+        description: "My music is crafted to evoke deep emotional responses, perfect for creating memorable moments in any project."
+    },
+    {
+        icon: CheckCircle,
+        title: "High-Quality Production",
+        description: "Using industry-standard tools and techniques to deliver pristine, professional-grade audio files for any use case."
+    },
+    {
+        icon: Music,
+        title: "Unique Fusion Style",
+        description: "A rare blend of epic Western orchestral sounds and the rich, mystical traditions of Malay Gamelan music."
+    }
+];
 
 export default function MusicPage() {
-  const { play } = useMusicPlayer();
-  const [latestAlbum, ...otherAlbums] = [...albums].sort((a, b) => b.releaseYear - a.releaseYear);
-  const featuredAlbums = albums.slice(0, 3); // For carousel
+    const { play } = useMusicPlayer();
+    const [latestAlbum, ...otherAlbums] = [...albums].sort((a, b) => b.releaseYear - a.releaseYear);
+    const heroImage = PlaceHolderImages.find(p => p.id === 'music-hero');
+    const [filter, setFilter] = useState('All');
+    
+    // In a real app, albums would have categories. We'll simulate for the UI.
+    const getCategoryForAlbum = (albumId: string) => {
+        const cats = ['Cinematic', 'Orchestral', 'Gamelan', 'Ambient', 'Electronic'];
+        let hash = 0;
+        for (let i = 0; i < albumId.length; i++) {
+            hash = albumId.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        return cats[Math.abs(hash) % cats.length];
+    }
+    
+    const allAlbumsWithCats = albums.map(album => ({
+        ...album,
+        category: getCategoryForAlbum(album.id),
+    }));
 
-  const handlePlayAlbum = (album: Album) => {
-    play(album.tracks[0], album.tracks);
-  };
+    const filteredAlbums = filter === 'All' ? allAlbumsWithCats : allAlbumsWithCats.filter(p => p.category === filter);
 
-  const handlePlayTrack = (track: Track, album: Album) => {
-    play(track, album.tracks);
-  };
-  
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-  };
 
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
-  };
+    const handlePlayAlbum = (album: Album) => {
+        play(album.tracks[0], album.tracks);
+    };
 
-  return (
-    <div className="bg-background text-foreground">
-      {/* Hero Section */}
-      <motion.section 
-        className="py-20 px-6 text-center relative overflow-hidden bg-card"
-        initial="hidden"
-        animate="visible"
-        variants={staggerContainer}
-      >
-         <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background z-0"></div>
-        <div className="relative z-10">
-          <motion.h1 className="text-5xl md:text-7xl font-headline font-bold" variants={fadeInUp}>Discography</motion.h1>
-          <motion.p className="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto" variants={fadeInUp}>
-            Explore the collection of sounds and stories from FFM.
-          </motion.p>
-        </div>
-      </motion.section>
+    const handlePlayTrack = (track: Track, album: Album) => {
+        play(track, album.tracks);
+    };
 
-      {/* Featured Albums Carousel */}
-      <motion.section 
-        className="py-20 px-6"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={staggerContainer}
-      >
-        <div className="container mx-auto">
-          <motion.h2 className="text-3xl md:text-4xl font-headline font-bold text-center mb-12" variants={fadeInUp}>
-            Featured Albums
-          </motion.h2>
-          <motion.div variants={fadeInUp}>
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              className="w-full"
+    const fadeInUp = {
+        hidden: { opacity: 0, y: 30 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+    };
+
+    const staggerContainer = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
+    };
+
+    return (
+        <div className="bg-background text-foreground">
+            {/* Hero Section */}
+            <motion.section
+                className="py-24 px-6 text-center relative overflow-hidden bg-card"
+                initial="hidden"
+                animate="visible"
+                variants={staggerContainer}
             >
-              <CarouselContent>
-                {featuredAlbums.map((album) => {
-                  const coverArt = PlaceHolderImages.find(p => p.id === album.coverArtId);
-                  return (
-                    <CarouselItem key={album.id} className="md:basis-1/2 lg:basis-1/3">
-                      <div className="p-1">
-                        <Card className="bg-card border-border/50 overflow-hidden group">
-                          <div className="relative">
-                            {coverArt && (
-                              <Image
-                                src={coverArt.imageUrl}
-                                alt={`Cover for ${album.title}`}
-                                width={500}
-                                height={500}
-                                className="w-full h-auto object-cover aspect-square group-hover:scale-105 transition-transform duration-300"
-                                data-ai-hint={coverArt.imageHint}
-                              />
-                            )}
-                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Button size="icon" className="h-16 w-16 rounded-full" onClick={() => handlePlayAlbum(album)}>
-                                <PlayCircle className="h-8 w-8" />
-                              </Button>
-                            </div>
-                          </div>
-                          <CardContent className="p-4">
-                            <h3 className="text-xl font-bold truncate">{album.title}</h3>
-                            <p className="text-muted-foreground">{album.releaseYear}</p>
-                          </CardContent>
-                        </Card>
-                      </div>
-                    </CarouselItem>
-                  )
-                })}
-              </CarouselContent>
-              <CarouselPrevious className="hidden sm:flex" />
-              <CarouselNext className="hidden sm:flex" />
-            </Carousel>
-          </motion.div>
-        </div>
-      </motion.section>
-
-      <Separator className="my-8 bg-border/20" />
-
-      {/* Latest Release Section */}
-      {latestAlbum && (
-        <motion.section 
-          className="py-20 px-6 bg-card"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={staggerContainer}
-        >
-          <div className="container mx-auto">
-            <motion.h2 className="text-3xl md:text-4xl font-headline font-bold text-center mb-4" variants={fadeInUp}>
-              Latest Release
-            </motion.h2>
-            <motion.p className="text-muted-foreground text-center mb-12" variants={fadeInUp}>
-              Check out the newest sounds from FFM.
-            </motion.p>
-            <motion.div variants={fadeInUp}>
-              <Card className="overflow-hidden bg-transparent border-0 md:border md:bg-card md:border-border/50">
-                <CardContent className="p-0 md:p-6 grid md:grid-cols-2 gap-8 items-center">
-                  <div className="relative group aspect-square md:aspect-auto">
-                    {(() => {
-                      const coverArt = PlaceHolderImages.find(p => p.id === latestAlbum.coverArtId);
-                      return coverArt && (
-                        <Image
-                          src={coverArt.imageUrl}
-                          alt={`Cover for ${latestAlbum.title}`}
-                          width={600}
-                          height={600}
-                          className="w-full h-full object-cover md:rounded-lg"
-                          data-ai-hint={coverArt.imageHint}
-                        />
-                      );
-                    })()}
-                    <div className="absolute inset-0 bg-black/20 md:rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button size="icon" className="h-20 w-20 rounded-full" onClick={() => handlePlayAlbum(latestAlbum)}>
-                        <PlayCircle className="h-10 w-10" />
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="p-6 md:p-0">
-                    <Badge variant="default" className="mb-4">Latest Release</Badge>
-                    <h3 className="font-headline text-4xl font-bold">{latestAlbum.title}</h3>
-                    <p className="text-muted-foreground mt-2 text-lg">{latestAlbum.releaseYear}</p>
-                    <p className="mt-4 text-muted-foreground leading-relaxed">
-                      Celestial Echoes takes you on a journey through starlit soundscapes and cosmic ambiances. A blend of electronic waves and orchestral arrangements.
-                    </p>
-                    <div className="mt-6">
-                      <h4 className="font-bold mb-3">Tracklist</h4>
-                      <ul className="space-y-3">
-                        {latestAlbum.tracks.map((track, index) => (
-                          <li key={track.id} className="flex items-center justify-between hover:bg-accent/50 p-2 rounded-md transition-colors">
-                            <div className="flex items-center gap-4">
-                              <Music className="h-5 w-5 text-primary" />
-                              <button onClick={() => handlePlayTrack(track, latestAlbum)} className="text-left hover:text-primary transition-colors">
-                                <span className="font-medium">{track.title}</span>
-                              </button>
-                            </div>
-                            <span className="text-sm text-muted-foreground">{track.duration}</span>
-                          </li>
+                {heroImage && (
+                    <Image
+                        src={heroImage.imageUrl}
+                        alt={heroImage.description}
+                        fill
+                        className="object-cover opacity-20"
+                        data-ai-hint={heroImage.imageHint}
+                    />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/50 to-background z-0"></div>
+                <div className="relative z-10">
+                    <motion.h1 className="text-5xl md:text-7xl font-headline font-bold" variants={fadeInUp}>Music</motion.h1>
+                    <motion.p className="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto" variants={fadeInUp}>
+                        A curated collection of cinematic and cultural compositions for licensing and listening.
+                    </motion.p>
+                </div>
+            </motion.section>
+            
+            {/* Explore My Music Section */}
+            <motion.section
+                className="py-20 px-6"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.1 }}
+                variants={staggerContainer}
+            >
+                <div className="container mx-auto">
+                    <motion.h2 className="text-3xl md:text-4xl font-headline font-bold text-center mb-4" variants={fadeInUp}>
+                        Explore My Music
+                    </motion.h2>
+                    <motion.p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto" variants={fadeInUp}>
+                       Browse through a diverse library of high-quality tracks. Use the filters to find the perfect sound for your project.
+                    </motion.p>
+                    
+                    <motion.div className="flex justify-center flex-wrap gap-2 mb-12" variants={fadeInUp}>
+                        {musicCategories.map(category => (
+                            <Button
+                                key={category}
+                                variant={filter === category ? 'default' : 'outline'}
+                                onClick={() => setFilter(category)}
+                                className={cn(
+                                    "capitalize rounded-md",
+                                    filter === category
+                                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                                        : "bg-transparent border-primary/50 text-primary hover:bg-primary/10"
+                                )}
+                            >
+                                {category}
+                            </Button>
                         ))}
-                      </ul>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        </motion.section>
-      )}
-      
-      <Separator className="my-8 bg-border/20" />
+                    </motion.div>
 
-      {/* Singles & EPs */}
-      <motion.section 
-        className="py-20 px-6"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.1 }}
-        variants={staggerContainer}
-      >
-        <div className="container mx-auto">
-          <motion.h2 className="text-3xl md:text-4xl font-headline font-bold text-center mb-12" variants={fadeInUp}>
-            Singles & EPs
-          </motion.h2>
-          <motion.div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8" variants={staggerContainer}>
-            {otherAlbums.map((album) => {
-              const coverArt = PlaceHolderImages.find(p => p.id === album.coverArtId);
-              return (
-                <motion.div key={album.id} variants={fadeInUp}>
-                  <Card className="bg-card border-border/50 overflow-hidden group h-full flex flex-col">
-                    <div className="relative">
-                      {coverArt && (
-                        <Image
-                          src={coverArt.imageUrl}
-                          alt={`Cover for ${album.title}`}
-                          width={400}
-                          height={400}
-                          className="w-full h-auto object-cover aspect-square group-hover:scale-105 transition-transform duration-300"
-                          data-ai-hint={coverArt.imageHint}
-                        />
-                      )}
-                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button size="icon" className="h-12 w-12 rounded-full" onClick={() => handlePlayAlbum(album)}>
-                          <PlayCircle className="h-6 w-6" />
-                        </Button>
-                      </div>
-                    </div>
-                    <CardContent className="p-4 flex-grow flex flex-col">
-                      <h3 className="font-bold text-lg truncate flex-grow">{album.title}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">{album.releaseYear}</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </motion.section>
+                    <motion.div 
+                        layout 
+                        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8"
+                    >
+                        {filteredAlbums.map((album) => {
+                            const coverArt = PlaceHolderImages.find(p => p.id === album.coverArtId);
+                            return (
+                                <motion.div layout key={album.id} variants={fadeInUp}>
+                                    <Card className="bg-card border-border/50 overflow-hidden group h-full flex flex-col">
+                                        <div className="relative">
+                                            {coverArt && (
+                                                <Image
+                                                    src={coverArt.imageUrl}
+                                                    alt={`Cover for ${album.title}`}
+                                                    width={400}
+                                                    height={400}
+                                                    className="w-full h-auto object-cover aspect-square group-hover:scale-105 transition-transform duration-300"
+                                                    data-ai-hint={coverArt.imageHint}
+                                                />
+                                            )}
+                                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <Button size="icon" className="h-12 w-12 rounded-full" onClick={() => handlePlayAlbum(album)}>
+                                                    <PlayCircle className="h-6 w-6" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                        <CardContent className="p-4 flex-grow flex flex-col">
+                                            <h3 className="font-bold text-lg truncate flex-grow">{album.title}</h3>
+                                            <p className="text-sm text-muted-foreground mt-1">{album.releaseYear} • <span className="text-primary">{album.category}</span></p>
+                                        </CardContent>
+                                    </Card>
+                                </motion.div>
+                            );
+                        })}
+                    </motion.div>
+                </div>
+            </motion.section>
 
-      {/* CTA */}
-      <section className="py-20 px-6 bg-card">
-        <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Want more?</h2>
-          <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-            Explore the full catalog, including collaborations and unreleased tracks.
-          </p>
-          <Button size="lg" asChild className="btn-gold">
-            <Link href="/portfolio">
-              Explore Full Catalog <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
+            {/* Latest Release Section */}
+            {latestAlbum && (
+                <motion.section
+                    className="py-20 px-6 bg-card"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                    variants={staggerContainer}
+                >
+                    <div className="container mx-auto">
+                        <motion.div variants={fadeInUp}>
+                            <Card className="overflow-hidden bg-transparent border-0 md:border md:bg-card md:border-border/50">
+                                <CardContent className="p-0 md:p-6 grid md:grid-cols-2 gap-8 items-center">
+                                    <div className="relative group aspect-square md:aspect-auto">
+                                        {(() => {
+                                            const coverArt = PlaceHolderImages.find(p => p.id === latestAlbum.coverArtId);
+                                            return coverArt && (
+                                                <Image
+                                                    src={coverArt.imageUrl}
+                                                    alt={`Cover for ${latestAlbum.title}`}
+                                                    width={600}
+                                                    height={600}
+                                                    className="w-full h-full object-cover md:rounded-lg"
+                                                    data-ai-hint={coverArt.imageHint}
+                                                />
+                                            );
+                                        })()}
+                                        <div className="absolute inset-0 bg-black/20 md:rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Button size="icon" className="h-20 w-20 rounded-full" onClick={() => handlePlayAlbum(latestAlbum)}>
+                                                <PlayCircle className="h-10 w-10" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <div className="p-6 md:p-0">
+                                        <Badge variant="default" className="mb-4">Latest Release</Badge>
+                                        <h3 className="font-headline text-4xl font-bold">{latestAlbum.title}</h3>
+                                        <p className="text-muted-foreground mt-2 text-lg">{latestAlbum.releaseYear}</p>
+                                        <p className="mt-4 text-muted-foreground leading-relaxed">
+                                            Celestial Echoes takes you on a journey through starlit soundscapes and cosmic ambiances. A blend of electronic waves and orchestral arrangements perfect for storytelling.
+                                        </p>
+                                        <div className="mt-6">
+                                            <h4 className="font-bold mb-3">Tracklist</h4>
+                                            <ul className="space-y-3">
+                                                {latestAlbum.tracks.map((track) => (
+                                                    <li key={track.id} className="flex items-center justify-between hover:bg-accent/50 p-2 rounded-md transition-colors">
+                                                        <div className="flex items-center gap-4">
+                                                            <Music className="h-5 w-5 text-primary" />
+                                                            <button onClick={() => handlePlayTrack(track, latestAlbum)} className="text-left hover:text-primary transition-colors">
+                                                                <span className="font-medium">{track.title}</span>
+                                                            </button>
+                                                        </div>
+                                                        <span className="text-sm text-muted-foreground">{track.duration}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
+                    </div>
+                </motion.section>
+            )}
+
+            {/* Why Choose My Music Section */}
+            <motion.section
+                className="py-20 px-6"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={staggerContainer}
+            >
+                <div className="container mx-auto">
+                    <motion.h2 className="text-3xl md:text-4xl font-headline font-bold text-center mb-12" variants={fadeInUp}>
+                        Why Choose My Music?
+                    </motion.h2>
+                    <div className="grid md:grid-cols-3 gap-8 text-center">
+                        {whyChooseMe.map((item, index) => (
+                            <motion.div key={index} variants={fadeInUp}>
+                                <Card className="bg-card border-border/50 p-8 h-full">
+                                    <div className="flex justify-center mb-4">
+                                        <div className="bg-primary/10 text-primary p-4 rounded-full">
+                                            <item.icon className="h-8 w-8" />
+                                        </div>
+                                    </div>
+                                    <h3 className="text-xl font-bold mb-2">{item.title}</h3>
+                                    <p className="text-muted-foreground">{item.description}</p>
+                                </Card>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </motion.section>
+
+
+            {/* Testimonials Section */}
+            <section className="py-20 px-6 bg-card">
+                <div className="container mx-auto">
+                    <motion.h2
+                        className="text-3xl md:text-4xl font-headline font-bold text-center mb-12"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        What My Clients Say
+                    </motion.h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                         {bio.pressReleases.slice(0, 3).map((testimonial, index) => (
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, amount: 0.3 }}
+                                transition={{ duration: 0.6, delay: index * 0.1 }}
+                            >
+                                <Card className="bg-background/50 border-border/50 h-full flex flex-col p-6">
+                                    <div className="flex-grow mb-4">
+                                        <p className="text-muted-foreground italic">"{testimonial.title}"</p>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <div className="flex-shrink-0">
+                                            <div className="flex">
+                                                {[...Array(5)].map((_, i) => (
+                                                    <Star key={i} className="w-5 h-5 text-primary fill-current" />
+                                                ))}
+                                            </div>
+                                            <p className="font-bold mt-2">{testimonial.publication}</p>
+                                            <p className="text-sm text-muted-foreground">{new Date(testimonial.date).toLocaleDateString()}</p>
+                                        </div>
+                                    </div>
+                                </Card>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* CTA */}
+            <section className="py-20 px-6">
+                <div className="container mx-auto text-center">
+                    <h2 className="text-3xl font-bold mb-4">Let's Create Something Amazing</h2>
+                    <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+                        Have a project in mind? I'd love to hear about it. Contact me for custom compositions or licensing inquiries.
+                    </p>
+                    <Button size="lg" asChild className="btn-gold">
+                        <Link href="/contact">
+                            Get In Touch <ArrowRight className="ml-2 h-5 w-5" />
+                        </Link>
+                    </Button>
+                </div>
+            </section>
         </div>
-      </section>
-    </div>
-  );
+    );
 }
+
+    
