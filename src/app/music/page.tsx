@@ -8,6 +8,7 @@ import { albums, bio } from '@/lib/data';
 import type { Album, Track } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useMusicPlayer } from '@/context/music-player-context';
+import { cn } from '@/lib/utils';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
