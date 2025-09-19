@@ -9,10 +9,11 @@ import { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Particles } from '@/components/particles';
 import { useMusicPlayer } from '@/context/music-player-context';
-import type { Album, Track } from '@/lib/types';
-import { albums, bio } from '@/lib/data';
-import { Card, CardContent } from '@/components/ui/card';
+import type { Album, Track, Project } from '@/lib/types';
+import { albums, bio, projects } from '@/lib/data';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FeaturedTrackClient } from '@/components/featured-track-client';
+import { Badge } from '@/components/ui/badge';
 
 export default function Home() {
   const heroImage = PlaceHolderImages.find(p => p.id === 'hero-background');
@@ -174,18 +175,18 @@ export default function Home() {
                               </div>
                               <CardContent className="p-6 flex-grow flex flex-col">
                                   <h3 className="text-xl font-bold text-foreground mb-2">{album.title}</h3>
-                                  <p className="text-primary text-sm mb-2">{album.releaseYear}</p>
-                                  <div className="flex-grow">
-                                      <ul className="text-sm space-y-2">
-                                          {album.tracks.map(track => (
-                                              <li key={track.id} className="flex items-center justify-between">
-                                                  <span className="text-muted-foreground">{track.title}</span>
-                                                  <Button variant="ghost" size="icon" className="w-8 h-8" onClick={() => playTrackFromPortfolio(track, album)}>
-                                                      <PlayCircle className="w-5 h-5" />
-                                                  </Button>
-                                              </li>
-                                          ))}
-                                      </ul>
+                                  <p className="text-primary text-sm mb-4">{album.releaseYear}</p>
+                                  <div className="flex items-center justify-between text-sm text-muted-foreground mt-auto border-t border-border/10 pt-4">
+                                      <div className="flex items-center space-x-4">
+                                          <span className="flex items-center space-x-1"><Play className="w-4 h-4" /><span>{album.tracks.length} tracks</span></span>
+                                      </div>
+                                      <span>{album.tracks.reduce((acc, track) => {
+                                          const [min, sec] = track.duration.split(':').map(Number);
+                                          return acc + min * 60 + sec;
+                                      }, 0) / 60 > 1 ? `${Math.floor((album.tracks.reduce((acc, track) => {
+                                          const [min, sec] = track.duration.split(':').map(Number);
+                                          return acc + min * 60 + sec;
+                                      }, 0)) / 60)} min` : ''}</span>
                                   </div>
                               </CardContent>
                           </Card>
@@ -197,7 +198,7 @@ export default function Home() {
 
       <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div><div className="divider-line"></div></div>
 
-      <section className="py-20 px-6 bg-card">
+      <section id="about" className="py-20 px-6 bg-card">
           <div className="max-w-7xl mx-auto">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                   <motion.div
@@ -232,9 +233,12 @@ export default function Home() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true, amount: 0.3 }}
                       transition={{ duration: 0.8, delay: 0.2 }}
-                      className="relative"
+                      className="relative group"
                   >
-                      <div className="relative mx-auto max-w-md">
+                      <div 
+                        className="relative mx-auto max-w-md transition-transform duration-500 group-hover:[transform:rotateY(5deg)_rotateX(2deg)_scale(1.05)]"
+                        style={{ transformStyle: 'preserve-3d' }}
+                      >
                           {aboutImage && <Image src={aboutImage.imageUrl}
                               alt="Composer at work"
                               width={600}
@@ -244,6 +248,51 @@ export default function Home() {
                           <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent rounded-xl"></div>
                       </div>
                   </motion.div>
+              </div>
+          </div>
+      </section>
+
+      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div><div className="divider-line"></div></div>
+
+      <section id="testimonials" className="py-20 px-6 bg-deep-black">
+          <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-12">
+                  <h2 className="text-3xl md:text-4xl font-bold mb-4">What People Say</h2>
+                  <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                      Hear from clients and collaborators who have experienced the magic of my compositions.
+                  </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {bio.pressReleases.map((testimonial, index) => (
+                      <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: 30 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true, amount: 0.3 }}
+                          transition={{ duration: 0.6, delay: index * 0.1 }}
+                          className="group"
+                      >
+                          <Card 
+                            className="bg-card/90 backdrop-blur-sm border-primary/30 h-full transition-transform duration-500 group-hover:[transform:rotateY(-5deg)_rotateX(2deg)_scale(1.05)]"
+                            style={{ transformStyle: 'preserve-3d' }}
+                          >
+                              <CardContent className="p-6 flex flex-col h-full">
+                                  <div className="flex items-center mb-4">
+                                      <div>
+                                          <h4 className="font-semibold text-foreground">{testimonial.publication}</h4>
+                                          <p className="text-sm text-primary">{new Date(testimonial.date).toLocaleDateString()}</p>
+                                      </div>
+                                  </div>
+                                  <p className="text-muted-foreground flex-grow">"{testimonial.title}"</p>
+                                  <div className="flex mt-4">
+                                      {[...Array(5)].map((_, i) => (
+                                          <Star key={i} className="w-5 h-5 text-primary fill-current" />
+                                      ))}
+                                  </div>
+                              </CardContent>
+                          </Card>
+                      </motion.div>
+                  ))}
               </div>
           </div>
       </section>
