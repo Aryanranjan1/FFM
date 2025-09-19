@@ -110,7 +110,7 @@ export function FeaturedTrackClient() {
     const coverArt = PlaceHolderImages.find(p => p.id === currentAlbum?.coverArtId);
 
     return (
-      <section id="music-player" className="py-20 px-6 bg-deep-black scroll-mt-20">
+      <section id="music-player" className="py-20 px-6 bg-card/50 scroll-mt-20">
            <div className="max-w-7xl mx-auto">
                <div className="text-center mb-12">
                    <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Music Track</h2>
