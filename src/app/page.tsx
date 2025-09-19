@@ -101,29 +101,10 @@ export default function Home() {
             Crafting cinematic soundscapes that blend epic orchestral arrangements with the rich cultural heritage of Malay gamelan music. <span className="text-primary">Experience the fusion of tradition and innovation.</span>
           </motion.p>
           <motion.div
+            className="flex justify-center items-center space-x-8 my-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex justify-center space-x-4 my-8"
-          >
-            <Button asChild size="lg" className="group">
-              <Link href="#music-portfolio">
-                <Diamond className="w-5 h-5 mr-2" />
-                Explore Works
-              </Link>
-            </Button>
-             <Button variant="outline" size="lg" asChild className="group">
-                <Link href="/music">
-                  <Music className="w-5 h-5 mr-2" />
-                  Listen Now
-                </Link>
-            </Button>
-          </motion.div>
-          <motion.div
-            className="flex justify-center items-center space-x-8 mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
           >
               <Link href="#" className="flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
                   <div className="w-16 h-16 rounded-full border-2 border-primary/30 flex items-center justify-center bg-card/50">
@@ -144,6 +125,26 @@ export default function Home() {
                   <span>Instagram</span>
               </Link>
           </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="flex justify-center space-x-4 mb-8"
+          >
+            <Button asChild size="lg" className="group">
+              <Link href="#music-portfolio">
+                <Diamond className="w-5 h-5 mr-2" />
+                Explore Works
+              </Link>
+            </Button>
+             <Button variant="outline" size="lg" asChild className="group">
+                <Link href="/music">
+                  <Music className="w-5 h-5 mr-2" />
+                  Listen Now
+                </Link>
+            </Button>
+          </motion.div>
+          
           <motion.div 
             className="flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-muted-foreground"
             initial={{ opacity: 0, y: 20 }}
@@ -155,36 +156,6 @@ export default function Home() {
             <span className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Malaysia</span>
           </motion.div>
         </div>
-
-        <motion.div 
-            className="absolute bottom-0 left-0 right-0 p-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
-        >
-            <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                <div className="bg-card/50 backdrop-blur-sm rounded-lg p-4">
-                    <Music className="w-8 h-8 mx-auto text-primary mb-2" />
-                    <div className="text-2xl font-bold">150+</div>
-                    <div className="text-muted-foreground">Compositions</div>
-                </div>
-                <div className="bg-card/50 backdrop-blur-sm rounded-lg p-4">
-                    <Heart className="w-8 h-8 mx-auto text-primary mb-2" />
-                    <div className="text-2xl font-bold">200+</div>
-                    <div className="text-muted-foreground">Happy Clients</div>
-                </div>
-                <div className="bg-card/50 backdrop-blur-sm rounded-lg p-4">
-                    <Award className="w-8 h-8 mx-auto text-primary mb-2" />
-                    <div className="text-2xl font-bold">10+</div>
-                    <div className="text-muted-foreground">Years Experience</div>
-                </div>
-                <div className="bg-card/50 backdrop-blur-sm rounded-lg p-4">
-                    <Headphones className="w-8 h-8 mx-auto text-primary mb-2" />
-                    <div className="text-2xl font-bold">5M+</div>
-                    <div className="text-muted-foreground">Global Plays</div>
-                </div>
-            </div>
-        </motion.div>
       </div>
       
       <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div><div className="divider-line"></div></div>
