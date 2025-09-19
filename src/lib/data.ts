@@ -41,11 +41,12 @@ export const albums: Album[] = [
 ];
 
 export const projects: Project[] = [
-  { id: 'proj-1', title: 'Aurora', description: 'A vibrant music video capturing the essence of the northern lights.', category: 'Music Video', imageId: 'project-1', date: '2023-10-26' },
-  { id: 'proj-2', title: 'Metropolis Live', description: 'A groundbreaking live performance merging electronic music with live orchestral arrangements.', category: 'Live Performance', imageId: 'project-2', date: '2023-08-15' },
-  { id: 'proj-3', title: 'Mirage Artwork', description: 'The official single artwork for the track \'Mirage\', a visual representation of sound.', category: 'Artwork', imageId: 'project-3', date: '2022-11-01' },
-  { id: 'proj-4', title: 'Etherea Collab', description: 'A collaborative track with artist Nova, exploring ambient and ethereal soundscapes.', category: 'Collaboration', imageId: 'project-4', date: '2022-05-20' },
-  { id: 'proj-5', title: 'Odyssey EP BTS', description: 'Behind the scenes footage from the making of the \'Odyssey\' EP.', category: 'Music Video', imageId: 'project-5', date: '2021-09-03' },
+    { id: 'proj-1', title: 'INTERVIEW WITH THE ARTIST 6', description: 'A vibrant music video capturing the essence of the northern lights.', category: 'Interview', imageId: 'project-1', date: '2023-10-26' },
+    { id: 'proj-2', title: 'LIVE PERFORMANCE HIGHLIGHT 5', description: 'A groundbreaking live performance merging electronic music with live orchestral arrangements.', category: 'Performance', imageId: 'project-2', date: '2023-08-15' },
+    { id: 'proj-3', title: 'GAMELAN MUSIC TUTORIAL 4', description: 'The official single artwork for the track \'Mirage\', a visual representation of sound.', category: 'Educational', imageId: 'project-3', date: '2022-11-01' },
+    { id: 'proj-4', title: 'ETHEREA COLLAB', description: 'A collaborative track with artist Nova, exploring ambient and ethereal soundscapes.', category: 'Heroic', imageId: 'project-4', date: '2022-05-20' },
+    { id: 'proj-5', title: 'ODYSSEY EP BTS', description: 'Behind the scenes footage from the making of the \'Odyssey\' EP.', category: 'Behind The Scenes', imageId: 'project-5', date: '2021-09-03' },
+    { id: 'proj-6', title: 'MOTIVATIONAL SCORE', description: 'A motivational score for a short film.', category: 'Motivational', imageId: 'project-6', date: '2022-01-10' },
 ];
 
 export const bio: Bio = {

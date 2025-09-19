@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
-const categories = ['All', ...Array.from(new Set(projects.map(p => p.category)))];
+const categories = ['All', 'Interview', 'Performance', 'Educational', 'Motivational', 'Heroic', 'Behind The Scenes'];
 
 export default function PortfolioPage() {
   const [filter, setFilter] = useState('All');
@@ -17,9 +17,9 @@ export default function PortfolioPage() {
   return (
     <div className="container py-12">
       <div className="text-center mb-12">
-        <h1 className="font-headline text-5xl md:text-7xl font-bold">Portfolio</h1>
+        <h1 className="font-headline text-5xl md:text-6xl font-bold text-primary">MUSIC PORTFOLIO</h1>
         <p className="text-muted-foreground text-lg mt-4 max-w-2xl mx-auto">
-          A collection of creative works, from music videos to live performances.
+          Explore my compositions and music videos.
         </p>
       </div>
 
@@ -29,7 +29,12 @@ export default function PortfolioPage() {
             key={category}
             variant={filter === category ? 'default' : 'outline'}
             onClick={() => setFilter(category)}
-            className="capitalize"
+            className={cn(
+              "capitalize rounded-md",
+              filter === category
+                ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                : "bg-transparent border-primary/50 text-primary hover:bg-primary/10"
+            )}
           >
             {category}
           </Button>
