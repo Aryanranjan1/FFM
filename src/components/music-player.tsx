@@ -8,6 +8,7 @@ import { Play, Pause, SkipBack, SkipForward, Volume1, Volume2, VolumeX } from 'l
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { AnimatePresence, motion } from 'framer-motion';
+import { albums } from '@/lib/data';
 
 const MusicPlayer: React.FC = () => {
   const { currentTrack, isPlaying, playNext, playPrev, pause, play } = useMusicPlayer();
@@ -46,10 +47,16 @@ const MusicPlayer: React.FC = () => {
   }, [volume]);
   
   useEffect(() => {
-    if (currentTrack && isPlaying) {
-      audioRef.current?.play().catch(e => console.error("Error playing audio:", e));
-    } else {
-      audioRef.current?.pause();
+    const audio = audioRef.current;
+    if (audio) {
+      if (currentTrack && isPlaying) {
+        if (audio.src !== currentTrack.audioSrc) {
+          audio.src = currentTrack.audioSrc;
+        }
+        audio.play().catch(e => console.error("Error playing audio:", e));
+      } else {
+        audio.pause();
+      }
     }
   }, [currentTrack, isPlaying]);
 
@@ -79,7 +86,8 @@ const MusicPlayer: React.FC = () => {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
-  const coverArt = PlaceHolderImages.find(p => p.id === 'album-cover-1'); // Default cover
+  const currentAlbum = albums.find(album => album.tracks.some(t => t.id === currentTrack?.id));
+  const coverArt = PlaceHolderImages.find(p => p.id === currentAlbum?.coverArtId);
 
   const VolumeIcon = volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
 
