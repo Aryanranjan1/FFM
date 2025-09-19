@@ -1,3 +1,65 @@
+
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-background",
+      "description": "Abstract background for hero section",
+      "imageUrl": "https://picsum.photos/seed/hero/1920/1080",
+      "imageHint": "abstract dark"
+    },
+    {
+      "id": "album-cover-1",
+      "description": "Album cover for 'Celestial Echoes'",
+      "imageUrl": "https://picsum.photos/seed/album1/500/500",
+      "imageHint": "abstract geometric"
+    },
+    {
+      "id": "album-cover-2",
+      "description": "Album cover for 'Urban Flora'",
+      "imageUrl": "https://picsum.photos/seed/album2/500/500",
+      "imageHint": "city night"
+    },
+    {
+      "id": "album-cover-3",
+      "description": "Album cover for 'Chroma'",
+      "imageUrl": "https://picsum.photos/seed/album3/500/500",
+      "imageHint": "colorful abstract"
+    },
+    {
+      "id": "project-1",
+      "description": "Visual for 'Aurora' music video",
+      "imageUrl": "https://picsum.photos/seed/project1/600/400",
+      "imageHint": "aurora borealis"
+    },
+    {
+      "id": "project-2",
+      "description": "Photo from 'Metropolis' live set",
+      "imageUrl": "https://picsum.photos/seed/project2/600/400",
+      "imageHint": "concert stage"
+    },
+    {
+      "id": "project-3",
+      "description": "Artwork for 'Mirage' single",
+      "imageUrl": "https://picsum.photos/seed/project3/600/400",
+      "imageHint": "desert mirage"
+    },
+    {
+      "id": "project-4",
+      "description": "Visual for 'Etherea' collaboration",
+      "imageUrl": "https://picsum.photos/seed/project4/600/400",
+      "imageHint": "ethereal light"
+    },
+    {
+      "id": "project-5",
+      "description": "Behind the scenes of 'Odyssey' EP",
+      "imageUrl": "https://picsum.photos/seed/project5/600/400",
+      "imageHint": "music studio"
+    },
+    {
+      "id": "about-artist",
+      "description": "Portrait of the artist FFM",
+      "imageUrl": "https://picsum.photos/seed/artist/500/600",
+      "imageHint": "artist portrait"
+    }
+  ]
 }
