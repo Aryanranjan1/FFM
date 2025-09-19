@@ -38,7 +38,7 @@ export default function MusicPage() {
         {albums.map((album) => {
           const coverArt = PlaceHolderImages.find(p => p.id === album.coverArtId);
           return (
-            <Card key={album.id} className="overflow-hidden">
+            <Card key={album.id} className="overflow-hidden bg-transparent">
               <CardContent className="p-0 md:p-6 md:flex md:gap-8">
                 <div className="md:w-1/3 relative group">
                   {coverArt && (

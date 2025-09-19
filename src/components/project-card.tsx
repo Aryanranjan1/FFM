@@ -12,7 +12,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const image = PlaceHolderImages.find(p => p.id === project.imageId);
 
   return (
-    <Card className="overflow-hidden group">
+    <Card className="overflow-hidden group bg-transparent">
       {image && (
         <div className="overflow-hidden">
           <Image

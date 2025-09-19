@@ -66,7 +66,7 @@ export default function AboutPage() {
               )}
             </div>
             <div className="md:col-span-2 space-y-8">
-              <Card>
+              <Card className='bg-transparent'>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle className="font-headline text-3xl">Biography</CardTitle>
                   <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
@@ -81,7 +81,7 @@ export default function AboutPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className='bg-transparent'>
                 <CardHeader>
                   <CardTitle className="font-headline text-3xl">Press</CardTitle>
                 </CardHeader>
