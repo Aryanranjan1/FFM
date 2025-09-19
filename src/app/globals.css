@@ -4,7 +4,59 @@
 
 @layer base {
   :root {
-    --background: 240 5% 7% / 0;
+    --radius: 0.625rem;
+    --deep-black: #0a0a0a;
+    --charcoal-dark: #1a1a1a;
+    --fantasy-gold: #d4af37;
+    --text-white: #e5e5e5;
+    --text-muted: #a0a0a0;
+
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 47.9 95.8% 53.1%;
+    --primary-foreground: 26 83.3% 14.1%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+
+    --chart-1: #d4af37;
+    --chart-2: #f59e0b;
+    --chart-3: #eab308;
+    --chart-4: #ca8a04;
+    --chart-5: #a16207;
+
+    --sidebar: #1a1a1a;
+    --sidebar-foreground: #e5e5e5;
+    --sidebar-primary: #d4af37;
+    --sidebar-primary-foreground: #0a0a0a;
+    --sidebar-accent: #1a1a1a;
+    --sidebar-accent-foreground: #e5e5e5;
+    --sidebar-border: rgba(212, 175, 55, 0.2);
+    --sidebar-ring: #d4af37;
+  }
+
+  .dark {
+    --background: 240 5% 7%;
     --foreground: 0 0% 98%;
     --card: 240 4% 12% / 0.5;
     --card-foreground: 0 0% 98%;
