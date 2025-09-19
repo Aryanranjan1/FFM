@@ -71,7 +71,7 @@ export default function Home() {
   return (
     <>
       <div className="relative h-[calc(100vh-80px)] w-full flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-background to-black"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-background to-black/80"></div>
         <div className="absolute inset-0 floating-orbs" ref={orbsRef}></div>
         <div className="absolute bottom-0 left-0 w-full h-1/2 floating-notes" ref={notesRef}></div>
 
