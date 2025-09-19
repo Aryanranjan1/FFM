@@ -70,6 +70,7 @@
   border-radius: 50%;
   opacity: 0;
   animation: particle-animation ease-in-out infinite;
+  box-shadow: 0 0 8px hsla(var(--primary) / 0.8);
 }
 
 .section-divider {
