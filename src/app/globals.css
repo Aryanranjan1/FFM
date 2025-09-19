@@ -66,6 +66,25 @@
   z-index: 0;
 }
 
+.particles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  background-color: hsla(var(--primary) / 0.5);
+  border-radius: 50%;
+  opacity: 0;
+  animation: particle-animation ease-in-out infinite;
+}
+
+
 @keyframes float {
   0%, 100% { transform: translateY(0) translateX(0); }
   25% { transform: translateY(-20px) translateX(20px); }
@@ -78,4 +97,18 @@
   10% { opacity: 1; }
   90% { opacity: 1; }
   100% { transform: translateY(-105vh) scale(1.5); opacity: 0; }
+}
+
+@keyframes particle-animation {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  10%, 90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1.2);
+    opacity: 0;
+  }
 }

@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Particles } from '@/components/particles';
 
 export default function Home() {
   const heroImage = PlaceHolderImages.find(p => p.id === 'hero-background');
@@ -47,6 +48,7 @@ export default function Home() {
 
   return (
     <div className="relative h-[calc(100vh-80px)] w-full flex items-center justify-center overflow-hidden">
+      <Particles />
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black"></div>
       <div className="absolute inset-0 floating-orbs" ref={orbsRef}></div>
       <div className="absolute inset-0 floating-notes" ref={notesRef}></div>
