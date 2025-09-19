@@ -76,7 +76,7 @@ export default function BlogPage() {
       </div>
       
       <motion.div 
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        className="grid grid-cols-1 md:grid-cols-2 gap-8"
         initial="hidden"
         animate="visible"
         variants={{
@@ -107,7 +107,7 @@ export default function BlogPage() {
                         alt={post.title}
                         width={600}
                         height={400}
-                        className="object-cover w-full h-auto aspect-video group-hover:scale-105 transition-transform duration-300"
+                        className="object-cover w-full h-auto aspect-[16/9] group-hover:scale-105 transition-transform duration-300"
                         data-ai-hint={image.imageHint}
                       />
                     )}
