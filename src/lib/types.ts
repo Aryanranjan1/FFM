@@ -27,7 +27,7 @@ export type Project = {
 export type Bio = {
   content: string;
   pressReleases: {
-    title: string;
+    title:string;
     publication: string;
     date: string;
     url: string;
@@ -48,3 +48,13 @@ export interface Achievement {
     year: string;
     icon: string;
 }
+
+export type Post = {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  readTime: string;
+  isFeatured: boolean;
+  imageId: string;
+};
