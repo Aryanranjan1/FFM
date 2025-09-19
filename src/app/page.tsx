@@ -42,7 +42,7 @@ export default function Home() {
     if (notesRef.current) {
       notesRef.current.innerHTML = '';
       const noteChars = ["♪", "♫", "♬", "♩"];
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 7; i++) {
         const note = document.createElement("div");
         note.className = "music-note";
         note.textContent = noteChars[Math.floor(Math.random() * noteChars.length)];
@@ -125,6 +125,16 @@ export default function Home() {
                   <span>Instagram</span>
               </Link>
           </motion.div>
+          <motion.div 
+            className="flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-muted-foreground mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.0 }}
+          >
+            <a href="mailto:contact@fahmiefarhan.com" className="flex items-center gap-2 hover:text-primary"><Mail className="w-4 h-4" /> contact@fahmiefarhan.com</a>
+            <span className="flex items-center gap-2"><Phone className="w-4 h-4" /> +60 11-31377753</span>
+            <span className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Malaysia</span>
+          </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -143,17 +153,6 @@ export default function Home() {
                   Listen Now
                 </Link>
             </Button>
-          </motion.div>
-          
-          <motion.div 
-            className="flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-muted-foreground"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.0 }}
-          >
-            <a href="mailto:contact@fahmiefarhan.com" className="flex items-center gap-2 hover:text-primary"><Mail className="w-4 h-4" /> contact@fahmiefarhan.com</a>
-            <span className="flex items-center gap-2"><Phone className="w-4 h-4" /> +60 11-31377753</span>
-            <span className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Malaysia</span>
           </motion.div>
         </div>
       </div>
