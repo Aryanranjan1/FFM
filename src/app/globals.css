@@ -54,13 +54,13 @@
 }
 
 .particles-container {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  z-index: 1;
+  z-index: -1;
 }
 
 .particle {
@@ -102,10 +102,10 @@
 }
 
 @keyframes floatNote {
-  0% { transform: translateY(5vh) scale(1); opacity: 0; }
+  0% { transform: translateY(0) scale(1); opacity: 0; }
   10% { opacity: 1; }
   90% { opacity: 1; }
-  100% { transform: translateY(-105vh) scale(1.5); opacity: 0; }
+  100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
 }
 
 @keyframes particle-animation {

@@ -4,7 +4,7 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { Menu, Music, User, Mail, MicVocal, Home } from 'lucide-react';
+import { Menu, Music, User, Mail, Newspaper, Home } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
@@ -12,7 +12,7 @@ import React from 'react';
 const navLinks = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/music', label: 'Music', icon: Music },
-  { href: '/portfolio', label: 'Portfolio', icon: MicVocal },
+  { href: '/portfolio', label: 'Blog', icon: Newspaper },
   { href: '/about', label: 'About', icon: User },
   { href: '/contact', label: 'Contact', icon: Mail },
 ];

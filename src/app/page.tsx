@@ -4,16 +4,15 @@ import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Award, Play, Star, Music, Heart, Share2, PlayCircle, Mail, Phone, MapPin } from 'lucide-react';
+import { ArrowRight, Award, Play, Star, Music, Heart, Share2, PlayCircle, Mail, Phone, MapPin, Diamond, Youtube, Instagram, Headphones } from 'lucide-react';
 import { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Particles } from '@/components/particles';
 import { useMusicPlayer } from '@/context/music-player-context';
 import type { Album, Track, Project } from '@/lib/types';
 import { albums, bio, projects } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FeaturedTrackClient } from '@/components/featured-track-client';
-import { Badge } from '@/components/ui/badge';
+import { SoundcloudIcon } from '@/components/icons';
 
 export default function Home() {
   const heroImage = PlaceHolderImages.find(p => p.id === 'hero-background');
@@ -48,6 +47,7 @@ export default function Home() {
         note.className = "music-note";
         note.textContent = noteChars[Math.floor(Math.random() * noteChars.length)];
         note.style.left = `${Math.random() * 100}%`;
+        note.style.bottom = `-${Math.random() * 20}vh`;
         note.style.animationDuration = `${Math.random() * 10 + 20}s`;
         note.style.animationDelay = `${Math.random() * 10}s`;
         notesRef.current.appendChild(note);
@@ -71,10 +71,9 @@ export default function Home() {
   return (
     <>
       <div className="relative h-[calc(100vh-80px)] w-full flex items-center justify-center overflow-hidden">
-        <Particles />
         <div className="absolute inset-0 bg-gradient-to-br from-background to-black"></div>
         <div className="absolute inset-0 floating-orbs" ref={orbsRef}></div>
-        <div className="absolute inset-0 floating-notes" ref={notesRef}></div>
+        <div className="absolute bottom-0 left-0 w-full h-1/2 floating-notes" ref={notesRef}></div>
 
         <div className="relative z-10 text-center px-4">
           <motion.h1 
@@ -94,33 +93,98 @@ export default function Home() {
               Epic Orchestral &amp; Malay Gamelan Composer
           </motion.h2>
           <motion.p 
-            className="font-body text-xl md:text-2xl mt-4 max-w-2xl mx-auto text-foreground/80"
+            className="font-body text-xl md:text-2xl mt-4 max-w-3xl mx-auto text-foreground/80"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Crafting sonic landscapes that transcend boundaries.
+            Crafting cinematic soundscapes that blend epic orchestral arrangements with the rich cultural heritage of Malay gamelan music. <span className="text-primary">Experience the fusion of tradition and innovation.</span>
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex justify-center space-x-4 mb-12"
+            className="flex justify-center space-x-4 my-8"
           >
-            <Button asChild size="lg" className="mt-8 group">
+            <Button asChild size="lg" className="group">
               <Link href="#music-portfolio">
-                Explore Music
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                <Diamond className="w-5 h-5 mr-2" />
+                Explore Works
               </Link>
             </Button>
-             <Button variant="outline" size="lg" asChild className="mt-8 group border-2">
-                <Link href="/contact">
-                  Contact Me
-                  <Mail className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+             <Button variant="outline" size="lg" asChild className="group">
+                <Link href="/music">
+                  <Music className="w-5 h-5 mr-2" />
+                  Listen Now
                 </Link>
             </Button>
           </motion.div>
+          <motion.div
+            className="flex justify-center items-center space-x-8 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+          >
+              <Link href="#" className="flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                  <div className="w-16 h-16 rounded-full border-2 border-primary/30 flex items-center justify-center bg-card/50">
+                    <Youtube className="w-8 h-8" />
+                  </div>
+                  <span>YouTube</span>
+              </Link>
+               <Link href="#" className="flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                  <div className="w-16 h-16 rounded-full border-2 border-primary/30 flex items-center justify-center bg-card/50">
+                    <SoundcloudIcon className="w-8 h-8" />
+                  </div>
+                  <span>SoundCloud</span>
+              </Link>
+               <Link href="#" className="flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                  <div className="w-16 h-16 rounded-full border-2 border-primary/30 flex items-center justify-center bg-card/50">
+                    <Instagram className="w-8 h-8" />
+                  </div>
+                  <span>Instagram</span>
+              </Link>
+          </motion.div>
+          <motion.div 
+            className="flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-muted-foreground"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.0 }}
+          >
+            <a href="mailto:contact@fahmiefarhan.com" className="flex items-center gap-2 hover:text-primary"><Mail className="w-4 h-4" /> contact@fahmiefarhan.com</a>
+            <span className="flex items-center gap-2"><Phone className="w-4 h-4" /> +60 11-31377753</span>
+            <span className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Malaysia</span>
+          </motion.div>
         </div>
+
+        <motion.div 
+            className="absolute bottom-0 left-0 right-0 p-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.2 }}
+        >
+            <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div className="bg-card/50 backdrop-blur-sm rounded-lg p-4">
+                    <Music className="w-8 h-8 mx-auto text-primary mb-2" />
+                    <div className="text-2xl font-bold">150+</div>
+                    <div className="text-muted-foreground">Compositions</div>
+                </div>
+                <div className="bg-card/50 backdrop-blur-sm rounded-lg p-4">
+                    <Heart className="w-8 h-8 mx-auto text-primary mb-2" />
+                    <div className="text-2xl font-bold">200+</div>
+                    <div className="text-muted-foreground">Happy Clients</div>
+                </div>
+                <div className="bg-card/50 backdrop-blur-sm rounded-lg p-4">
+                    <Award className="w-8 h-8 mx-auto text-primary mb-2" />
+                    <div className="text-2xl font-bold">10+</div>
+                    <div className="text-muted-foreground">Years Experience</div>
+                </div>
+                <div className="bg-card/50 backdrop-blur-sm rounded-lg p-4">
+                    <Headphones className="w-8 h-8 mx-auto text-primary mb-2" />
+                    <div className="text-2xl font-bold">5M+</div>
+                    <div className="text-muted-foreground">Global Plays</div>
+                </div>
+            </div>
+        </motion.div>
       </div>
       
       <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div><div className="divider-line"></div></div>

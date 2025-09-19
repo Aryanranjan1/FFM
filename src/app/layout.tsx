@@ -7,6 +7,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { MusicPlayerProvider } from '@/context/music-player-context';
 import MusicPlayer from '@/components/music-player';
 import { PageTransition } from '@/components/page-transition';
+import { Particles } from '@/components/particles';
 
 export const metadata: Metadata = {
   title: 'FFM',
@@ -26,6 +27,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Alegreya&family=Belleza&display=swap" rel="stylesheet" />
       </head>
       <body className={cn('font-body antialiased min-h-screen flex flex-col')}>
+        <Particles />
         <MusicPlayerProvider>
           <div className="flex flex-col flex-1">
             <Header />
