@@ -125,7 +125,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 5;
+    z-index: 10;
     pointer-events: none;
     overflow: hidden;
   }
@@ -154,29 +154,6 @@
       transform: translateY(-100px);
       opacity: 0;
     }
-  }
-
-  .floating-orbs {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 3;
-    pointer-events: none;
-  }
-
-  .orb {
-    position: absolute;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.1) 50%, transparent 70%);
-    animation: orb-float 15s infinite ease-in-out;
-  }
-
-  @keyframes orb-float {
-    0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.3; }
-    33% { transform: translateY(-20px) translateX(10px); opacity: 0.6; }
-    66% { transform: translateY(10px) translateX(-5px); opacity: 0.4; }
   }
 
   .floating-notes {

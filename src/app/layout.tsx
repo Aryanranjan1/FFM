@@ -29,7 +29,7 @@ export default function RootLayout({
       <body className={cn('font-body antialiased min-h-screen flex flex-col')}>
         <Particles />
         <MusicPlayerProvider>
-          <div className="flex flex-col flex-1 z-10">
+          <div className="flex flex-col flex-1 z-0">
             <Header />
             <main className="flex-1">
               <PageTransition>
