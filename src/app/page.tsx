@@ -134,9 +134,12 @@ export default function Home() {
                 setTestimonials(testimonialsData);
                 
                 // Fetch Videos
-                const videosQuery = query(collection(db, "videos"), where("isPublished", "==", true), orderBy("createdAt", "desc"));
+                const videosQuery = query(collection(db, "videos"), orderBy("createdAt", "desc"));
                 const videosSnapshot = await getDocs(videosQuery);
-                const videosData = videosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as VideoType));
+                const videosData = videosSnapshot.docs
+                  .map(doc => ({ id: doc.id, ...doc.data() } as VideoType))
+                  .filter(video => video.isPublished);
+                
                 setAllVideos(videosData);
 
                 if (videosData.length > 0) {
