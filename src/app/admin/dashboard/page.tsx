@@ -1,63 +1,101 @@
 
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Video, Newspaper, Users, Link as LinkIcon, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 import { db } from "@/lib/firebase";
-import { collection, getDocs, query, orderBy, limit, Timestamp } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, limit, Timestamp, onSnapshot } from "firebase/firestore";
 import type { Video as VideoType, ContactSubmission } from "@/lib/admin-types";
 import Image from "next/image";
 import Link from 'next/link';
 import { format } from "date-fns";
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 
-async function getDashboardData() {
-    const videosQuery = query(collection(db, 'videos'));
-    const blogQuery = query(collection(db, 'blog'));
-    const socialLinksQuery = query(collection(db, 'social-links'));
-    const contactsQuery = query(collection(db, 'contacts'), orderBy('submittedAt', 'desc'), limit(5));
-    const recentVideosQuery = query(collection(db, 'videos'), orderBy('createdAt', 'desc'), limit(5));
-
-    const [
-        videosSnapshot,
-        blogSnapshot,
-        socialLinksSnapshot,
-        contactsSnapshot,
-        recentVideosSnapshot,
-    ] = await Promise.all([
-        getDocs(videosQuery),
-        getDocs(blogQuery),
-        getDocs(socialLinksQuery),
-        getDocs(contactsQuery),
-        getDocs(recentVideosQuery),
-    ]);
-    
-    const videosCount = videosSnapshot.size;
-    const blogCount = blogSnapshot.size;
-    const socialLinksCount = socialLinksSnapshot.size;
-    
-    const recentContacts = contactsSnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-            id: doc.id,
-            ...data,
-            submittedAt: (data.submittedAt as Timestamp).toDate().toISOString(),
-        } as ContactSubmission;
-    });
-
-    const recentVideos = recentVideosSnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-            id: doc.id,
-            ...data,
-            createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
-        } as VideoType;
-    });
-
-    return { videosCount, blogCount, socialLinksCount, recentContacts, recentVideos };
+interface DashboardData {
+    videosCount: number;
+    blogCount: number;
+    socialLinksCount: number;
+    recentContacts: ContactSubmission[];
+    recentVideos: VideoType[];
 }
 
+export default function AdminDashboardPage() {
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-export default async function AdminDashboardPage() {
-  const { videosCount, blogCount, socialLinksCount, recentContacts, recentVideos } = await getDashboardData();
+  useEffect(() => {
+    const fetchData = async () => {
+        const videosQuery = query(collection(db, 'videos'));
+        const blogQuery = query(collection(db, 'blog'));
+        const socialLinksQuery = query(collection(db, 'social-links'));
+        const contactsQuery = query(collection(db, 'contacts'), orderBy('submittedAt', 'desc'), limit(5));
+        const recentVideosQuery = query(collection(db, 'videos'), orderBy('createdAt', 'desc'), limit(5));
+
+        const [
+            videosSnapshot,
+            blogSnapshot,
+            socialLinksSnapshot,
+            contactsSnapshot,
+            recentVideosSnapshot,
+        ] = await Promise.all([
+            getDocs(videosQuery),
+            getDocs(blogQuery),
+            getDocs(socialLinksQuery),
+            getDocs(contactsQuery),
+            getDocs(recentVideosQuery),
+        ]);
+        
+        const videosCount = videosSnapshot.size;
+        const blogCount = blogSnapshot.size;
+        const socialLinksCount = socialLinksSnapshot.size;
+        
+        const recentContacts = contactsSnapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                ...data,
+                submittedAt: (data.submittedAt as Timestamp)?.toDate ? (data.submittedAt as Timestamp).toDate().toISOString() : new Date().toISOString(),
+            } as ContactSubmission;
+        });
+
+        const recentVideos = recentVideosSnapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                ...data,
+                createdAt: (data.createdAt as Timestamp)?.toDate ? (data.createdAt as Timestamp).toDate().toISOString() : new Date().toISOString(),
+            } as VideoType;
+        });
+
+        setData({ videosCount, blogCount, socialLinksCount, recentContacts, recentVideos });
+        setLoading(false);
+    };
+
+    fetchData();
+
+    // Set up listeners for real-time updates
+    const unsubscribers = [
+      onSnapshot(collection(db, 'videos'), () => fetchData()),
+      onSnapshot(collection(db, 'blog'), () => fetchData()),
+      onSnapshot(collection(db, 'social-links'), () => fetchData()),
+      onSnapshot(collection(db, 'contacts'), () => fetchData()),
+    ];
+
+    return () => unsubscribers.forEach(unsub => unsub());
+
+  }, []);
+
+  if (loading || !data) {
+    return (
+        <div className="flex justify-center items-center h-full">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+    );
+  }
+  
+  const { videosCount, blogCount, socialLinksCount, recentContacts, recentVideos } = data;
   
   const stats = [
     { title: "YouTube Videos", value: videosCount, icon: Video },
