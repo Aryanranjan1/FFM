@@ -18,7 +18,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
   };
 
   return (
-    <div className="container py-12">
+    <div className="container mx-auto py-12">
       <div className="text-center mb-12">
         <h1 className="font-headline text-5xl md:text-7xl font-bold text-primary">ABOUT</h1>
         <p className="text-muted-foreground text-lg mt-4 max-w-3xl mx-auto">
