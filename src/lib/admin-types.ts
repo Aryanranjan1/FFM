@@ -53,3 +53,12 @@ export type SocialLink = {
   url: string;
   createdAt: Timestamp;
 };
+
+export type ContactSubmission = {
+    id: string;
+    name: string;
+    email: string;
+    subject?: string;
+    message: string;
+    submittedAt: string;
+};

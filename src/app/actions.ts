@@ -5,7 +5,7 @@ import { suggestBioUpdates, type SuggestBioUpdatesInput } from "@/ai/flows/sugge
 import { fetchYouTubeDetails as fetchYouTubeDetailsFlow, type FetchYouTubeDetailsOutput } from "@/ai/flows/fetch-youtube-details";
 import { z } from "zod";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, updateDoc, deleteDoc, getDoc, getDocs } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
 
 export async function getBioSuggestions(input: SuggestBioUpdatesInput) {
@@ -45,6 +45,7 @@ export async function submitContactForm(prevState: any, formData: FormData) {
       ...validatedFields.data,
       submittedAt: serverTimestamp(),
     });
+    revalidatePath("/admin/contacts");
     return {
       message: "Thank you for your message! We'll get back to you soon.",
       errors: {}
@@ -236,7 +237,7 @@ export async function addSocialLink(values: SocialLinkFormValues) {
 
 export async function deleteSocialLink(id: string) {
     try {
-        await deleteDoc(doc(db, 'social-links'), { ...values, createdAt: serverTimestamp() });
+        await deleteDoc(doc(db, 'social-links', id));
         revalidatePath('/admin/social-links');
         return { success: true, message: "Social link deleted successfully." };
     } catch (e) {
@@ -298,4 +299,48 @@ export async function deleteBlogPost(id: string) {
   } catch (e) {
     return { success: false, message: "Failed to delete blog post." };
   }
+}
+
+// Site Settings Actions
+const siteSettingsSchema = z.object({
+    email: z.string().email("Invalid email address.").optional(),
+    phone: z.string().optional(),
+    location: z.string().optional(),
+});
+export type SiteSettingsFormValues = z.infer<typeof siteSettingsSchema>;
+
+export async function updateSiteSettings(values: SiteSettingsFormValues) {
+    try {
+        const settingsRef = doc(db, 'settings', 'site');
+        await updateDoc(settingsRef, values, { merge: true });
+        revalidatePath('/');
+        return { success: true, message: "Settings updated successfully." };
+    } catch (error) {
+        // If the document doesn't exist, create it.
+        if ((error as any).code === 'not-found') {
+            try {
+                const settingsRef = doc(db, 'settings', 'site');
+                await addDoc(collection(db, 'settings'), values);
+                revalidatePath('/');
+                return { success: true, message: "Settings saved successfully." };
+            } catch (e) {
+                 return { success: false, message: "Failed to save settings." };
+            }
+        }
+        return { success: false, message: "Failed to update settings." };
+    }
+}
+
+export async function getSiteSettings() {
+    try {
+        const settingsRef = doc(db, 'settings', 'site');
+        const docSnap = await getDoc(settingsRef);
+        if (docSnap.exists()) {
+            return docSnap.data() as SiteSettingsFormValues;
+        }
+        return { email: 'contact@fahmiefarhan.com', phone: '+60 11-31377753', location: 'Malaysia' }; // Default values
+    } catch (error) {
+        console.error("Error fetching site settings:", error);
+        return { email: 'contact@fahmiefarhan.com', phone: '+60 11-31377753', location: 'Malaysia' }; // Default values
+    }
 }

@@ -1,7 +1,11 @@
+
 import { Mail, Phone, MapPin, Youtube, Instagram } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Logo, SoundcloudIcon } from '../icons';
+import { getSiteSettings } from '@/app/actions';
+import { db } from '@/lib/firebase';
+import { getDoc, doc } from 'firebase/firestore';
+
 
 const services = [
   { name: 'Custom Compositions', href: '#' },
@@ -10,7 +14,25 @@ const services = [
   { name: 'Malay Gamelan coaching', href: '#' },
 ];
 
-export function Footer() {
+async function getSettings() {
+    const docRef = doc(db, 'settings', 'site');
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        return docSnap.data();
+    } else {
+        return {
+            email: 'contact@fahmiefarhan.com',
+            phone: '+60 11-31377753',
+            location: 'Malaysia'
+        };
+    }
+}
+
+
+export async function Footer() {
+  const settings = await getSettings();
+
   return (
     <footer className="bg-card py-12">
       <div className="container mx-auto">
@@ -58,18 +80,18 @@ export function Footer() {
           </div>
           <div>
             <h3 className="font-bold text-lg mb-4 text-primary">Get In Touch</h3>
-            <ul className="space-y-4">
+             <ul className="space-y-4">
               <li className="flex items-center justify-center md:justify-start gap-2 text-muted-foreground hover:text-primary transition-colors">
                 <Mail className="w-4 h-4" />
-                <a href="mailto:contact@fahmiefarhan.com">contact@fahmiefarhan.com</a>
+                <a href={`mailto:${settings.email}`}>{settings.email}</a>
               </li>
               <li className="flex items-center justify-center md:justify-start gap-2 text-muted-foreground hover:text-primary transition-colors">
                 <Phone className="w-4 h-4" />
-                <span>+60 11-31377753</span>
+                <span>{settings.phone}</span>
               </li>
               <li className="flex items-center justify-center md:justify-start gap-2 text-muted-foreground hover:text-primary transition-colors">
                 <MapPin className="w-4 h-4" />
-                <span>Malaysia</span>
+                <span>{settings.location}</span>
               </li>
             </ul>
           </div>
@@ -81,5 +103,3 @@ export function Footer() {
     </footer>
   );
 }
-
-    
