@@ -170,62 +170,76 @@ const socialLinks = [
     { platform: 'Pond5', url: 'https://www.pond5.com/artist/fforchestral' },
 ].map(item => ({ ...item, createdAt: new Date('2025-09-20T10:30:21Z') }));
 
+const getYouTubeId = (urlOrId: string): string | null => {
+    if (!urlOrId) return null;
+    if (urlOrId.length === 11 && !urlOrId.includes('/')) return urlOrId;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = urlOrId.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+};
+
 const videos = [
-    { isFeatured: true, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/APEX/hqdefault.jpg', title: 'Epic Heroic Motivational Music - OPERATION APEX by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=APEX' },
-    { isFeatured: true, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/HeartWarrior/hqdefault.jpg', title: 'Epic Motivational Music - Heart Of A Warrior by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=HeartWarrior' },
-    { isFeatured: true, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/LoneWolf/hqdefault.jpg', title: 'EPIC MOTIVATIONAL MUSIC - Lone Wolf Resolve by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=LoneWolf' },
-    { isFeatured: true, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/vTmzISgwbFk/hqdefault.jpg', title: 'Epic Emotional Music - EVERLASTING STRUGGLE by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=vTmzISgwbFk' },
-    { isFeatured: true, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/CourageFire/hqdefault.jpg', title: 'Epic Action Music - COURAGE UNDER FIRE by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=CourageFire' },
-    { isFeatured: true, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/Hashashin/hqdefault.jpg', title: 'Epic Dark Arabic Music - HASHASHIN by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=Hashashin' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/VergeVictory/hqdefault.jpg', title: 'Epic Heroic Motivational Music - VERGE OF VICTORY by Fahmie Farhan Ariffin', videoUrl: 'https://www.youtube.com/watch?v=VergeVictory' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/UntilMeet/hqdefault.jpg', title: 'Sad Emotional Music - UNTIL WE MEET AGAIN by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=UntilMeet' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/CourageWithin/hqdefault.jpg', title: 'Epic Heroic Motivational Music - THE COURAGE WITHIN by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=CourageWithin' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/dDMkp9DWCEs/hqdefault.jpg', title: 'Epic Motivational Music - CONTINUE TO FIGHT by Fahmie Farhan Ariffin', videoUrl: 'https://www.youtube.com/watch?v=dDMkp9DWCEs' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/UnyieldingSpirit/hqdefault.jpg', title: 'Epic Uplifting Emotional Music - UNYIELDING SPIRIT by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=UnyieldingSpirit' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/BattlefrontsBeyond/hqdefault.jpg', title: 'EPIC SCI-FI BATTLE MUSIC - Battlefronts Beyond Time by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=BattlefrontsBeyond' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/BloodSacrifice/hqdefault.jpg', title: 'Epic Heroic Music - THROUGH BLOOD AND SACRIFICE by Fahmie Farhan Ariffin', videoUrl: 'https://www.youtube.com/watch?v=BloodSacrifice' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/nnjgGg3lRpE/hqdefault.jpg', title: 'Epic Heroic Music - THROUGH PAIN AND SUFFERING by Fahmie Farhan Ariffin', videoUrl: 'https://www.youtube.com/watch?v=nnjgGg3lRpE' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/SolitaryJourney/hqdefault.jpg', title: 'EPIC EMOTIONAL MUSIC - The Solitary Journey by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=SolitaryJourney' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/LastStand/hqdefault.jpg', title: 'Epic Action Music - THE LAST STAND', videoUrl: 'https://www.youtube.com/watch?v=LastStand' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/UnderMoonlight/hqdefault.jpg', title: 'Romantic Emotional Music - UNDER THE MOONLIGHT by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=UnderMoonlight' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/EndJourney/hqdefault.jpg', title: 'Epic Adventure Music - The End of Journey by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=EndJourney' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/JhYP3ijwdRU/hqdefault.jpg', title: 'Epic Heroic Music - POWERED UP', videoUrl: 'https://www.youtube.com/watch?v=JhYP3ijwdRU' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/FragmentsResolve/hqdefault.jpg', title: 'Epic Emotional Music - FRAGMENTS OF RESOLVE', videoUrl: 'https://www.youtube.com/watch?v=FragmentsResolve' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/Invincible/hqdefault.jpg', title: 'INVINCIBLE - Epic Heroic Motivational Music', videoUrl: 'https://www.youtube.com/watch?v=Invincible' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/_jsKkEolMnQ/hqdefault.jpg', title: 'Epic Heroic Music - INTO THE MARTYRDOM', videoUrl: 'https://www.youtube.com/watch?v=_jsKkEolMnQ' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/Successor/hqdefault.jpg', title: 'THE SUCCESSOR - Epic Emotional Music', videoUrl: 'https://www.youtube.com/watch?v=Successor' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/TragicVengeance/hqdefault.jpg', title: 'Epic Dark Emotional Music - TRAGIC VENGEANCE by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=TragicVengeance' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/MiddleEastChase/hqdefault.jpg', title: 'Intense background music that plays during chasing scene in Middle East', videoUrl: 'https://www.youtube.com/watch?v=MiddleEastChase' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/StrengthEndure/hqdefault.jpg', title: 'STRENGTH TO ENDURE - Epic Intense Action Music', videoUrl: 'https://www.youtube.com/watch?v=StrengthEndure' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/ResilienceBreaks/hqdefault.jpg', title: 'Resilience Beyond Breaks (Epic Emotional Music)', videoUrl: 'https://www.youtube.com/watch?v=ResilienceBreaks' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/SunriseSymphony/hqdefault.jpg', title: 'EPIC ADVENTURE MUSIC - Sunrise Symphony by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=SunriseSymphony' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/JourneyWaves/hqdefault.jpg', title: 'EPIC PIRATE ADVENTURE MUSIC - Journey Across The Waves by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=JourneyWaves' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/NewAdventure/hqdefault.jpg', title: 'Epic Adventure Music - NEW ADVENTURE BEGINS by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=NewAdventure' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/NeverSurrender/hqdefault.jpg', title: 'Never Surrender (Cinematic Corporate Music)', videoUrl: 'https://www.youtube.com/watch?v=NeverSurrender' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/AssaultShadows/hqdefault.jpg', title: 'Assault On Shadows (Epic Cinematic Music)', videoUrl: 'https://www.youtube.com/watch?v=AssaultShadows' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/TearsBrave/hqdefault.jpg', title: 'Tears Of The Brave (Epic Cinematic Music)', videoUrl: 'https://www.youtube.com/watch?v=TearsBrave' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/LineOfDuty/hqdefault.jpg', title: 'In The Line Of Duty (Epic Action Music)', videoUrl: 'https://www.youtube.com/watch?v=LineOfDuty' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/fr9ARYi0wqQ/hqdefault.jpg', title: 'SANDS OF MARTYRDOM - Epic Arabic Music', videoUrl: 'https://www.youtube.com/watch?v=fr9ARYi0wqQ' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/85dbXlGyDP8/hqdefault.jpg', title: 'Shimmering Destiny (Epic Adventure Music)', videoUrl: 'https://www.youtube.com/watch?v=85dbXlGyDP8' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/DeterminationHero/hqdefault.jpg', title: 'Determination Of A Hero (Epic Cinematic Music)', videoUrl: 'https://www.youtube.com/watch?v=DeterminationHero' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/Thanks500/hqdefault.jpg', title: 'THANK YOU FOR 500 SUBSCRIBERS!', videoUrl: 'https://www.youtube.com/watch?v=Thanks500' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/FlyingSky/hqdefault.jpg', title: 'Flying To The Sky (Epic Adventure Music)', videoUrl: 'https://www.youtube.com/watch?v=FlyingSky' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/TogetherVictory/hqdefault.jpg', title: 'Together Towards Victory (Epic Cinematic Music)', videoUrl: 'https://www.youtube.com/watch?v=TogetherVictory' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/ShatteredStanding/hqdefault.jpg', title: 'Shattered Yet Standing (Epic Emotional Music)', videoUrl: 'https://www.youtube.com/watch?v=ShatteredStanding' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/TowardsHorizon/hqdefault.jpg', title: 'Towards The Horizon (Epic Adventure Music)', videoUrl: 'https://www.youtube.com/watch?v=TowardsHorizon' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/LegacyFortitude/hqdefault.jpg', title: 'Legacy Of Fortitude (Epic Emotional Music)', videoUrl: 'https://www.youtube.com/watch?v=LegacyFortitude' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/LastBreath/hqdefault.jpg', title: 'Till The Last Breath (Epic Cinematic Music)', videoUrl: 'https://www.youtube.com/watch?v=LastBreath' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/DayMetYou/hqdefault.jpg', title: 'The Day I Met You (Epic Emotional Music)', videoUrl: 'https://www.youtube.com/watch?v=DayMetYou' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/BraceYourself/hqdefault.jpg', title: 'Brace Yourself (Epic Action Music)', videoUrl: 'https://www.youtube.com/watch?v=BraceYourself' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/WinBattle/hqdefault.jpg', title: 'Let Us Win This Battle (Epic Cinematic Music)', videoUrl: 'https://www.youtube.com/watch?v=WinBattle' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/AllAsWant/hqdefault.jpg', title: 'All As I Want (Epic Cinematic Music)', videoUrl: 'https://www.youtube.com/watch?v=AllAsWant' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/NotTheEnd/hqdefault.jpg', title: 'This Is Not The End (Cinematic Corporate Music)', videoUrl: 'https://www.youtube.com/watch?v=NotTheEnd' },
-    { isFeatured: false, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/ChosenOne/hqdefault.jpg', title: 'The Chosen One (Epic Cinematic Music)', videoUrl: 'https://www.youtube.com/watch?v=ChosenOne' },
-].map((video) => ({
-    ...video,
-    category: "Orchestral Cover",
-    createdAt: new Date('2025-09-20T10:30:21Z'),
-}));
+    { isFeatured: true, isPublished: true, videoId: 'APEX', title: 'Epic Heroic Motivational Music - OPERATION APEX by FF Orchestral Music' },
+    { isFeatured: true, isPublished: true, videoId: 'HeartWarrior', title: 'Epic Motivational Music - Heart Of A Warrior by FF Orchestral Music' },
+    { isFeatured: true, isPublished: true, videoId: 'LoneWolf', title: 'EPIC MOTIVATIONAL MUSIC - Lone Wolf Resolve by FF Orchestral Music' },
+    { isFeatured: true, isPublished: true, videoId: 'vTmzISgwbFk', title: 'Epic Emotional Music - EVERLASTING STRUGGLE by FF Orchestral Music' },
+    { isFeatured: true, isPublished: true, videoId: 'CourageFire', title: 'Epic Action Music - COURAGE UNDER FIRE by FF Orchestral Music' },
+    { isFeatured: true, isPublished: true, videoId: 'Hashashin', title: 'Epic Dark Arabic Music - HASHASHIN by FF Orchestral Music' },
+    { isFeatured: false, isPublished: true, videoId: 'VergeVictory', title: 'Epic Heroic Motivational Music - VERGE OF VICTORY by Fahmie Farhan Ariffin' },
+    { isFeatured: false, isPublished: true, videoId: 'UntilMeet', title: 'Sad Emotional Music - UNTIL WE MEET AGAIN by FF Orchestral Music' },
+    { isFeatured: false, isPublished: true, videoId: 'CourageWithin', title: 'Epic Heroic Motivational Music - THE COURAGE WITHIN by FF Orchestral Music' },
+    { isFeatured: false, isPublished: true, videoId: 'dDMkp9DWCEs', title: 'Epic Motivational Music - CONTINUE TO FIGHT by Fahmie Farhan Ariffin' },
+    { isFeatured: false, isPublished: true, videoId: 'UnyieldingSpirit', title: 'Epic Uplifting Emotional Music - UNYIELDING SPIRIT by FF Orchestral Music' },
+    { isFeatured: false, isPublished: true, videoId: 'BattlefrontsBeyond', title: 'EPIC SCI-FI BATTLE MUSIC - Battlefronts Beyond Time by FF Orchestral Music' },
+    { isFeatured: false, isPublished: true, videoId: 'BloodSacrifice', title: 'Epic Heroic Music - THROUGH BLOOD AND SACRIFICE by Fahmie Farhan Ariffin' },
+    { isFeatured: false, isPublished: true, videoId: 'nnjgGg3lRpE', title: 'Epic Heroic Music - THROUGH PAIN AND SUFFERING by Fahmie Farhan Ariffin' },
+    { isFeatured: false, isPublished: true, videoId: 'SolitaryJourney', title: 'EPIC EMOTIONAL MUSIC - The Solitary Journey by FF Orchestral Music' },
+    { isFeatured: false, isPublished: true, videoId: 'LastStand', title: 'Epic Action Music - THE LAST STAND' },
+    { isFeatured: false, isPublished: true, videoId: 'UnderMoonlight', title: 'Romantic Emotional Music - UNDER THE MOONLIGHT by FF Orchestral Music' },
+    { isFeatured: false, isPublished: true, videoId: 'EndJourney', title: 'Epic Adventure Music - The End of Journey by FF Orchestral Music' },
+    { isFeatured: false, isPublished: true, videoId: 'JhYP3ijwdRU', title: 'Epic Heroic Music - POWERED UP' },
+    { isFeatured: false, isPublished: true, videoId: 'FragmentsResolve', title: 'Epic Emotional Music - FRAGMENTS OF RESOLVE' },
+    { isFeatured: false, isPublished: true, videoId: 'Invincible', title: 'INVINCIBLE - Epic Heroic Motivational Music' },
+    { isFeatured: false, isPublished: true, videoId: '_jsKkEolMnQ', title: 'Epic Heroic Music - INTO THE MARTYRDOM' },
+    { isFeatured: false, isPublished: true, videoId: 'Successor', title: 'THE SUCCESSOR - Epic Emotional Music' },
+    { isFeatured: false, isPublished: true, videoId: 'TragicVengeance', title: 'Epic Dark Emotional Music - TRAGIC VENGEANCE by FF Orchestral Music' },
+    { isFeatured: false, isPublished: true, videoId: 'MiddleEastChase', title: 'Intense background music that plays during chasing scene in Middle East' },
+    { isFeatured: false, isPublished: true, videoId: 'StrengthEndure', title: 'STRENGTH TO ENDURE - Epic Intense Action Music' },
+    { isFeatured: false, isPublished: true, videoId: 'ResilienceBreaks', title: 'Resilience Beyond Breaks (Epic Emotional Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'SunriseSymphony', title: 'EPIC ADVENTURE MUSIC - Sunrise Symphony by FF Orchestral Music' },
+    { isFeatured: false, isPublished: true, videoId: 'JourneyWaves', title: 'EPIC PIRATE ADVENTURE MUSIC - Journey Across The Waves by FF Orchestral Music' },
+    { isFeatured: false, isPublished: true, videoId: 'NewAdventure', title: 'Epic Adventure Music - NEW ADVENTURE BEGINS by FF Orchestral Music' },
+    { isFeatured: false, isPublished: true, videoId: 'NeverSurrender', title: 'Never Surrender (Cinematic Corporate Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'AssaultShadows', title: 'Assault On Shadows (Epic Cinematic Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'TearsBrave', title: 'Tears Of The Brave (Epic Cinematic Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'LineOfDuty', title: 'In The Line Of Duty (Epic Action Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'fr9ARYi0wqQ', title: 'SANDS OF MARTYRDOM - Epic Arabic Music' },
+    { isFeatured: false, isPublished: true, videoId: '85dbXlGyDP8', title: 'Shimmering Destiny (Epic Adventure Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'DeterminationHero', title: 'Determination Of A Hero (Epic Cinematic Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'Thanks500', title: 'THANK YOU FOR 500 SUBSCRIBERS!' },
+    { isFeatured: false, isPublished: true, videoId: 'FlyingSky', title: 'Flying To The Sky (Epic Adventure Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'TogetherVictory', title: 'Together Towards Victory (Epic Cinematic Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'ShatteredStanding', title: 'Shattered Yet Standing (Epic Emotional Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'TowardsHorizon', title: 'Towards The Horizon (Epic Adventure Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'LegacyFortitude', title: 'Legacy Of Fortitude (Epic Emotional Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'LastBreath', title: 'Till The Last Breath (Epic Cinematic Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'DayMetYou', title: 'The Day I Met You (Epic Emotional Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'BraceYourself', title: 'Brace Yourself (Epic Action Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'WinBattle', title: 'Let Us Win This Battle (Epic Cinematic Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'AllAsWant', title: 'All As I Want (Epic Cinematic Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'NotTheEnd', title: 'This Is Not The End (Cinematic Corporate Music)' },
+    { isFeatured: false, isPublished: true, videoId: 'ChosenOne', title: 'The Chosen One (Epic Cinematic Music)' },
+].map((video) => {
+    const videoId = getYouTubeId(video.videoId);
+    if (!videoId) throw new Error(`Invalid videoId: ${video.videoId}`);
+    return {
+        ...video,
+        videoUrl: `https://www.youtube.com/watch?v=${videoId}`,
+        thumbnailUrl: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+        category: "Orchestral Cover",
+        createdAt: new Date('2025-09-20T10:30:21Z'),
+    }
+});
 
 
 async function clearCollection(collectionName: string) {
@@ -252,6 +266,11 @@ async function seedCollection(collectionName: string, data: any[]) {
             ...item,
             createdAt: Timestamp.fromDate(item.createdAt),
         };
+        // remove videoId if it exists
+        if (docData.videoId) {
+            delete docData.videoId;
+        }
+
         await addDoc(collectionRef, docData);
         console.log(`Added doc to ${collectionName}`);
     }

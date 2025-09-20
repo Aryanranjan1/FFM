@@ -73,19 +73,48 @@ export async function fetchYouTubeDetails(videoUrl: string): Promise<{ success: 
 
 const videoSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters."),
-  videoUrl: z.string().url("Please enter a valid YouTube URL."),
-  thumbnailUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
+  videoId: z.string().min(11, "Please enter a valid YouTube URL or Video ID."),
   isPublished: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
   isFeatured: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
   category: z.string().optional(),
+  thumbnailUrl: z.string().url("Please provide a thumbnail URL").optional().or(z.literal('')),
 });
 
 export type VideoFormValues = z.infer<typeof videoSchema>;
 
+const getYouTubeId = (urlOrId: string): string | null => {
+    if (!urlOrId) return null;
+    if (urlOrId.length === 11 && !urlOrId.includes('/')) return urlOrId;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = urlOrId.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+};
+
+async function prepareVideoData(values: VideoFormValues) {
+    const videoId = getYouTubeId(values.videoId);
+    if (!videoId) {
+        throw new Error("Invalid YouTube URL or Video ID");
+    }
+
+    const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+    const thumbnailUrl = values.thumbnailUrl || `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    
+    return {
+      title: values.title,
+      videoUrl,
+      thumbnailUrl,
+      isPublished: values.isPublished,
+      isFeatured: values.isFeatured,
+      category: values.category,
+    };
+}
+
+
 export async function addVideo(values: VideoFormValues) {
   try {
+    const videoData = await prepareVideoData(values);
     await addDoc(collection(db, 'videos'), {
-      ...values,
+      ...videoData,
       createdAt: serverTimestamp(),
     });
 
@@ -101,8 +130,9 @@ export async function addVideo(values: VideoFormValues) {
 
 export async function updateVideo(id: string, values: VideoFormValues) {
   try {
+    const videoData = await prepareVideoData(values);
     const videoRef = doc(db, 'videos', id);
-    await updateDoc(videoRef, values);
+    await updateDoc(videoRef, videoData);
     
     revalidatePath('/videos');
     revalidatePath('/admin/videos');

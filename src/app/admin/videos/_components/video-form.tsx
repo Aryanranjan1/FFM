@@ -22,7 +22,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 const videoSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters."),
-  videoUrl: z.string().url("Please enter a valid YouTube URL."),
+  videoId: z.string().min(11, "Please enter a valid YouTube URL or Video ID."),
   category: z.string().optional(),
   thumbnailUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
   isPublished: z.boolean().default(true),
@@ -31,6 +31,14 @@ const videoSchema = z.object({
 
 type VideoFormProps = {
   video?: Video | null;
+};
+
+const getYouTubeId = (urlOrId: string) => {
+    if (!urlOrId) return null;
+    if (urlOrId.length === 11 && !urlOrId.includes('/')) return urlOrId;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = urlOrId.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
 };
 
 export function VideoForm({ video }: VideoFormProps) {
@@ -43,7 +51,7 @@ export function VideoForm({ video }: VideoFormProps) {
     resolver: zodResolver(videoSchema),
     defaultValues: {
       title: video?.title || "",
-      videoUrl: video?.videoUrl || "",
+      videoId: video ? getYouTubeId(video.videoUrl) || "" : "",
       category: video?.category || "",
       thumbnailUrl: video?.thumbnailUrl || "",
       isPublished: video?.isPublished ?? true,
@@ -51,25 +59,28 @@ export function VideoForm({ video }: VideoFormProps) {
     },
   });
 
-  const videoUrl = form.watch("videoUrl");
+  const videoIdValue = form.watch("videoId");
   const pageTitle = video ? "EDIT VIDEO" : "ADD NEW VIDEO";
   const actionText = video ? "Save Changes" : "Create Video";
 
   const handleFetchYouTubeDetails = async () => {
-    if (!videoUrl.includes("youtube.com")) {
+    const videoId = getYouTubeId(videoIdValue);
+    if (!videoId) {
       toast({
-        title: "Invalid URL",
-        description: "Please provide a valid YouTube URL.",
+        title: "Invalid ID",
+        description: "Please provide a valid YouTube URL or Video ID.",
         variant: "destructive",
       });
       return;
     }
+    
+    const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
     setIsFetching(true);
     try {
       const details = await fetchYouTubeDetails(videoUrl);
       if (details.success && details.data) {
         form.setValue("title", details.data.title, { shouldValidate: true });
-        form.setValue("thumbnailUrl", details.data.thumbnailUrl, { shouldValidate: true });
+        form.setValue("thumbnailUrl", `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`, { shouldValidate: true });
         toast({
           title: "Success",
           description: "YouTube details fetched successfully.",
@@ -137,15 +148,15 @@ export function VideoForm({ video }: VideoFormProps) {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
-                name="videoUrl"
+                name="videoId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>YouTube URL</FormLabel>
+                    <FormLabel>YouTube URL or ID</FormLabel>
                      <div className="flex gap-2">
                         <FormControl>
-                            <Input placeholder="https://www.youtube.com/watch?v=..." {...field} />
+                            <Input placeholder="e.g., dQw4w9WgXcQ or full YouTube URL" {...field} />
                         </FormControl>
-                        {videoUrl.includes("youtube.com") && (
+                        {videoIdValue && (
                            <Button type="button" onClick={handleFetchYouTubeDetails} disabled={isFetching}>
                                {isFetching ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Youtube className="mr-2 h-4 w-4" />}
                                Fetch
@@ -191,7 +202,7 @@ export function VideoForm({ video }: VideoFormProps) {
                   <FormItem>
                     <FormLabel>Thumbnail URL (Optional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="https://example.com/thumbnail.jpg" {...field} />
+                      <Input placeholder="https://img.youtube.com/vi/.../hqdefault.jpg" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
