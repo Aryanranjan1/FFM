@@ -61,7 +61,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+    <div className="relative flex flex-col items-center justify-center min-h-screen p-4 overflow-hidden">
       <FloatingNotes />
       <div className="text-center mb-8 relative z-10">
         <h1 className="text-4xl font-headline font-bold text-primary">ADMIN LOGIN</h1>

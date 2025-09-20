@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -16,7 +17,7 @@ export function FloatingNotes() {
         const note = document.createElement("div");
         note.className = "music-note";
         note.textContent = noteChars[Math.floor(Math.random() * noteChars.length)];
-        note.style.left = `${Math.random() * 100}vw`;
+        note.style.left = `${Math.random() * 100}%`;
         note.style.animationDuration = `${Math.random() * 15 + 15}s`;
         note.style.animationDelay = `${Math.random() * 15}s`;
         note.style.fontSize = `${Math.random() * 1.5 + 0.75}rem`;
@@ -26,5 +27,5 @@ export function FloatingNotes() {
     }
   }, []);
 
-  return <div ref={notesRef} className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden" />;
+  return <div ref={notesRef} className="floating-notes" />;
 }
