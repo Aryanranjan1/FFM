@@ -2,10 +2,11 @@ import type { Metadata } from 'next';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { FloatingNotes } from '@/components/floating-notes';
+import { AuthProvider } from '@/context/auth-context';
 
 export const metadata: Metadata = {
-  title: 'Admin Login - FFM',
-  description: 'Admin login page for FFM website',
+  title: 'Admin - FFM',
+  description: 'Admin section for FFM website',
 };
 
 export default function AdminLayout({
@@ -20,11 +21,13 @@ export default function AdminLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Alegreya&family=Belleza&display=swap" rel="stylesheet" />
       </head>
-      <body className={cn('font-body antialiased bg-background text-foreground min-h-screen flex items-center justify-center')}>
+      <body className={cn('font-body antialiased bg-background text-foreground min-h-screen')}>
         <FloatingNotes />
-        <main className="z-10">
-          {children}
-        </main>
+        <AuthProvider>
+            <main className="z-10">
+              {children}
+            </main>
+        </AuthProvider>
         <Toaster />
       </body>
     </html>

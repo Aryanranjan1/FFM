@@ -3,7 +3,7 @@
 
 import { useEffect, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/context/auth-context";
 import { Loader2 } from "lucide-react";
 
 export function AuthGuard({ children }: { children: ReactNode }) {

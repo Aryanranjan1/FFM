@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 import { AuthGuard } from '@/components/auth-guard';
 import {
   SidebarProvider,
@@ -18,7 +18,6 @@ import {
 } from '@/components/ui/sidebar';
 import { Home, Music, Video, Newspaper, Link as LinkIcon, Star, Settings, User, LogOut } from 'lucide-react';
 import { Logo } from '@/components/icons';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -78,7 +77,7 @@ const navLinks = [
 export default function DashboardLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   const pathname = usePathname();
   

@@ -1,13 +1,24 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 
 const AUTH_TOKEN_KEY = 'authToken';
 
-export function useAuth() {
+interface AuthContextType {
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (email: string, password: string) => boolean;
+  logout: () => void;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     try {
@@ -42,7 +53,22 @@ export function useAuth() {
        console.error("Could not access localStorage:", error);
     }
     setIsAuthenticated(false);
-  }, []);
+    router.push('/admin/login');
+  }, [router]);
 
-  return { isAuthenticated, isLoading, login, logout };
+  const value = { isAuthenticated, isLoading, login, logout };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }
