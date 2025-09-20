@@ -293,7 +293,7 @@
   }
 
   .section-divider-light .divider-content {
-    background-color: hsl(var(--card));
+    background-color: transparent;
   }
 }
 
