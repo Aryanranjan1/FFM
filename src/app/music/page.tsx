@@ -141,7 +141,7 @@ export default function MusicPage() {
                 </div>
             </motion.section>
             
-            {/* Explore My Music Section */}
+            {/* Music Portfolio Section */}
             <motion.section
                 className="py-20 px-6"
                 initial="hidden"
@@ -361,7 +361,6 @@ export default function MusicPage() {
                 </motion.div>
                 </div>
             </motion.section>
-
 
             {/* Testimonials Section */}
             <section className="py-20 px-6 bg-card">
