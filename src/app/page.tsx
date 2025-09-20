@@ -1,8 +1,9 @@
-
 "use client";
 
 import { useState, useEffect, useRef, useActionState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
+import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,12 +18,9 @@ import { useToast } from "@/hooks/use-toast";
 import { submitContactForm } from "@/app/actions";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
-import Image from "next/image";
 import {
     Music,
     Mail,
-    Youtube,
-    Instagram,
     User,
     Phone,
     MapPin,
@@ -38,7 +36,7 @@ import {
     Headphones,
     Link as LinkIcon,
 } from "lucide-react";
-import { SoundcloudIcon } from "@/components/icons";
+import { SoundcloudIcon, Instagram, Youtube } from "@/components/icons";
 import { FloatingNotes } from "@/components/floating-notes";
 
 const contactFormSchema = z.object({
@@ -276,18 +274,18 @@ export default function Home() {
                         transition={{ duration: 0.8, delay: 0.6 }}
                     >
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                           <a href="#music-portfolio">
+                           <Link href="#music-portfolio">
                              <Button size="lg" className="btn-gold px-6 py-3 rounded-md flex items-center">
                                 <span className="mr-2">⟡</span> Explore Works
                              </Button>
-                           </a>
+                           </Link>
                         </motion.div>
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <a href="#contact">
+                            <Link href="#contact">
                               <Button variant="outline" size="lg" className="btn-outline-gold px-6 py-3 rounded-md flex items-center border-2">
                                 <Send className="w-5 h-5 mr-2" /> Contact Me
                               </Button>
-                            </a>
+                            </Link>
                         </motion.div>
                     </motion.div>
 
