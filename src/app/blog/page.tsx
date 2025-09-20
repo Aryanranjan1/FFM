@@ -1,9 +1,12 @@
 
+"use client";
+
 import { motion } from "framer-motion";
 import { db } from "@/lib/firebase";
 import { collection, query, getDocs, where } from "firebase/firestore";
 import type { BlogPost } from "@/lib/admin-types";
 import { BlogList } from "./_components/blog-list";
+import { useState, useEffect } from "react";
 
 async function getPosts(): Promise<BlogPost[]> {
     const postsCollection = collection(db, "blog");
@@ -26,8 +29,13 @@ async function getPosts(): Promise<BlogPost[]> {
 }
 
 
-export default async function BlogPage() {
-  const posts = await getPosts();
+export default function BlogPage() {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  
+  useEffect(() => {
+    getPosts().then(setPosts);
+  }, []);
+
 
   return (
     <div className="bg-background text-foreground">
