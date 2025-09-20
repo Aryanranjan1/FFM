@@ -1,3 +1,4 @@
+
 "use client";
 
 import { motion } from 'framer-motion';
@@ -5,8 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Search, Calendar, User, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Clock, Search, Calendar, User, Heart, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,106 +18,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-
-const featuredArticles = [
-  {
-    id: 'blog-1',
-    title: 'Bridging Tradition and Innovation 2',
-    description: 'Exploring the fusion of traditional and modern music.',
-    category: 'Culture',
-    readTime: '1 min read',
-    imageId: 'project-1'
-  },
-  {
-    id: 'blog-2',
-    title: 'The Future of Music Production 4',
-    description: 'Insights into upcoming innovations in music production.',
-    category: 'Technology',
-    readTime: '1 min read',
-    imageId: 'project-2'
-  }
-];
-
-const publishedArticles = [
-    {
-        id: 'pub-1',
-        title: 'Bridging Tradition and Innovation 2',
-        description: 'Exploring the fusion of traditional and modern music.',
-        category: 'Culture',
-        readTime: '1 min read',
-        imageId: 'blog-pub-1',
-        tags: ['gamelan', 'fusion', 'innovation'],
-        author: 'Fahmie Farhan',
-        date: '9/20/2025',
-        views: 200,
-        featured: true,
-    },
-    {
-        id: 'pub-2',
-        title: 'The Future of Music Production 4',
-        description: 'Insights into upcoming innovations in music production.',
-        category: 'Technology',
-        readTime: '1 min read',
-        imageId: 'blog-pub-2',
-        tags: ['production', 'future', 'AI'],
-        author: 'Fahmie Farhan',
-        date: '9/20/2025',
-        views: 250,
-        featured: true,
-    },
-    {
-        id: 'pub-3',
-        title: 'Behind the Scenes: Scoring for Film 5',
-        description: 'Composing music for movies and TV shows.',
-        category: 'Film Scoring',
-        readTime: '1 min read',
-        imageId: 'blog-pub-3',
-        tags: ['film', 'media', 'composition'],
-        author: 'Fahmie Farhan',
-        date: '9/20/2025',
-        views: 190,
-        featured: true,
-    },
-    {
-        id: 'pub-4',
-        title: 'The Art of Composing Epic Orchestral Music 1',
-        description: 'A deep dive into creating large-scale orchestral pieces.',
-        category: 'Composition',
-        readTime: '1 min read',
-        imageId: 'blog-pub-4',
-        tags: ['orchestral', 'epic', 'theory'],
-        author: 'Fahmie Farhan',
-        date: '9/18/2025',
-        views: 310,
-        featured: true,
-    },
-    {
-        id: 'pub-5',
-        title: 'My Creative Process: From Idea to Masterpiece 3',
-        description: 'A look into the journey of a musical composition.',
-        category: 'Process',
-        readTime: '1 min read',
-        imageId: 'blog-pub-5',
-        tags: ['creativity', 'workflow', 'inspiration'],
-        author: 'Fahmie Farhan',
-        date: '9/15/2025',
-        views: 180,
-        featured: true,
-    },
-    {
-        id: 'pub-6',
-        title: 'Understanding Music Theory Basics 6',
-        description: 'A beginner-friendly guide to the building blocks of music.',
-        category: 'Education',
-        readTime: '1 min read',
-        imageId: 'blog-pub-6',
-        tags: ['theory', 'basics', 'learning'],
-        author: 'Fahmie Farhan',
-        date: '9/12/2025',
-        views: 450,
-        featured: true,
-    },
-];
+import { db } from '@/lib/firebase';
+import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import type { BlogPost } from '@/lib/admin-types';
+import { format } from 'date-fns';
 
 const categories = ["All", "Composition", "Cultural Heritage", "Behind the Scenes", "Industry Insights", "Business", "Collaboration", "Tutorials", "Film Scoring", "Technology"];
 
@@ -127,6 +31,36 @@ export default function BlogPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchPosts = async () => {
+      setLoading(true);
+      const postsCollection = collection(db, 'blog');
+      const q = query(
+        postsCollection,
+        where('isPublished', '==', true),
+        orderBy('createdAt', 'desc')
+      );
+      const querySnapshot = await getDocs(q);
+      const postsData = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: (data.createdAt as any)?.toDate ? (data.createdAt as any).toDate().toISOString() : data.createdAt,
+        } as BlogPost;
+      });
+      setPosts(postsData);
+      setLoading(false);
+    };
+    fetchPosts();
+  }, []);
+
+  const filteredPosts = activeTab === 'All' ? posts : posts.filter(p => p.category === activeTab);
+  const featuredArticles = posts.filter(p => p.isFeatured).slice(0, 2);
+
 
   const checkScrollability = useCallback(() => {
     const el = scrollRef.current;
@@ -210,23 +144,23 @@ export default function BlogPage() {
             className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
             variants={staggerContainer}
           >
-            {featuredArticles.map((article) => {
-              const image = PlaceHolderImages.find(p => p.id === article.imageId);
-              return (
+            {loading ? (
+                <div className="md:col-span-2 flex justify-center items-center h-64">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+            ) : featuredArticles.length > 0 ? (
+                featuredArticles.map((article) => (
                 <motion.div key={article.id} variants={fadeInUp}>
                   <Link href={`/blog/${article.id}`}>
                     <Card className="bg-background border-border/50 hover:border-primary/50 transition-all duration-300 group overflow-hidden">
                       <div className="relative">
-                        {image && (
                           <Image
-                            src={image.imageUrl}
+                            src={article.coverImageUrl || 'https://placehold.co/600x400'}
                             alt={article.title}
                             width={600}
                             height={400}
                             className="object-cover w-full h-auto aspect-video group-hover:scale-105 transition-transform duration-300"
-                            data-ai-hint={image.imageHint}
                           />
-                        )}
                         <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
                           Featured
                         </Badge>
@@ -238,21 +172,23 @@ export default function BlogPage() {
                           </Badge>
                           <div className="flex items-center text-muted-foreground">
                             <Clock className="h-4 w-4 mr-1.5" />
-                            <span>{article.readTime}</span>
+                            <span>5 min read</span>
                           </div>
                         </div>
                         <h3 className="font-headline text-2xl font-semibold text-foreground group-hover:text-primary transition-colors">
                           {article.title}
                         </h3>
-                        <p className="text-muted-foreground leading-relaxed">
-                          {article.description}
+                        <p className="text-muted-foreground leading-relaxed line-clamp-2">
+                          {article.content}
                         </p>
                       </CardContent>
                     </Card>
                   </Link>
                 </motion.div>
-              );
-            })}
+              ))
+            ) : (
+                <div className="md:col-span-2 text-center text-muted-foreground">No featured articles found.</div>
+            )}
           </motion.div>
         </div>
       </motion.section>
@@ -315,67 +251,69 @@ export default function BlogPage() {
                  </div>
             </div>
 
-            <motion.div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                variants={staggerContainer}
-            >
-                {publishedArticles.map((article) => {
-                    const image = PlaceHolderImages.find(p => p.id === article.imageId);
-                    return (
-                        <motion.div key={article.id} variants={fadeInUp}>
-                            <Card className="bg-card border-border/50 hover:border-primary/50 transition-all duration-300 group overflow-hidden flex flex-col h-full">
-                                <div className="relative">
-                                    {image && (
+            {loading ? (
+                <div className="flex justify-center items-center h-64">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+            ) : (
+                <motion.div
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                    variants={staggerContainer}
+                >
+                    {filteredPosts.map((article) => {
+                        return (
+                            <motion.div key={article.id} variants={fadeInUp}>
+                                <Card className="bg-card border-border/50 hover:border-primary/50 transition-all duration-300 group overflow-hidden flex flex-col h-full">
+                                    <div className="relative">
                                         <Image
-                                            src={image.imageUrl}
+                                            src={article.coverImageUrl || 'https://placehold.co/600x338'}
                                             alt={article.title}
                                             width={600}
                                             height={338}
                                             className="object-cover w-full h-auto aspect-video"
-                                            data-ai-hint={image.imageHint}
                                         />
-                                    )}
-                                    {article.featured && <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground">Featured</Badge>}
-                                </div>
-                                <CardHeader className="p-4 space-y-2">
-                                    <div className="flex justify-between items-center text-sm">
-                                        <Badge variant="outline" className="text-primary border-primary/50">
-                                            {article.category}
-                                        </Badge>
-                                        <div className="flex items-center text-muted-foreground">
-                                            <Clock className="h-4 w-4 mr-1.5" />
-                                            <span>{article.readTime}</span>
+                                        {article.isFeatured && <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground">Featured</Badge>}
+                                    </div>
+                                    <CardHeader className="p-4 space-y-2">
+                                        <div className="flex justify-between items-center text-sm">
+                                            <Badge variant="outline" className="text-primary border-primary/50">
+                                                {article.category}
+                                            </Badge>
+                                            <div className="flex items-center text-muted-foreground">
+                                                <Clock className="h-4 w-4 mr-1.5" />
+                                                <span>5 min read</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <h3 className="font-headline text-xl font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                                        {article.title}
-                                    </h3>
-                                    <p className="text-muted-foreground leading-relaxed text-sm line-clamp-2">
-                                        {article.description}
-                                    </p>
-                                </CardHeader>
-                                <CardContent className="p-4 flex flex-col flex-grow">
-                                     <div className="flex flex-wrap gap-2 mb-4">
-                                        {article.tags.map(tag => (
-                                            <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
-                                        ))}
-                                    </div>
-                                    <div className="mt-auto space-y-3 border-t border-border/50 pt-4 text-xs text-muted-foreground">
-                                        <div className="flex justify-between">
-                                            <span className="flex items-center"><User className="h-3 w-3 mr-1.5"/>{article.author}</span>
-                                            <span className="flex items-center"><Calendar className="h-3 w-3 mr-1.5"/>{article.date}</span>
-                                            <span className="flex items-center"><Heart className="h-3 w-3 mr-1.5"/>{article.views}</span>
+                                        <h3 className="font-headline text-xl font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                                            {article.title}
+                                        </h3>
+                                        <p className="text-muted-foreground leading-relaxed text-sm line-clamp-2">
+                                            {article.content}
+                                        </p>
+                                    </CardHeader>
+                                    <CardContent className="p-4 flex flex-col flex-grow">
+                                         <div className="flex flex-wrap gap-2 mb-4">
+                                            {article.tags?.split(',').map(tag => (
+                                                <Badge key={tag.trim()} variant="secondary" className="text-xs">{tag.trim()}</Badge>
+                                            ))}
                                         </div>
-                                         <Button asChild className="w-full btn-gold mt-2">
-                                            <Link href={`/blog/${article.id}`}>Read Article</Link>
-                                        </Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </motion.div>
-                    );
-                })}
-            </motion.div>
+                                        <div className="mt-auto space-y-3 border-t border-border/50 pt-4 text-xs text-muted-foreground">
+                                            <div className="flex justify-between">
+                                                <span className="flex items-center"><User className="h-3 w-3 mr-1.5"/>Fahmie Farhan</span>
+                                                <span className="flex items-center"><Calendar className="h-3 w-3 mr-1.5"/>{format(new Date(article.createdAt), 'PPP')}</span>
+                                                <span className="flex items-center"><Heart className="h-3 w-3 mr-1.5"/>{Math.floor(Math.random()*500)}</span>
+                                            </div>
+                                             <Button asChild className="w-full btn-gold mt-2">
+                                                <Link href={`/blog/${article.id}`}>Read Article</Link>
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </motion.div>
+                        );
+                    })}
+                </motion.div>
+            )}
         </div>
       </motion.section>
     </div>

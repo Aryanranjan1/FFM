@@ -1,3 +1,4 @@
+
 import type { Timestamp } from "firebase/firestore";
 
 export type MusicTrack = {
@@ -27,12 +28,12 @@ export type BlogPost = {
     title: string;
     content: string;
     category: string;
-    tags: string;
-    coverImageUrl: string;
+    tags?: string;
+    coverImageUrl?: string;
     isPublished: boolean;
     isFeatured: boolean;
-    seoTitle: string;
-    seoDescription: string;
+    seoTitle?: string;
+    seoDescription?: string;
     createdAt: string;
 };
 

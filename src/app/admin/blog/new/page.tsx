@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { addBlogPost, type BlogPostFormValues } from '@/app/actions';
+import { addBlogPost } from '@/app/actions';
 
 import { ArrowLeft, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, Image as ImageIcon, List, ListOrdered, Code, Quote, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -32,6 +32,9 @@ const blogPostSchema = z.object({
   isPublished: z.boolean().default(false),
   isFeatured: z.boolean().default(false),
 });
+
+type BlogPostFormValues = z.infer<typeof blogPostSchema>;
+
 
 export default function NewBlogPostPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);

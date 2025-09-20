@@ -252,8 +252,8 @@ const blogPostSchema = z.object({
   coverImageUrl: z.string().url("A valid URL is required.").optional().or(z.literal('')),
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),
-  isPublished: z.boolean().default(false),
-  isFeatured: z.boolean().default(false),
+  isPublished: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
+  isFeatured: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
 });
 export type BlogPostFormValues = z.infer<typeof blogPostSchema>;
 
