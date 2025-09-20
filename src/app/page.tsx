@@ -75,7 +75,6 @@ export default function Home() {
 
     // Player State
     const [featuredVideo, setFeaturedVideo] = useState<VideoType | null>(null);
-    const [isMuted, setIsMuted] = useState(true);
     const playerRef = useRef<YouTubePlayer | null>(null);
     
     const [state, formAction] = useActionState(submitContactForm, initialState);
@@ -135,13 +134,8 @@ export default function Home() {
                 setAllVideos(videosData);
 
                 if (videosData.length > 0) {
-                    const featuredVideos = videosData.filter(video => video.isFeatured);
-                    if (featuredVideos.length > 0) {
-                        const randomIndex = Math.floor(Math.random() * featuredVideos.length);
-                        setFeaturedVideo(featuredVideos[randomIndex]);
-                    } else {
-                         setFeaturedVideo(videosData[0]);
-                    }
+                    const featured = videosData.find(video => video.isFeatured);
+                    setFeaturedVideo(featured || videosData[0]);
                 }
 
             } catch (error) {
@@ -160,22 +154,12 @@ export default function Home() {
     const videoId = featuredVideo ? getYouTubeId(featuredVideo.videoUrl) : null;
     
     const playTrackFromPortfolio = (track: VideoType) => {
-        setIsMuted(false);
         setFeaturedVideo(track);
-        setTimeout(() => {
-             document.getElementById('music-player')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
+        document.getElementById('music-player')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
 
     const handlePlayerReady = (event: { target: YouTubePlayer }) => {
         playerRef.current = event.target;
-    };
-
-    const handleUnmute = () => {
-        if (playerRef.current) {
-            playerRef.current.unMute();
-            setIsMuted(false);
-        }
     };
     
     const filteredTracks = allVideos.filter(video => video.isFeatured);
@@ -314,7 +298,7 @@ export default function Home() {
                                             width: '100%',
                                             playerVars: {
                                                 autoplay: 1,
-                                                mute: isMuted ? 1 : 0,
+                                                mute: 1,
                                                 controls: 1,
                                                 rel: 0,
                                                 showinfo: 0,
@@ -323,17 +307,6 @@ export default function Home() {
                                         }}
                                         className="w-full h-full"
                                     />
-                                    {isMuted && (
-                                        <div 
-                                            className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 cursor-pointer group"
-                                            onClick={handleUnmute}
-                                        >
-                                            <div className="flex items-center gap-2 text-white bg-black/50 p-3 rounded-lg">
-                                                <VolumeX className="w-8 h-8" />
-                                                <span className="text-lg font-semibold">Click to Unmute</span>
-                                            </div>
-                                        </div>
-                                    )}
                                 </div>
                                 <CardContent className="p-4 md:p-6">
                                     <h3 className="text-2xl font-bold text-white mb-1 font-headline">{featuredVideo.title}</h3>
