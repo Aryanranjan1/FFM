@@ -1,9 +1,10 @@
+
 "use client";
 
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ExternalLink, MapPin, Music } from 'lucide-react';
-import type { Collaboration } from '@/lib/types';
+import type { Collaboration, Achievement } from '@/lib/types';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,6 +25,46 @@ const collaborations: Collaboration[] = [
       image: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=400&fit=crop"
     }
 ];
+
+const achievements: Achievement[] = [
+    {
+      title: "1st Prize – National Gamelan Competition (HKSBP)",
+      description: "Awarded for outstanding composition and performance in the prestigious national competition",
+      year: "2023 & 2024",
+      icon: "🏆"
+    },
+    {
+      title: "1st Place – Ensemble of Gamelan Competition, UTP",
+      description: "Recognized as the best gamelan ensemble in the university competition",
+      year: "2023",
+      icon: "🥇"
+    },
+    {
+      title: "Featured in Ensemble of Gamelan Performance, UTP",
+      description: "Selected to showcase original compositions at the university's premier gamelan event",
+      year: "2025",
+      icon: "⭐"
+    },
+    {
+      title: "International Collaborations",
+      description: "Successful partnerships with renowned international artists and performers",
+      year: "2023-2024",
+      icon: "🤝"
+    },
+    {
+      title: "Growing Global Audience on YouTube",
+      description: "Expanding international reach with increasing subscribers and engagement",
+      year: "Ongoing",
+      icon: "📈"
+    },
+    {
+      title: "Music Licensed for Media, Games, and Online Creators",
+      description: "Compositions featured in various media productions and by content creators worldwide",
+      year: "Ongoing",
+      icon: "🎵"
+    }
+];
+
 
 export default function AboutPage() {
   const artistImage = PlaceHolderImages.find(p => p.id === 'about-artist');
@@ -151,6 +192,42 @@ Fahmie's portfolio covers both international collaborations and competitive musi
                   </motion.div>
                   ))}
               </motion.div>
+          </div>
+      </motion.section>
+
+      {/* Achievements Section */}
+      <motion.section
+          className="py-20 px-6 bg-transparent"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={staggerContainer}
+      >
+          <div className="container mx-auto">
+          <motion.div className="text-center mb-12" variants={fadeInUp}>
+              <h2 className="text-4xl font-bold mb-4">Achievements</h2>
+              <p className="text-lg text-muted-foreground">
+              Recognition and awards received throughout my musical journey
+              </p>
+          </motion.div>
+          <motion.div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" variants={staggerContainer}>
+              {achievements.map((achievement, index) => (
+              <motion.div key={index} variants={fadeInUp}>
+                  <Card className="bg-card border-primary/20 text-center hover:border-primary/40 transition-colors h-full">
+                  <CardHeader>
+                      <div className="text-4xl mb-4">{achievement.icon}</div>
+                      <CardTitle className="text-lg">{achievement.title}</CardTitle>
+                      <CardDescription className="text-primary">
+                      {achievement.year}
+                      </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                      <p className="text-muted-foreground text-sm">{achievement.description}</p>
+                  </CardContent>
+                  </Card>
+              </motion.div>
+              ))}
+          </motion.div>
           </div>
       </motion.section>
 
