@@ -109,7 +109,6 @@ export default function AdminLayout({
 
   return (
     <div className="bg-background text-foreground min-h-screen">
-        <FloatingNotes />
         <AuthProvider>
            <AuthGuard>
               <SidebarProvider>
