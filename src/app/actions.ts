@@ -179,7 +179,7 @@ export async function addVideo(prevState: AddVideoState, formData: FormData): Pr
     revalidatePath('/videos');
     revalidatePath('/admin/videos');
 
-    return { message: "Successfully added new video." };
+    return { message: "Successfully added new video.", errors: {} };
   } catch (e) {
     console.error(e);
     return {
