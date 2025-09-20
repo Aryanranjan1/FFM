@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
+import { FloatingNotes } from '@/components/floating-notes';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -61,7 +62,8 @@ export default function AdminLoginPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <div className="text-center mb-8">
+      <FloatingNotes />
+      <div className="text-center mb-8 relative z-10">
         <h1 className="text-4xl font-headline font-bold text-primary">ADMIN LOGIN</h1>
         <p className="text-muted-foreground">Sign in to access the admin dashboard</p>
       </div>
@@ -70,6 +72,7 @@ export default function AdminLoginPage() {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
+        className="relative z-10"
       >
         <Card className="w-full max-w-md bg-card/80 backdrop-blur-sm border-border/50">
           <CardHeader className="text-center">

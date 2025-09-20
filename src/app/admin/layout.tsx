@@ -24,7 +24,6 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth, AuthProvider } from '@/context/auth-context';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { FloatingNotes } from '@/components/floating-notes';
 import { Toaster } from '@/components/ui/toaster';
 
 function UserNav() {
@@ -96,7 +95,6 @@ export default function AdminLayout({
   if (isLoginPage) {
     return (
         <div className="bg-background text-foreground min-h-screen">
-          <FloatingNotes />
           <AuthProvider>
               <main className="z-10">
                 {children}
