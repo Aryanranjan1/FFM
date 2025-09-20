@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
@@ -15,13 +16,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Alegreya&family=Belleza&display=swap" rel="stylesheet" />
-      </head>
-      <body className={cn('font-body antialiased bg-background text-foreground min-h-screen')}>
+    <div className="bg-background text-foreground min-h-screen">
         <FloatingNotes />
         <AuthProvider>
             <main className="z-10">
@@ -29,7 +24,6 @@ export default function AdminLayout({
             </main>
         </AuthProvider>
         <Toaster />
-      </body>
-    </html>
+    </div>
   );
 }
