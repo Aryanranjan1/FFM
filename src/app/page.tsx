@@ -289,6 +289,8 @@ export default function Home() {
                 </div>
             </section>
             
+            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+
             {/* --- FEATURED MUSIC TRACK SECTION --- */}
             <section id="music-player" className="py-20 bg-card scroll-mt-20">
                  <div className="container mx-auto px-4 md:px-6">
