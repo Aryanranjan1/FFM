@@ -70,7 +70,7 @@ export default async function VideosManagementPage() {
                                         </TableCell>
                                         <TableCell className="font-medium">{video.title}</TableCell>
                                         <TableCell>
-                                            {video.createdAt ? format(new Date(video.createdAt.seconds * 1000), "PPP") : 'N/A'}
+                                            {video.createdAt ? format(video.createdAt.toDate(), "PPP") : 'N/A'}
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <Button variant="ghost" size="icon">
@@ -96,3 +96,4 @@ export default async function VideosManagementPage() {
         </div>
     );
 }
+
