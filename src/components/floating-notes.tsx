@@ -11,7 +11,7 @@ export function FloatingNotes() {
     if (container) {
       container.innerHTML = ''; // Clear existing notes
       const noteChars = ["♪", "♫", "♬", "♩"];
-      const numNotes = 10;
+      const numNotes = 10; // Reduced from 20 for a subtler effect
 
       for (let i = 0; i < numNotes; i++) {
         const note = document.createElement("div");
