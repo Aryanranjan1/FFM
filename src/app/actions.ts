@@ -99,14 +99,6 @@ export async function addMusicTrack(prevState: AddMusicTrackState, formData: For
             ...validatedFields.data,
             createdAt: serverTimestamp(),
         });
-
-        revalidatePath('/music');
-        revalidatePath('/admin/music');
-
-        return {
-            message: "Successfully added new music track.",
-            errors: {},
-        };
     } catch (e) {
         console.error(e);
         return {
@@ -114,6 +106,14 @@ export async function addMusicTrack(prevState: AddMusicTrackState, formData: For
             message: "Failed to add music track.",
         };
     }
+    
+    revalidatePath('/music');
+    revalidatePath('/admin/music');
+
+    return {
+        message: "Successfully added new music track.",
+        errors: {},
+    };
 }
 
 
@@ -175,11 +175,6 @@ export async function addVideo(prevState: AddVideoState, formData: FormData): Pr
       ...validatedFields.data,
       createdAt: serverTimestamp(),
     });
-
-    revalidatePath('/videos');
-    revalidatePath('/admin/videos');
-
-    return { message: "Successfully added new video.", errors: {} };
   } catch (e) {
     console.error(e);
     return {
@@ -187,4 +182,9 @@ export async function addVideo(prevState: AddVideoState, formData: FormData): Pr
       message: "Failed to add video.",
     };
   }
+
+  revalidatePath('/videos');
+  revalidatePath('/admin/videos');
+
+  return { message: "Successfully added new video.", errors: {} };
 }
