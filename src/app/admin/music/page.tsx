@@ -2,11 +2,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Edit, Trash2, CheckCircle2, XCircle } from "lucide-react";
+import { Plus, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { db } from "@/lib/firebase";
-import { collection, getDocs, orderBy, Timestamp } from "firebase/firestore";
+import { collection, getDocs, orderBy } from "firebase/firestore";
 import type { MusicTrack } from "@/lib/admin-types";
 import { Badge } from "@/components/ui/badge";
 
