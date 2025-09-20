@@ -2,8 +2,9 @@
 "use client";
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { ExternalLink, MapPin, Music } from 'lucide-react';
+import { ExternalLink, MapPin, Music, ArrowRight } from 'lucide-react';
 import type { Collaboration, Achievement } from '@/lib/types';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -230,6 +231,21 @@ Fahmie's portfolio covers both international collaborations and competitive musi
           </motion.div>
           </div>
       </motion.section>
+
+       {/* CTA */}
+       <section className="py-20 px-6">
+          <div className="container mx-auto text-center">
+              <h2 className="text-3xl font-bold mb-4">Let's Create Something Amazing</h2>
+              <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+                  Have a project in mind? I'd love to hear about it. Contact me for custom compositions or licensing inquiries.
+              </p>
+              <Button size="lg" asChild className="btn-gold">
+                  <Link href="/contact">
+                      Get In Touch <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+              </Button>
+          </div>
+      </section>
 
       <div className="text-center mt-20 text-primary text-2xl">
         ♪ ♫ ♪
