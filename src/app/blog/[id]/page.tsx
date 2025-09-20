@@ -155,7 +155,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
     <div className="bg-background text-foreground">
         <section className="relative py-12 md:py-20 bg-gradient-to-br from-gray-900 to-black">
             <div className="hero-bg"></div>
-             <div className="container mx-auto px-4 md:px-12 relative z-10">
+             <div className="container mx-auto px-4 md:px-6 relative z-10">
                 <article className="max-w-4xl mx-auto">
                 {/* Header */}
                 <header className="text-center mb-12">
@@ -189,7 +189,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
             </div>
         </section>
         
-        <div className="container mx-auto px-4 md:px-12 -mt-20 relative z-10 pb-20">
+        <div className="container mx-auto px-4 md:px-6 -mt-20 relative z-10 pb-20">
              <article className="max-w-4xl mx-auto">
                  {/* Cover Image */}
                 {post.coverImageUrl && (
@@ -251,7 +251,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
         {/* Related Articles */}
         {relatedPosts.length > 0 && (
             <section className="py-20 border-t border-border/50">
-                 <div className="container mx-auto px-4 md:px-12">
+                 <div className="container mx-auto px-4 md:px-6">
                     <h2 className="text-3xl font-headline font-bold text-center mb-12">Related Articles</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                         {relatedPosts.map(relatedPost => (

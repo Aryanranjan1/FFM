@@ -197,7 +197,7 @@ export default function MusicPage() {
             {/* Hero Section */}
             <section className="py-24 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
                 <div className="hero-bg"></div>
-                <div className="relative z-10 container mx-auto px-4 md:px-12">
+                <div className="relative z-10 container mx-auto px-4 md:px-6">
                     <motion.h1 
                         className="text-5xl md:text-7xl font-headline font-bold text-primary" 
                         initial={{ opacity: 0, y: 20 }}
@@ -225,7 +225,7 @@ export default function MusicPage() {
                 viewport={{ once: true, amount: 0.1 }}
                 variants={staggerContainer}
             >
-                <div className="container mx-auto px-4 md:px-12">
+                <div className="container mx-auto px-4 md:px-6">
                     <motion.div className="flex justify-center flex-wrap gap-2 mb-12" variants={fadeInUp}>
                         {videoCategories.map(category => (
                             <Button
@@ -347,7 +347,7 @@ export default function MusicPage() {
                     variants={staggerContainer}
                 >
                     <div className="hero-bg"></div>
-                    <div className="container mx-auto px-4 md:px-12 relative z-10">
+                    <div className="container mx-auto px-4 md:px-6 relative z-10">
                         <motion.div variants={fadeInUp}>
                             <Card className="overflow-hidden bg-transparent border-0 md:border md:bg-card md:border-border/50">
                                  <CardContent className="p-0 md:p-6 grid md:grid-cols-2 gap-8 items-center">
@@ -393,7 +393,7 @@ export default function MusicPage() {
                 viewport={{ once: true, margin: "-100px" }}
                 variants={staggerContainer}
             >
-                <div className="container mx-auto px-4 md:px-12">
+                <div className="container mx-auto px-4 md:px-6">
                     <motion.div className="text-center mb-12" variants={fadeInUp}>
                         <h2 className="text-4xl font-bold mb-4">Collaborations</h2>
                         <p className="text-lg text-muted-foreground">
@@ -443,7 +443,7 @@ export default function MusicPage() {
                 viewport={{ once: true, margin: "-100px" }}
                 variants={staggerContainer}
             >
-                <div className="container mx-auto px-4 md:px-12">
+                <div className="container mx-auto px-4 md:px-6">
                 <motion.div className="text-center mb-12" variants={fadeInUp}>
                     <h2 className="text-4xl font-bold mb-4">Achievements</h2>
                     <p className="text-lg text-muted-foreground">
@@ -475,7 +475,7 @@ export default function MusicPage() {
 
             {/* Testimonials Section */}
             <section className="py-20 bg-card">
-                <div className="container mx-auto px-4 md:px-12">
+                <div className="container mx-auto px-4 md:px-6">
                     <motion.h2
                         className="text-3xl md:text-4xl font-headline font-bold text-center mb-12"
                         initial={{ opacity: 0, y: 20 }}
@@ -520,7 +520,7 @@ export default function MusicPage() {
 
             {/* CTA */}
             <section className="py-20">
-                <div className="container mx-auto text-center px-4 md:px-12">
+                <div className="container mx-auto text-center px-4 md:px-6">
                     <h2 className="text-3xl font-bold mb-4">Let's Create Something Amazing</h2>
                     <p className="text-muted-foreground mb-8 max-w-md mx-auto">
                         Have a project in mind? I'd love to hear about it. Contact me for custom compositions or licensing inquiries.

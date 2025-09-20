@@ -119,7 +119,7 @@ export default function BlogPage() {
       {/* Hero Section */}
       <section className="py-20 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
         <div className="hero-bg"></div>
-        <div className="container mx-auto px-4 md:px-12 relative z-10">
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <motion.h1 
             className="text-5xl font-headline font-bold text-primary mb-4" 
             initial={{ opacity: 0, y: 20 }}
@@ -150,7 +150,7 @@ export default function BlogPage() {
             viewport={{ once: true, amount: 0.1 }}
             variants={staggerContainer}
         >
-            <div className="container mx-auto px-4 md:px-12">
+            <div className="container mx-auto px-4 md:px-6">
                 <motion.div className="text-center mb-12" variants={fadeInUp}>
                     <h2 className="text-3xl font-headline font-bold text-primary mb-4">
                         FEATURED POST
@@ -209,7 +209,7 @@ export default function BlogPage() {
         viewport={{ once: true, amount: 0.1 }}
         variants={staggerContainer}
       >
-        <div className="container mx-auto px-4 md:px-12">
+        <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col gap-4 mb-12">
                  <motion.div className="text-center" variants={fadeInUp}>
                     <h2 className="text-3xl font-headline font-bold text-primary mb-4">

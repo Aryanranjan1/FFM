@@ -95,7 +95,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
     <div className="bg-background text-foreground">
         <section className="py-20 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
             <div className="hero-bg"></div>
-            <div className="container mx-auto px-4 md:px-12 relative z-10">
+            <div className="container mx-auto px-4 md:px-6 relative z-10">
                 <h1 className="font-headline text-5xl md:text-7xl font-bold text-primary">ABOUT</h1>
                 <p className="text-muted-foreground text-lg mt-4 max-w-3xl mx-auto">
                     Discover the journey of a Malaysian composer who bridges cultural heritage with contemporary musical innovation
@@ -105,7 +105,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
         
         <section className="py-20 relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
           <div className="hero-bg"></div>
-          <div className="container mx-auto px-4 md:px-12 relative z-10">
+          <div className="container mx-auto px-4 md:px-6 relative z-10">
               <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12 items-start">
               <div className="md:col-span-1 flex flex-col items-center">
                   <div className="relative w-full max-w-xs md:max-w-full transition-transform duration-300 hover:-rotate-3">
@@ -162,7 +162,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
 
         <div className="py-12 bg-card">
             <motion.section
-            className="container mx-auto px-4 md:px-12"
+            className="container mx-auto px-4 md:px-6"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -209,7 +209,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
 
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-        <div className="py-20 container mx-auto px-4 md:px-12">
+        <div className="py-20 container mx-auto px-4 md:px-6">
             <motion.section
                 className="bg-transparent"
                 initial="hidden"
@@ -249,7 +249,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
         <div className="py-12 bg-card">
-            <section className="container mx-auto px-4 md:px-12">
+            <section className="container mx-auto px-4 md:px-6">
                 <motion.h2
                     className="text-3xl md:text-4xl font-headline font-bold text-center mb-12"
                     initial={{ opacity: 0, y: 20 }}
@@ -292,7 +292,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
       
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-        <div className="container mx-auto px-4 md:px-12">
+        <div className="container mx-auto px-4 md:px-6">
             <section className="py-20">
                 <div className="container mx-auto text-center">
                     <h2 className="text-3xl font-bold mb-4">Let's Create Something Amazing</h2>

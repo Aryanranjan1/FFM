@@ -3,9 +3,11 @@
 "use client";
 
 import { useState, useEffect, useRef, useActionState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from 'next/link';
+import YouTube from 'react-youtube';
+import type { YouTubePlayer } from 'react-youtube';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -39,7 +41,7 @@ import {
     Headphones,
     Link as LinkIcon,
 } from "lucide-react";
-import { SoundcloudIcon, Instagram, Youtube } from "@/components/icons";
+import { SoundcloudIcon, Instagram, Youtube, SpotifyIcon } from "@/components/icons";
 
 
 const contactFormSchema = z.object({
@@ -60,6 +62,7 @@ const iconComponents: { [key: string]: React.FC<any> } = {
     YouTube: (props) => <Youtube {...props} />,
     Instagram: (props) => <Instagram {...props} />,
     Soundcloud: (props) => <SoundcloudIcon {...props} />,
+    Spotify: (props) => <SpotifyIcon {...props} />,
     Default: LinkIcon,
 };
 
@@ -75,10 +78,10 @@ export default function Home() {
     const [activeTab, setActiveTab] = useState('All');
     const [categories, setCategories] = useState<string[]>(['All']);
 
-    // Audio Player State
+    // Player State
     const [featuredMusicTrack, setFeaturedMusicTrack] = useState<MusicTrackType | null>(null);
-    const audioRef = useRef<HTMLAudioElement>(null);
-    const [audioPlaying, setAudioPlaying] = useState(false);
+    const playerRef = useRef<YouTubePlayer>(null);
+    const [playerState, setPlayerState] = useState<number | null>(null);
     const [audioProgress, setAudioProgress] = useState(0);
     const [audioDuration, setAudioDuration] = useState(0);
     const [isMuted, setIsMuted] = useState(false);
@@ -157,27 +160,33 @@ export default function Home() {
         fetchData();
     }, []);
 
+    const getYouTubeId = (url: string) => {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
+    };
+    
+    const videoId = featuredMusicTrack ? getYouTubeId(featuredMusicTrack.musicUrl) : null;
+    
     useEffect(() => {
-        const audio = audioRef.current;
-        if (!audio) return;
-        const setAudioData = () => { setAudioDuration(audio.duration); setAudioProgress(audio.currentTime); };
-        const setAudioTime = () => setAudioProgress(audio.currentTime);
-        audio.addEventListener('loadeddata', setAudioData);
-        audio.addEventListener('timeupdate', setAudioTime);
-        audio.addEventListener('ended', () => setAudioPlaying(false));
-        return () => {
-            audio.removeEventListener('loadeddata', setAudioData);
-            audio.removeEventListener('timeupdate', setAudioTime);
-            audio.removeEventListener('ended', () => setAudioPlaying(false));
-        };
-    }, [featuredMusicTrack]);
+        const interval = setInterval(async () => {
+            if (playerRef.current && playerState === 1) { // 1 = playing
+                const progress = await playerRef.current.getCurrentTime();
+                const duration = await playerRef.current.getDuration();
+                setAudioProgress(progress);
+                setAudioDuration(duration);
+            }
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [playerState]);
 
     const playTrackFromPortfolio = (track: MusicTrackType) => {
         setFeaturedMusicTrack(track);
-        setAudioPlaying(true);
         setTimeout(() => {
-            audioRef.current?.play();
-            document.getElementById('music-player')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+             if (playerRef.current) {
+                playerRef.current.playVideo();
+                document.getElementById('music-player')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }, 100);
     };
 
@@ -194,16 +203,20 @@ export default function Home() {
         : allMusicTracks.filter(track => track.category === activeTab);
 
     const toggleAudioPlay = () => {
-        const audio = audioRef.current;
-        if (audio) {
-            if (audioPlaying) {
-                audio.pause();
-            } else {
-                audio.play();
-            }
-            setAudioPlaying(!audioPlaying);
+        if (!playerRef.current) return;
+        if (playerState === 1) { // playing
+            playerRef.current.pauseVideo();
+        } else {
+            playerRef.current.playVideo();
         }
     };
+    
+    const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!playerRef.current) return;
+        const newTime = Number(e.target.value);
+        setAudioProgress(newTime);
+        playerRef.current.seekTo(newTime, true);
+    }
     
     const formatTime = (seconds: number) => {
         if (isNaN(seconds) || seconds === 0) return "0:00";
@@ -212,14 +225,22 @@ export default function Home() {
         return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
     };
     
+    const onPlayerReady = (event: { target: YouTubePlayer }) => {
+        playerRef.current = event.target;
+        if(isMuted) event.target.mute();
+    };
+
+    const onPlayerStateChange = (event: { data: number }) => {
+        setPlayerState(event.data);
+    };
+    
     return (
         <div className="min-h-screen bg-background text-foreground">
-            {/* --- HERO SECTION --- */}
-            <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 pb-20 px-4 md:px-12 overflow-hidden bg-gradient-to-br from-gray-900 to-black">
+            <section id="home" className="relative flex flex-col items-center justify-center pt-20 pb-20 px-4 md:px-6 overflow-hidden bg-gradient-to-br from-gray-900 to-black">
                  <div className="hero-bg"></div>
                  <FloatingNotes />
                 
-                <div className="relative z-10 max-w-7xl mx-auto text-center">
+                <div className="relative z-10 max-w-7xl mx-auto text-center mt-20">
                     <motion.h1 
                         className="text-4xl md:text-6xl font-bold mb-6 text-white font-headline"
                         initial={{ opacity: 0, y: 20 }}
@@ -298,122 +319,128 @@ export default function Home() {
                             );
                         })}
                     </motion.div>
-
-                    <motion.div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8 text-sm"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 1.2 }}
-                    >
-                        <div className="flex items-center space-x-2">
-                            <Mail className="w-4 h-4 text-primary" />
-                            <span className="text-muted-foreground">contact@fahmiefarhan.com</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <Phone className="w-4 h-4 text-primary" />
-                            <span className="text-muted-foreground">+60 11-31377753</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <MapPin className="w-4 h-4 text-primary" />
-                            <span className="text-muted-foreground">Malaysia</span>
-                        </div>
-                    </motion.div>
                 </div>
+                 {/* --- FEATURED MUSIC TRACK SECTION --- */}
+                 <div id="music-player" className="py-20 scroll-mt-20 w-full">
+                     <div className="container mx-auto px-4 md:px-6">
+                         <div className="text-center mb-12">
+                             <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Featured Music Track</h2>
+                             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Discover a featured track from my collection. Select any song from the portfolio below to play it here.</p>
+                         </div>
+                         {featuredMusicTrack && videoId ? (
+                             <motion.div className="max-w-4xl mx-auto" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+                                 <Card className="bg-background/50 backdrop-blur-sm border-primary/30 overflow-hidden">
+                                     <CardContent className="p-4 md:p-8">
+                                         <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+                                             <div className="relative group w-full md:w-48 h-auto md:h-48 flex-shrink-0 aspect-video md:aspect-square">
+                                                <AnimatePresence>
+                                                    { (playerState !== 1) && (
+                                                        <motion.div
+                                                            initial={{ opacity: 1 }}
+                                                            exit={{ opacity: 0 }}
+                                                            className="absolute inset-0"
+                                                        >
+                                                            <Image
+                                                                src={featuredMusicTrack.coverImageUrl || "https://placehold.co/400x400"}
+                                                                alt={featuredMusicTrack.title}
+                                                                layout="fill"
+                                                                objectFit="cover"
+                                                                className="rounded-lg"
+                                                            />
+                                                            <div className="absolute inset-0 bg-black/30 flex items-center justify-center rounded-lg">
+                                                                <Button
+                                                                    size="lg"
+                                                                    onClick={toggleAudioPlay}
+                                                                    className="bg-primary/80 text-primary-foreground hover:bg-primary rounded-full w-16 h-16 flex items-center justify-center"
+                                                                >
+                                                                    <Play className="w-8 h-8" />
+                                                                </Button>
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+                                                 <YouTube
+                                                     videoId={videoId}
+                                                     onReady={onPlayerReady}
+                                                     onStateChange={onPlayerStateChange}
+                                                     className="w-full h-full"
+                                                     iframeClassName="w-full h-full rounded-lg"
+                                                     opts={{
+                                                         height: '100%',
+                                                         width: '100%',
+                                                         playerVars: {
+                                                             autoplay: 0,
+                                                             controls: 0,
+                                                             rel: 0,
+                                                             showinfo: 0,
+                                                             modestbranding: 1,
+                                                         },
+                                                     }}
+                                                 />
+                                             </div>
+                                             <div className="flex-1 text-center md:text-left w-full">
+                                                 <h3 className="text-2xl font-bold text-white mb-2 font-headline">{featuredMusicTrack.title}</h3>
+                                                 <p className="text-lg text-muted-foreground mb-2">{featuredMusicTrack.category}</p>
+                                                 
+                                                 <div className="mb-4">
+                                                     <input
+                                                         type="range"
+                                                         min="0"
+                                                         max={audioDuration}
+                                                         value={audioProgress}
+                                                         onChange={handleProgressChange}
+                                                         className="w-full h-2 bg-background rounded-lg appearance-none cursor-pointer range-lg"
+                                                     />
+                                                     <div className="flex justify-between text-sm text-muted-foreground mt-1">
+                                                         <span>{formatTime(audioProgress)}</span>
+                                                         <span>{formatTime(audioDuration)}</span>
+                                                     </div>
+                                                 </div>
+                                                 <div className="flex items-center justify-center md:justify-start space-x-4 mb-4">
+                                                     <Button size="sm" onClick={toggleAudioPlay} className="btn-gold">
+                                                         {playerState === 1 ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                                                     </Button>
+                                                     <Button
+                                                         variant="ghost" size="sm"
+                                                         onClick={() => {
+                                                            if (!playerRef.current) return;
+                                                            if (isMuted) {
+                                                                playerRef.current.unMute();
+                                                            } else {
+                                                                playerRef.current.mute();
+                                                            }
+                                                            setIsMuted(!isMuted);
+                                                         }}
+                                                         className="text-primary hover:text-white"
+                                                     >
+                                                         {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                                                     </Button>
+                                                 </div>
+                                                 <div className="flex items-center justify-center md:justify-start space-x-6 text-sm text-muted-foreground">
+                                                     <div className="flex items-center space-x-1 cursor-pointer hover:text-primary" onClick={() => toggleLike(featuredMusicTrack.id)}>
+                                                         <Heart className={`w-4 h-4 ${likedTracks.includes(featuredMusicTrack.id) ? 'text-red-500 fill-current' : ''}`} />
+                                                         <span>Like</span>
+                                                     </div>
+                                                     <div className="flex items-center space-x-1 cursor-pointer hover:text-primary">
+                                                         <Share2 className="w-4 h-4" />
+                                                         <span>Share</span>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                     </CardContent>
+                                 </Card>
+                             </motion.div>
+                         ) : ( <div className="text-center text-muted-foreground">Loading featured music...</div> )}
+                     </div>
+                 </div>
             </section>
             
-            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
-
-            {/* --- FEATURED MUSIC TRACK SECTION --- */}
-            <section id="music-player" className="py-20 bg-card scroll-mt-20">
-                 <div className="container mx-auto px-4 md:px-12">
-                     <div className="text-center mb-12">
-                         <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Featured Music Track</h2>
-                         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Discover a featured track from my collection. Select any song from the portfolio below to play it here.</p>
-                     </div>
-                     {featuredMusicTrack ? (
-                         <motion.div className="max-w-4xl mx-auto" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-                             <Card className="bg-background/50 backdrop-blur-sm border-primary/30 overflow-hidden">
-                                 <CardContent className="p-8">
-                                     <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
-                                         <div className="relative group w-48 h-48 flex-shrink-0">
-                                            <Image
-                                                src={featuredMusicTrack.coverImageUrl || "https://placehold.co/400x400"}
-                                                alt={featuredMusicTrack.title}
-                                                width={192}
-                                                height={192}
-                                                className="w-full h-full object-cover rounded-lg"
-                                            />
-                                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg">
-                                                 <Button
-                                                     size="lg"
-                                                     onClick={toggleAudioPlay}
-                                                     className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full w-16 h-16 flex items-center justify-center"
-                                                 >
-                                                     {audioPlaying ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8" />}
-                                                 </Button>
-                                             </div>
-                                         </div>
-                                         <div className="flex-1 text-center md:text-left w-full">
-                                             <h3 className="text-2xl font-bold text-white mb-2 font-headline">{featuredMusicTrack.title}</h3>
-                                             <p className="text-lg text-muted-foreground mb-2">{featuredMusicTrack.category}</p>
-                                             <audio ref={audioRef} src={featuredMusicTrack.musicUrl} preload="metadata"></audio>
-                                             <div className="mb-4">
-                                                 <input
-                                                     type="range"
-                                                     min="0"
-                                                     max={audioDuration}
-                                                     value={audioProgress}
-                                                     onChange={(e) => {
-                                                         if(audioRef.current) audioRef.current.currentTime = Number(e.target.value)
-                                                     }}
-                                                     className="w-full h-2 bg-background rounded-lg appearance-none cursor-pointer range-lg"
-                                                 />
-                                                 <div className="flex justify-between text-sm text-muted-foreground mt-1">
-                                                     <span>{formatTime(audioProgress)}</span>
-                                                     <span>{formatTime(audioDuration)}</span>
-                                                 </div>
-                                             </div>
-                                             <div className="flex items-center justify-center md:justify-start space-x-4 mb-4">
-                                                 <Button size="sm" onClick={toggleAudioPlay} className="btn-gold">
-                                                     {audioPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-                                                 </Button>
-                                                 <Button
-                                                     variant="ghost" size="sm"
-                                                     onClick={() => {
-                                                         if (audioRef.current) {
-                                                             const newMutedState = !isMuted;
-                                                             audioRef.current.muted = newMutedState;
-                                                             setIsMuted(newMutedState);
-                                                         }
-                                                     }}
-                                                     className="text-primary hover:text-white"
-                                                 >
-                                                     {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                                                 </Button>
-                                             </div>
-                                             <div className="flex items-center justify-center md:justify-start space-x-6 text-sm text-muted-foreground">
-                                                 <div className="flex items-center space-x-1 cursor-pointer hover:text-primary" onClick={() => toggleLike(featuredMusicTrack.id)}>
-                                                     <Heart className={`w-4 h-4 ${likedTracks.includes(featuredMusicTrack.id) ? 'text-red-500 fill-current' : ''}`} />
-                                                     <span>Like</span>
-                                                 </div>
-                                                 <div className="flex items-center space-x-1 cursor-pointer hover:text-primary">
-                                                     <Share2 className="w-4 h-4" />
-                                                     <span>Share</span>
-                                                 </div>
-                                             </div>
-                                         </div>
-                                     </div>
-                                 </CardContent>
-                             </Card>
-                         </motion.div>
-                     ) : ( <div className="text-center text-muted-foreground">Loading featured music...</div> )}
-                 </div>
-             </section>
-
             <div className="section-divider"><div className="divider-content">♫ ♪ ♫</div></div>
 
             {/* --- MUSIC PORTFOLIO SECTION --- */}
             <section id="music-portfolio" className="py-20 bg-background">
-                <div className="container mx-auto px-4 md:px-12">
+                <div className="container mx-auto px-4 md:px-6">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Music Portfolio</h2>
                         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -502,7 +529,7 @@ export default function Home() {
             
             {/* --- ABOUT SECTION --- */}
             <section className="py-20 bg-card">
-                <div className="container mx-auto px-4 md:px-12">
+                <div className="container mx-auto px-4 md:px-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <motion.div
                             initial={{ opacity: 0, x: -50 }}
@@ -561,7 +588,7 @@ export default function Home() {
 
             {/* --- TESTIMONIALS SECTION --- */}
             <section className="py-20 bg-background">
-                <div className="container mx-auto px-4 md:px-12">
+                <div className="container mx-auto px-4 md:px-6">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">What People Say</h2>
                         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -604,7 +631,7 @@ export default function Home() {
             {/* --- CONTACT SECTION --- */}
             <section id="contact" className="py-20">
                 <motion.div 
-                    className="container mx-auto px-4 md:px-12"
+                    className="container mx-auto px-4 md:px-6"
                     initial="hidden" 
                     whileInView="visible" 
                     viewport={{ once: true, amount: 0.1 }}
