@@ -96,10 +96,10 @@ export default function NewVideoPage() {
 
   useEffect(() => {
     if (state.message) {
-      if (state.errors && (state.errors._form || Object.keys(state.errors).length > 0)) {
+      if (state.errors && Object.keys(state.errors).length > 0) {
         toast({
           title: "Error",
-          description: state.message || state.errors?._form?.[0] || "An error occurred.",
+          description: state.message,
           variant: "destructive",
         });
       } else {
