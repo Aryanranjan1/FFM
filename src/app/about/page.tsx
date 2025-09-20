@@ -1,9 +1,29 @@
 "use client";
 
-import { bio as initialBioData } from '@/lib/data';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { MapPin, Music } from 'lucide-react';
+import { ExternalLink, MapPin, Music } from 'lucide-react';
+import type { Collaboration } from '@/lib/types';
+import { motion } from 'framer-motion';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+
+const collaborations: Collaboration[] = [
+    {
+      name: "Diane Allen",
+      role: "Violin Virtuoso",
+      description: "Collaborated on multiple orchestral projects for live keynote performances in the United States, creating powerful musical experiences that have deeply moved audiences.",
+      link: "https://dianeallen.com/",
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop"
+    },
+    {
+      name: "GEMAWAN KISAS",
+      role: "Cultural Ensemble",
+      description: "Gema Gamelan Waqafan (GEMAWAN) from Kolej Islam Sultan Alam Shah (KISAS). Collaboration includes training the ensemble and composing original modern gamelan pieces.",
+      link: "http://www.youtube.com/@gemawankisas4271",
+      image: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=400&fit=crop"
+    }
+];
 
 export default function AboutPage() {
   const artistImage = PlaceHolderImages.find(p => p.id === 'about-artist');
@@ -15,6 +35,16 @@ export default function AboutPage() {
 Fahmie's portfolio covers both international collaborations and competitive music performances. He has arranged and composed orchestral works for live keynote events in the United States, including multiple projects with violinist Diane Allen, whose audiences have been deeply moved by his music.`,
     traditional: `In the realm of traditional ensemble performance, Fahmie collaborates with Gema Gamelan Waqafan (GEMAWAN), the gamelan group from Kolej Islam Sultan Alam Shah (KISAS). He trains the ensemble and composes original modern gamelan pieces, leading the group to multiple top awards — including 1st Prize in the SBP Gamelan Competition in both 2023 and 2024, as well as 1st Place in the Ensemble of Gamelan Competition at Universiti Teknologi Petronas (UTP) in 2023.`,
     digital: `Fahmie is also active on YouTube, where he shares his original works with a growing international audience, and on stock music platforms where his compositions are licensed for use in films, games, and online content. Whether it's a high-energy anime-inspired battle theme or a reflective, emotionally driven score, Fahmie's focus is always on creating music that elevates the stories it accompanies.`
+  };
+  
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  };
+
+  const staggerContainer = {
+      hidden: { opacity: 0 },
+      visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
   };
 
   return (
@@ -75,6 +105,55 @@ Fahmie's portfolio covers both international collaborations and competitive musi
           </div>
         </div>
       </div>
+      
+      {/* Collaborations Section */}
+      <motion.section
+          className="py-20 px-6 bg-transparent"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={staggerContainer}
+      >
+          <div className="container mx-auto">
+              <motion.div className="text-center mb-12" variants={fadeInUp}>
+                  <h2 className="text-4xl font-bold mb-4">Collaborations</h2>
+                  <p className="text-lg text-muted-foreground">
+                  Working with talented artists and ensembles to create extraordinary music
+                  </p>
+              </motion.div>
+              <motion.div className="grid md:grid-cols-2 gap-8" variants={staggerContainer}>
+                  {collaborations.map((collab, index) => (
+                  <motion.div key={index} variants={fadeInUp}>
+                      <Card className="bg-card border-primary/20 hover:border-primary/40 transition-all h-full">
+                      <CardHeader>
+                          <div className="flex items-center space-x-4">
+                          <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-purple-500/10 rounded-lg overflow-hidden flex-shrink-0">
+                              <Image src={collab.image} alt={collab.name} width={64} height={64} className="w-full h-full object-cover" />
+                          </div>
+                          <div className="flex-1">
+                              <CardTitle className="text-xl">{collab.name}</CardTitle>
+                              <CardDescription className="text-primary">{collab.role}</CardDescription>
+                          </div>
+                          </div>
+                      </CardHeader>
+                      <CardContent>
+                          <p className="text-muted-foreground mb-6 leading-relaxed">{collab.description}</p>
+                          {collab.link && collab.link !== "#" && (
+                          <Button variant="outline" className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground" asChild>
+                              <a href={collab.link} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="w-4 h-4 mr-2" />
+                              Visit {collab.name}
+                              </a>
+                          </Button>
+                          )}
+                      </CardContent>
+                      </Card>
+                  </motion.div>
+                  ))}
+              </motion.div>
+          </div>
+      </motion.section>
+
       <div className="text-center mt-20 text-primary text-2xl">
         ♪ ♫ ♪
       </div>
