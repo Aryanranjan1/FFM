@@ -206,9 +206,9 @@ Fahmie's portfolio covers both international collaborations and competitive musi
 
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-        <div className="container mx-auto px-4 md:px-12">
+        <div className="py-20 container mx-auto px-4 md:px-12">
             <motion.section
-                className="py-20 bg-transparent"
+                className="bg-transparent"
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}

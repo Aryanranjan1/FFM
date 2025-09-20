@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useEffect, useRef, useActionState } from "react";
@@ -60,9 +61,9 @@ const iconComponents: { [key: string]: React.FC<any> } = {
     User,
     Award,
     Headphones,
-    Youtube,
-    Instagram,
-    Soundcloud: SoundcloudIcon,
+    Youtube: (props) => <Youtube {...props} />,
+    Instagram: (props) => <Instagram {...props} />,
+    Soundcloud: (props) => <SoundcloudIcon {...props} />,
     Default: LinkIcon,
 };
 
@@ -749,5 +750,3 @@ export default function Home() {
         </div>
     );
 }
-
-    

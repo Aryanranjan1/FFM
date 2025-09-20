@@ -167,6 +167,8 @@ export default function MusicPage() {
                 </div>
             </section>
             
+            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+
             {/* Music Portfolio Section */}
             <motion.section
                 className="py-20"
