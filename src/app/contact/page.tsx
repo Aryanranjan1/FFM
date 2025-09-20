@@ -68,27 +68,6 @@ export default function ContactPage() {
     <div className="bg-background text-foreground relative">
         <div className="hero-bg" style={{ zIndex: 0 }}></div>
         <div className="relative z-10">
-            <section className="py-20 text-center">
-                 <div className="container mx-auto px-4 md:px-12 relative z-10">
-                    <motion.h2
-                        initial={{ opacity: 0, x: -50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="font-headline text-4xl md:text-5xl font-bold mb-4 text-primary"
-                    >
-                        LET'S CONNECT
-                    </motion.h2>
-                    <motion.p
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-lg text-muted-foreground mb-8 max-w-lg mx-auto"
-                    >
-                        Whether you're looking for custom compositions, music licensing, or just want to discuss musical ideas, I'm here to help bring your vision to life.
-                    </motion.p>
-                </div>
-            </section>
-
             <div className="py-20 container mx-auto px-4 md:px-12">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
                      <motion.div
