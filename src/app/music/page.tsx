@@ -15,7 +15,7 @@ import type { Video } from '@/lib/admin-types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink, Heart, Share2, Loader2, X, Play } from 'lucide-react';
+import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink, Heart, Share2, Loader2, X, Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import { bio } from '@/lib/data';
 
 const collaborations: Collaboration[] = [
@@ -81,6 +81,8 @@ export default function MusicPage() {
     const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
     const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
     const [likedTracks, setLikedTracks] = useState<string[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const videosPerPage = 9;
 
     useEffect(() => {
         const fetchVideos = async () => {
@@ -112,6 +114,18 @@ export default function MusicPage() {
         if (filter === 'All') return videos;
         return videos.filter(p => p.category === filter);
     }, [videos, filter]);
+
+    const indexOfLastVideo = currentPage * videosPerPage;
+    const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
+    const currentVideos = filteredVideos.slice(indexOfFirstVideo, indexOfLastVideo);
+    const totalPages = Math.ceil(filteredVideos.length / videosPerPage);
+
+    const paginate = (pageNumber: number) => {
+        if (pageNumber > 0 && pageNumber <= totalPages) {
+            setCurrentPage(pageNumber);
+        }
+    };
+
 
     const handlePlayVideo = (video: Video) => {
         setSelectedVideo(video);
@@ -217,7 +231,7 @@ export default function MusicPage() {
                             <Button
                                 key={category}
                                 variant={filter === category ? 'default' : 'outline'}
-                                onClick={() => setFilter(category)}
+                                onClick={() => { setFilter(category); setCurrentPage(1); }}
                                 className={cn(
                                     "capitalize rounded-md",
                                     filter === category
@@ -235,11 +249,12 @@ export default function MusicPage() {
                             <Loader2 className="h-8 w-8 animate-spin text-primary" />
                         </div>
                     ) : (
+                        <>
                         <motion.div 
                             layout 
                             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8"
                         >
-                            {filteredVideos.map((video, index) => {
+                            {currentVideos.map((video, index) => {
                                 return (
                                      <motion.div
                                         key={video.id}
@@ -248,12 +263,11 @@ export default function MusicPage() {
                                         transition={{ duration: 0.6, delay: index * 0.1 }}
                                         onMouseEnter={() => setHoveredMusicCard(video.id)}
                                         onMouseLeave={() => setHoveredMusicCard(null)}
-                                        onClick={() => handlePlayVideo(video)}
                                     >
-                                        <Card className={`music-card bg-card rounded-lg overflow-hidden transition-all duration-300 h-full flex flex-col cursor-pointer ${
+                                        <Card className={`music-card bg-card rounded-lg overflow-hidden transition-all duration-300 h-full flex flex-col ${
                                             hoveredMusicCard === video.id ? 'transform scale-105 border-primary/50' : 'border-transparent'
                                         }`}>
-                                            <div className="relative">
+                                            <div className="relative cursor-pointer" onClick={() => handlePlayVideo(video)}>
                                                 <Image src={video.thumbnailUrl || `https://placehold.co/400x400`} 
                                                     alt={video.title} 
                                                     width={400}
@@ -294,6 +308,31 @@ export default function MusicPage() {
                                 );
                             })}
                         </motion.div>
+
+                        {totalPages > 1 && (
+                            <div className="flex justify-center items-center mt-12 space-x-4">
+                                <Button
+                                    onClick={() => paginate(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    variant="outline"
+                                >
+                                    <ChevronLeft className="h-4 w-4 mr-2" />
+                                    Previous
+                                </Button>
+                                <span className="text-muted-foreground">
+                                    Page {currentPage} of {totalPages}
+                                </span>
+                                <Button
+                                    onClick={() => paginate(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    variant="outline"
+                                >
+                                    Next
+                                    <ChevronRight className="h-4 w-4 ml-2" />
+                                </Button>
+                            </div>
+                        )}
+                        </>
                     )}
                 </div>
             </motion.section>
