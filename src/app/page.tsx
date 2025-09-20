@@ -132,9 +132,9 @@ export default function Home() {
                 setTestimonials(testimonialsData);
                 
                 // Fetch Music Tracks
-                const musicTracksQuery = query(collection(db, "music"), where("isPublished", "==", true), orderBy("createdAt", "desc"));
+                const musicTracksQuery = query(collection(db, "music"), orderBy("createdAt", "desc"));
                 const musicTracksSnapshot = await getDocs(musicTracksQuery);
-                const musicTracksData = musicTracksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MusicTrackType));
+                const musicTracksData = musicTracksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MusicTrackType)).filter(track => track.isPublished);
                 setAllMusicTracks(musicTracksData);
 
                 if (musicTracksData.length > 0) {
