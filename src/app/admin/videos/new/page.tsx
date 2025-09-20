@@ -96,10 +96,16 @@ export default function NewVideoPage() {
 
   useEffect(() => {
     if (state.message) {
-      if (state.errors && Object.keys(state.errors).length > 0) {
+      if (state.errors && Object.keys(state.errors).length > 0 && !state.errors._form) {
+        toast({
+          title: "Validation Error",
+          description: state.message,
+          variant: "destructive",
+        });
+      } else if (state.errors?._form) {
         toast({
           title: "Error",
-          description: state.message,
+          description: state.errors._form[0],
           variant: "destructive",
         });
       } else {
@@ -153,7 +159,7 @@ export default function NewVideoPage() {
                            </Button>
                         )}
                     </div>
-                    <FormMessage>{state.errors?.videoUrl}</FormMessage>
+                    <FormMessage>{state.errors?.videoUrl?.[0]}</FormMessage>
                   </FormItem>
                 )}
               />
@@ -166,7 +172,7 @@ export default function NewVideoPage() {
                     <FormControl>
                       <Input placeholder="Enter video title" {...field} />
                     </FormControl>
-                    <FormMessage>{state.errors?.title}</FormMessage>
+                    <FormMessage>{state.errors?.title?.[0]}</FormMessage>
                   </FormItem>
                 )}
               />
@@ -179,7 +185,7 @@ export default function NewVideoPage() {
                     <FormControl>
                       <Textarea placeholder="Video description" {...field} rows={5} />
                     </FormControl>
-                    <FormMessage>{state.errors?.description}</FormMessage>
+                    <FormMessage>{state.errors?.description?.[0]}</FormMessage>
                   </FormItem>
                 )}
               />
@@ -192,7 +198,7 @@ export default function NewVideoPage() {
                     <FormControl>
                       <Input placeholder="e.g., cinematic, tutorial, live" {...field} />
                     </FormControl>
-                    <FormMessage>{state.errors?.tags}</FormMessage>
+                    <FormMessage>{state.errors?.tags?.[0]}</FormMessage>
                   </FormItem>
                 )}
               />
@@ -206,7 +212,7 @@ export default function NewVideoPage() {
                     <FormControl>
                       <Input placeholder="https://example.com/thumbnail.jpg" {...field} />
                     </FormControl>
-                    <FormMessage>{state.errors?.thumbnailUrl}</FormMessage>
+                    <FormMessage>{state.errors?.thumbnailUrl?.[0]}</FormMessage>
                   </FormItem>
                 )}
               />

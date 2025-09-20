@@ -91,19 +91,22 @@ export default function NewMusicTrackPage() {
 
   useEffect(() => {
     if (state.message) {
-      if (Object.keys(state.errors).length > 0 && state.errors._form?.length === 0) {
+      if (state.errors && Object.keys(state.errors).length > 0 && !state.errors._form) {
+        // Validation errors
         toast({
-          title: "Error",
+          title: "Validation Error",
           description: state.message,
           variant: "destructive",
         });
-      } else if (state.errors?._form?.[0]) {
+      } else if (state.errors?._form) {
+        // Server-side errors
         toast({
           title: "Error",
           description: state.errors._form[0],
           variant: "destructive",
         });
       } else {
+        // Success
         toast({
           title: "Success",
           description: state.message,
@@ -154,7 +157,7 @@ export default function NewMusicTrackPage() {
                            </Button>
                         )}
                     </div>
-                     <FormMessage>{state.errors?.musicUrl}</FormMessage>
+                     <FormMessage>{state.errors?.musicUrl?.[0]}</FormMessage>
                   </FormItem>
                 )}
               />
@@ -167,7 +170,7 @@ export default function NewMusicTrackPage() {
                     <FormControl>
                       <Input placeholder="Enter track title" {...field} />
                     </FormControl>
-                    <FormMessage>{state.errors?.title}</FormMessage>
+                    <FormMessage>{state.errors?.title?.[0]}</FormMessage>
                   </FormItem>
                 )}
               />
@@ -181,7 +184,7 @@ export default function NewMusicTrackPage() {
                     <FormControl>
                       <Input placeholder="https://example.com/cover.jpg" {...field} />
                     </FormControl>
-                    <FormMessage>{state.errors?.coverImageUrl}</FormMessage>
+                    <FormMessage>{state.errors?.coverImageUrl?.[0]}</FormMessage>
                   </FormItem>
                 )}
               />

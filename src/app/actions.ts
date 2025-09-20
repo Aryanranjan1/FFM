@@ -67,7 +67,7 @@ const musicTrackSchema = z.object({
 });
 
 export type AddMusicTrackState = {
-  errors: {
+  errors?: {
     title?: string[];
     musicUrl?: string[];
     coverImageUrl?: string[];
@@ -78,7 +78,7 @@ export type AddMusicTrackState = {
   message: string | null;
 };
 
-export async function addMusicTrack(prevState: any, formData: FormData): Promise<AddMusicTrackState> {
+export async function addMusicTrack(prevState: AddMusicTrackState, formData: FormData): Promise<AddMusicTrackState> {
     const validatedFields = musicTrackSchema.safeParse({
         title: formData.get('title'),
         musicUrl: formData.get('musicUrl'),
