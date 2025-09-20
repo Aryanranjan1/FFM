@@ -1,6 +1,7 @@
 
 "use client";
 
+import React, { useEffect, useState } from 'react';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/layout/header';
@@ -11,7 +12,8 @@ import MusicPlayer from '@/components/music-player';
 import { PageTransition } from '@/components/page-transition';
 import { Particles } from '@/components/particles';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import type { SiteSettingsFormValues } from '@/app/actions';
+import { getSiteSettings } from '@/app/actions';
 
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
@@ -25,7 +27,7 @@ function ClientOnly({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-
+// This is the root layout component. It's a client component to allow for hooks.
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,8 +35,11 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith('/admin');
-  
-  // No metadata export, as this is a client component
+  const [settings, setSettings] = useState<SiteSettingsFormValues>({ email: '', phone: '', location: '' });
+
+  useEffect(() => {
+    getSiteSettings().then(setSettings);
+  }, []);
 
   return (
     <html lang="en" className="dark">
@@ -60,7 +65,7 @@ export default function RootLayout({
                   {children}
                 </PageTransition>
               </main>
-              <Footer />
+              <Footer settings={settings} />
             </div>
           )}
           <MusicPlayer />

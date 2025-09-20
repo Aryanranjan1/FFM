@@ -1,10 +1,8 @@
 
-
 import { Mail, Phone, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { Logo, SoundcloudIcon, Youtube, Instagram } from '../icons';
-import { db } from '@/lib/firebase';
-import { getDoc, doc } from 'firebase/firestore';
+import type { SiteSettingsFormValues } from '@/app/actions';
 
 
 const services = [
@@ -14,22 +12,8 @@ const services = [
   { name: 'Malay Gamelan coaching', href: '#' },
 ];
 
-async function getSettings() {
-    const docRef = doc(db, 'settings', 'site');
-    const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
-        return docSnap.data();
-    } else {
-        return {
-            email: 'contact@fahmiefarhan.com',
-            phone: '+60 11-31377753',
-            location: 'Malaysia'
-        };
-    }
-}
-
-function FooterClient({ settings }: { settings: any }) {
+export function Footer({ settings }: { settings: SiteSettingsFormValues }) {
     return (
         <footer className="bg-card py-12">
             <div className="container mx-auto px-4 md:px-6">
@@ -103,9 +87,4 @@ function FooterClient({ settings }: { settings: any }) {
             </div>
         </footer>
     );
-}
-
-export async function Footer() {
-  const settings = await getSettings();
-  return <FooterClient settings={settings} />;
 }
