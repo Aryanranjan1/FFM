@@ -62,7 +62,7 @@ export default function ContactPage() {
   }, [state, toast, form]);
 
   return (
-    <div className="container py-20">
+    <div className="container mx-auto py-20">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
         <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -108,7 +108,7 @@ export default function ContactPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
         >
-            <Card className="bg-card/80 p-8 rounded-lg">
+            <Card className="bg-card p-8 rounded-lg">
                 <CardContent className="p-0">
                     <Form {...form}>
                       <form action={formAction} className="space-y-6">
