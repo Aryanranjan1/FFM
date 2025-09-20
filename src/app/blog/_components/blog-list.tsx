@@ -35,22 +35,17 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-  const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
-  const [loading, setLoading] = useState(false); // Data is pre-loaded
+  const [loading, setLoading] = useState(initialPosts.length === 0);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("recent");
 
-  useEffect(() => {
-    setPosts(initialPosts);
+  const categories = useMemo(() => {
+    const allCategories = initialPosts.map((p) => p.category).filter(Boolean);
+    return ["All", ...Array.from(new Set(allCategories))];
   }, [initialPosts]);
 
-  const categories = useMemo(() => {
-    const allCategories = posts.map((p) => p.category).filter(Boolean);
-    return ["All", ...Array.from(new Set(allCategories))];
-  }, [posts]);
-
   const filteredAndSortedPosts = useMemo(() => {
-    let filtered = posts;
+    let filtered = initialPosts;
 
     if (activeTab !== "All") {
       filtered = filtered.filter((p) => p.category === activeTab);
@@ -82,14 +77,20 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
     }
     return sorted;
 
-  }, [posts, activeTab, searchTerm, sortBy]);
+  }, [initialPosts, activeTab, searchTerm, sortBy]);
 
   const featuredPost = useMemo(() => {
-    if (posts.length === 0) return null;
-    const sortedByDate = [...posts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    if (initialPosts.length === 0) return null;
+    const sortedByDate = [...initialPosts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     const featured = sortedByDate.find((p) => p.isFeatured);
     return featured || sortedByDate[0];
-  }, [posts]);
+  }, [initialPosts]);
+
+  useEffect(() => {
+      if (initialPosts.length > 0) {
+          setLoading(false);
+      }
+  }, [initialPosts])
 
   const checkScrollability = useCallback(() => {
     const el = scrollRef.current;
@@ -112,7 +113,7 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
         window.removeEventListener("resize", checkScrollability);
       };
     }
-  }, [checkScrollability, posts]); 
+  }, [checkScrollability, initialPosts]); 
 
   const handleScroll = (direction: "left" | "right") => {
     const el = scrollRef.current;
