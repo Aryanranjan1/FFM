@@ -218,7 +218,7 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-background text-foreground">
             {/* --- HERO SECTION --- */}
-            <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 pb-20 px-6 overflow-hidden bg-gradient-to-br from-gray-900 to-black">
+            <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 pb-20 px-6 overflow-hidden hero-bg-custom">
                 <FloatingNotes />
                 
                 <div className="relative z-10 max-w-7xl mx-auto text-center">
@@ -326,7 +326,7 @@ export default function Home() {
 
             {/* --- FEATURED MUSIC TRACK SECTION --- */}
             <section id="music-player" className="py-20 bg-card scroll-mt-20">
-                 <div className="container mx-auto px-4 md:px-12">
+                 <div className="container mx-auto px-12">
                      <div className="text-center mb-12">
                          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Featured Music Track</h2>
                          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Discover a featured track from my collection. Select any song from the portfolio below to play it here.</p>
@@ -415,7 +415,7 @@ export default function Home() {
 
             {/* --- MUSIC PORTFOLIO SECTION --- */}
             <section id="music-portfolio" className="py-20 bg-background">
-                <div className="container mx-auto px-4 md:px-12">
+                <div className="container mx-auto px-12">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Music Portfolio</h2>
                         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -504,7 +504,7 @@ export default function Home() {
             
             {/* --- ABOUT SECTION --- */}
             <section className="py-20 bg-card">
-                <div className="container mx-auto px-4 md:px-12">
+                <div className="container mx-auto px-12">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <motion.div
                             initial={{ opacity: 0, x: -50 }}
@@ -563,7 +563,7 @@ export default function Home() {
 
             {/* --- TESTIMONIALS SECTION --- */}
             <section className="py-20 bg-background">
-                <div className="container mx-auto px-4 md:px-12">
+                <div className="container mx-auto px-12">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">What People Say</h2>
                         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -606,7 +606,7 @@ export default function Home() {
             {/* --- CONTACT SECTION --- */}
             <section id="contact" className="py-20">
                 <motion.div 
-                    className="container mx-auto px-4 md:px-12"
+                    className="container mx-auto px-12"
                     initial="hidden" 
                     whileInView="visible" 
                     viewport={{ once: true, amount: 0.1 }}
