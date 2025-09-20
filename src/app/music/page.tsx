@@ -145,7 +145,7 @@ export default function MusicPage() {
         <div className="bg-transparent text-foreground">
             {/* Hero Section */}
             <motion.section
-                className="py-24 px-6 text-center relative overflow-hidden bg-card"
+                className="py-24 text-center relative overflow-hidden bg-card"
                 initial="hidden"
                 animate="visible"
                 variants={staggerContainer}
@@ -158,7 +158,7 @@ export default function MusicPage() {
                     data-ai-hint="sound waves"
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/50 to-background z-0"></div>
-                <div className="relative z-10">
+                <div className="relative z-10 container mx-auto px-4 md:px-12">
                     <motion.h1 className="text-5xl md:text-7xl font-headline font-bold" variants={fadeInUp}>Music</motion.h1>
                     <motion.p className="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto" variants={fadeInUp}>
                         A curated collection of cinematic and cultural compositions for licensing and listening.
@@ -168,13 +168,13 @@ export default function MusicPage() {
             
             {/* Music Portfolio Section */}
             <motion.section
-                className="py-20 px-6"
+                className="py-20"
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.1 }}
                 variants={staggerContainer}
             >
-                <div className="container mx-auto">
+                <div className="container mx-auto px-4 md:px-12">
                     <motion.div className="flex justify-center flex-wrap gap-2 mb-12" variants={fadeInUp}>
                         {musicCategories.map(category => (
                             <Button
@@ -244,13 +244,13 @@ export default function MusicPage() {
             {/* Latest Release Section */}
             {!loading && latestRelease && (
                 <motion.section
-                    className="py-20 px-6 bg-card"
+                    className="py-20 bg-card"
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
                     variants={staggerContainer}
                 >
-                    <div className="container mx-auto">
+                    <div className="container mx-auto px-4 md:px-12">
                         <motion.div variants={fadeInUp}>
                             <Card className="overflow-hidden bg-transparent border-0 md:border md:bg-card md:border-border/50">
                                 <CardContent className="p-0 md:p-6 grid md:grid-cols-2 gap-8 items-center">
@@ -288,13 +288,13 @@ export default function MusicPage() {
 
             {/* Collaborations Section */}
             <motion.section
-                className="py-20 px-6 bg-transparent"
+                className="py-20"
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
                 variants={staggerContainer}
             >
-                <div className="container mx-auto">
+                <div className="container mx-auto px-4 md:px-12">
                     <motion.div className="text-center mb-12" variants={fadeInUp}>
                         <h2 className="text-4xl font-bold mb-4">Collaborations</h2>
                         <p className="text-lg text-muted-foreground">
@@ -336,13 +336,13 @@ export default function MusicPage() {
 
             {/* Achievements Section */}
             <motion.section
-                className="py-20 px-6 bg-transparent"
+                className="py-20"
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
                 variants={staggerContainer}
             >
-                <div className="container mx-auto">
+                <div className="container mx-auto px-4 md:px-12">
                 <motion.div className="text-center mb-12" variants={fadeInUp}>
                     <h2 className="text-4xl font-bold mb-4">Achievements</h2>
                     <p className="text-lg text-muted-foreground">
@@ -371,8 +371,8 @@ export default function MusicPage() {
             </motion.section>
 
             {/* Testimonials Section */}
-            <section className="py-20 px-6 bg-card">
-                <div className="container mx-auto">
+            <section className="py-20 bg-card">
+                <div className="container mx-auto px-4 md:px-12">
                     <motion.h2
                         className="text-3xl md:text-4xl font-headline font-bold text-center mb-12"
                         initial={{ opacity: 0, y: 20 }}
@@ -414,8 +414,8 @@ export default function MusicPage() {
             </section>
 
             {/* CTA */}
-            <section className="py-20 px-6">
-                <div className="container mx-auto text-center">
+            <section className="py-20">
+                <div className="container mx-auto text-center px-4 md:px-12">
                     <h2 className="text-3xl font-bold mb-4">Let's Create Something Amazing</h2>
                     <p className="text-muted-foreground mb-8 max-w-md mx-auto">
                         Have a project in mind? I'd love to hear about it. Contact me for custom compositions or licensing inquiries.

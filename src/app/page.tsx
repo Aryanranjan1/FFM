@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { db } from "@/lib/firebase";
-import { collection, getDocs, query, where, orderBy, Timestamp } from 'firebase/firestore';
+import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
 import type { MusicTrack as MusicTrackType, SocialLink as SocialLinkType, Testimonial as TestimonialType } from "@/lib/admin-types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +17,7 @@ import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { submitContactForm } from "@/app/actions";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FloatingNotes } from "@/components/floating-notes";
 
 import {
     Music,
@@ -37,7 +38,7 @@ import {
     Link as LinkIcon,
 } from "lucide-react";
 import { SoundcloudIcon, Instagram, Youtube } from "@/components/icons";
-import { FloatingNotes } from "@/components/floating-notes";
+
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -236,12 +237,12 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-background text-foreground">
             {/* --- HERO SECTION --- */}
-            <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 pb-20 px-6 overflow-hidden">
+            <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 pb-20 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-background to-black/80"></div>
                 <div className="floating-orbs" ref={orbsRef}></div>
                 <FloatingNotes />
                 
-                <div className="relative z-10 max-w-7xl mx-auto text-center">
+                <div className="relative z-10 max-w-7xl mx-auto text-center px-4 md:px-12">
                     <motion.h1 
                         className="text-4xl md:text-6xl font-bold mb-6 text-white font-headline"
                         initial={{ opacity: 0, y: 20 }}
@@ -345,8 +346,8 @@ export default function Home() {
             <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
             {/* --- FEATURED MUSIC TRACK SECTION --- */}
-            <section id="music-player" className="py-20 px-6 bg-card scroll-mt-20">
-                 <div className="max-w-7xl mx-auto">
+            <section id="music-player" className="py-20 bg-card scroll-mt-20">
+                 <div className="max-w-7xl mx-auto px-4 md:px-12">
                      <div className="text-center mb-12">
                          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Featured Music Track</h2>
                          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Discover a featured track from my collection. Select any song from the portfolio below to play it here.</p>
@@ -434,8 +435,8 @@ export default function Home() {
             <div className="section-divider"><div className="divider-content">♫ ♪ ♫</div></div>
 
             {/* --- MUSIC PORTFOLIO SECTION --- */}
-            <section id="music-portfolio" className="py-20 px-6 bg-background">
-                <div className="max-w-7xl mx-auto">
+            <section id="music-portfolio" className="py-20 bg-background">
+                <div className="max-w-7xl mx-auto px-4 md:px-12">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Music Portfolio</h2>
                         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -523,8 +524,8 @@ export default function Home() {
             <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
             
             {/* --- ABOUT SECTION --- */}
-            <section className="py-20 px-6 bg-card">
-                <div className="max-w-7xl mx-auto">
+            <section className="py-20 bg-card">
+                <div className="max-w-7xl mx-auto px-4 md:px-12">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <motion.div
                             initial={{ opacity: 0, x: -50 }}
@@ -582,8 +583,8 @@ export default function Home() {
             <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
             {/* --- TESTIMONIALS SECTION --- */}
-            <section className="py-20 px-6 bg-background">
-                <div className="max-w-7xl mx-auto">
+            <section className="py-20 bg-background">
+                <div className="max-w-7xl mx-auto px-4 md:px-12">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">What People Say</h2>
                         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -624,9 +625,9 @@ export default function Home() {
             <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
             {/* --- CONTACT SECTION --- */}
-            <section id="contact" className="py-20 px-6">
+            <section id="contact" className="py-20">
                 <motion.div 
-                    className="max-w-7xl mx-auto"
+                    className="max-w-7xl mx-auto px-4 md:px-12"
                     initial="hidden" 
                     whileInView="visible" 
                     viewport={{ once: true, amount: 0.1 }}

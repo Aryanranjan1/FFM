@@ -12,7 +12,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Clock, Calendar, User, Tag, Heart, MessageCircle, Share2, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { motion } from "framer-motion";
 
 async function getBlogPost(id: string): Promise<BlogPost | null> {
   const postRef = doc(db, 'blog', id);
@@ -96,7 +95,7 @@ export default async function BlogPostPage({ params }: { params: { id: string } 
 
   return (
     <div className="bg-background text-foreground py-12 md:py-20">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 md:px-12">
         <article className="max-w-4xl mx-auto">
           {/* Header */}
           <header className="text-center mb-12">

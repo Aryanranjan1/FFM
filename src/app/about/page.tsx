@@ -93,7 +93,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
 
   return (
     <div className="py-12">
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4 md:px-12">
         <div className="text-center mb-12">
           <h1 className="font-headline text-5xl md:text-7xl font-bold text-primary">ABOUT</h1>
           <p className="text-muted-foreground text-lg mt-4 max-w-3xl mx-auto">
@@ -156,7 +156,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
 
       <div className="py-12 bg-card">
         <motion.section
-          className="px-6 container mx-auto"
+          className="container mx-auto px-4 md:px-12"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
@@ -203,9 +203,9 @@ Fahmie's portfolio covers both international collaborations and competitive musi
 
       <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4 md:px-12">
         <motion.section
-            className="py-20 px-6 bg-transparent"
+            className="py-20 bg-transparent"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -243,7 +243,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
       <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
       <div className="py-12 bg-card">
-        <section className="px-6 container mx-auto">
+        <section className="container mx-auto px-4 md:px-12">
             <motion.h2
                 className="text-3xl md:text-4xl font-headline font-bold text-center mb-12"
                 initial={{ opacity: 0, y: 20 }}
@@ -286,8 +286,8 @@ Fahmie's portfolio covers both international collaborations and competitive musi
       
       <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-       <div className="container mx-auto">
-         <section className="py-20 px-6">
+       <div className="container mx-auto px-4 md:px-12">
+         <section className="py-20">
             <div className="container mx-auto text-center">
                 <h2 className="text-3xl font-bold mb-4">Let's Create Something Amazing</h2>
                 <p className="text-muted-foreground mb-8 max-w-md mx-auto">

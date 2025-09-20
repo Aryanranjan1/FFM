@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { motion } from 'framer-motion';
@@ -114,7 +115,7 @@ export default function BlogPage() {
         animate="visible"
         variants={staggerContainer}
       >
-        <div className="container mx-auto">
+        <div className="container mx-auto px-4 md:px-12">
           <motion.h1 className="text-5xl font-headline font-bold text-primary mb-4" variants={fadeInUp}>
             BLOG
           </motion.h1>
@@ -132,7 +133,7 @@ export default function BlogPage() {
         viewport={{ once: true, amount: 0.1 }}
         variants={staggerContainer}
       >
-        <div className="container mx-auto">
+        <div className="container mx-auto px-4 md:px-12">
           <motion.div className="text-center mb-12" variants={fadeInUp}>
             <h2 className="text-3xl font-headline font-bold text-primary mb-4">
               FEATURED ARTICLES
@@ -203,7 +204,7 @@ export default function BlogPage() {
         viewport={{ once: true, amount: 0.1 }}
         variants={staggerContainer}
       >
-        <div className="container mx-auto">
+        <div className="container mx-auto px-4 md:px-12">
             <div className="flex flex-col gap-4 mb-12">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="relative w-full md:max-w-xs">

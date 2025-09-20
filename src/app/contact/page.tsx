@@ -64,7 +64,7 @@ export default function ContactPage() {
   }, [state, toast, form]);
 
   return (
-    <div className="container mx-auto py-20">
+    <div className="container mx-auto py-20 px-4 md:px-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
         <motion.div
             initial={{ opacity: 0, x: -50 }}
