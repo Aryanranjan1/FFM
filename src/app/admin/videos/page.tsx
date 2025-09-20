@@ -50,6 +50,7 @@ export default async function VideosManagementPage() {
                                 <TableHead>Title</TableHead>
                                 <TableHead>Category</TableHead>
                                 <TableHead>Published</TableHead>
+                                <TableHead>Featured</TableHead>
                                 <TableHead>Date</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
@@ -75,6 +76,11 @@ export default async function VideosManagementPage() {
                                             </Badge>
                                         </TableCell>
                                         <TableCell>
+                                             <Badge variant={video.isFeatured ? "default" : "secondary"}>
+                                                {video.isFeatured ? 'Yes' : 'No'}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell>
                                             {video.createdAt ? format(new Date(video.createdAt as string), "PPP") : 'N/A'}
                                         </TableCell>
                                         <TableCell className="text-right">
@@ -89,7 +95,7 @@ export default async function VideosManagementPage() {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
+                                    <TableCell colSpan={7} className="text-center h-24 text-muted-foreground">
                                         No videos found.
                                     </TableCell>
                                 </TableRow>
@@ -101,3 +107,5 @@ export default async function VideosManagementPage() {
         </div>
     );
 }
+
+    

@@ -135,7 +135,6 @@ const videoSchema = z.object({
   videoUrl: z.string().url("Please enter a valid YouTube URL."),
   description: z.string().optional(),
   category: z.string().optional(),
-  tags: z.string().optional(),
   thumbnailUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
   isPublished: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
   isFeatured: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
@@ -344,3 +343,5 @@ export async function getSiteSettings() {
         return { email: 'contact@fahmiefarhan.com', phone: '+60 11-31377753', location: 'Malaysia' }; // Default values
     }
 }
+
+    

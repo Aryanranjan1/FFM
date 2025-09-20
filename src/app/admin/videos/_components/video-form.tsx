@@ -17,7 +17,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 
 const videoSchema = z.object({
@@ -25,7 +24,6 @@ const videoSchema = z.object({
   videoUrl: z.string().url("Please enter a valid YouTube URL."),
   description: z.string().optional(),
   category: z.string().optional(),
-  tags: z.string().optional(),
   thumbnailUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
   isPublished: z.boolean().default(true),
   isFeatured: z.boolean().default(false),
@@ -48,7 +46,6 @@ export function VideoForm({ video }: VideoFormProps) {
       videoUrl: video?.videoUrl || "",
       description: video?.description || "",
       category: video?.category || "",
-      tags: video?.tags || "",
       thumbnailUrl: video?.thumbnailUrl || "",
       isPublished: video?.isPublished ?? true,
       isFeatured: video?.isFeatured || false,
@@ -174,20 +171,7 @@ export function VideoForm({ video }: VideoFormProps) {
                   </FormItem>
                 )}
               />
-               <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description (Optional)</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Video description" {...field} rows={5} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
+              
               <FormField
                 control={form.control}
                 name="category"
@@ -201,20 +185,7 @@ export function VideoForm({ video }: VideoFormProps) {
                   </FormItem>
                 )}
               />
-               <FormField
-                control={form.control}
-                name="tags"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tags (comma-separated, optional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., cinematic, tutorial, live" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
+            
               <FormField
                 control={form.control}
                 name="thumbnailUrl"
@@ -282,3 +253,5 @@ export function VideoForm({ video }: VideoFormProps) {
     </motion.div>
   );
 }
+
+    
