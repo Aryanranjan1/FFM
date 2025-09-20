@@ -150,53 +150,59 @@ Fahmie's portfolio covers both international collaborations and competitive musi
         </div>
       </div>
       
+      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+
       {/* Collaborations Section */}
-      <motion.section
-        className="py-20 px-6 bg-transparent"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={staggerContainer}
-      >
-        <div className="container mx-auto">
-          <motion.div className="text-center mb-12" variants={fadeInUp}>
-            <h2 className="font-headline text-4xl font-bold mb-4">COLLABORATIONS</h2>
-            <p className="text-lg text-muted-foreground">
-              Working with talented artists and ensembles to create extraordinary music
-            </p>
-          </motion.div>
-          <motion.div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto" variants={staggerContainer}>
-            {collaborations.map((collab, index) => (
-              <motion.div key={index} variants={fadeInUp}>
-                <Card className="bg-card border border-primary/20 hover:border-primary/40 transition-all h-full flex flex-col">
-                  <CardHeader>
-                    <div className="flex items-center space-x-4">
-                      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                        <Image src={collab.image} alt={collab.name} width={64} height={64} className="w-full h-full object-cover" />
+      <div className="py-12 bg-card rounded-lg">
+        <motion.section
+          className="px-6"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={staggerContainer}
+        >
+          <div className="container mx-auto">
+            <motion.div className="text-center mb-12" variants={fadeInUp}>
+              <h2 className="font-headline text-4xl font-bold mb-4">COLLABORATIONS</h2>
+              <p className="text-lg text-muted-foreground">
+                Working with talented artists and ensembles to create extraordinary music
+              </p>
+            </motion.div>
+            <motion.div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto" variants={staggerContainer}>
+              {collaborations.map((collab, index) => (
+                <motion.div key={index} variants={fadeInUp}>
+                  <Card className="bg-background/50 border border-primary/20 hover:border-primary/40 transition-all h-full flex flex-col">
+                    <CardHeader>
+                      <div className="flex items-center space-x-4">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                          <Image src={collab.image} alt={collab.name} width={64} height={64} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex-1">
+                          <CardTitle className="text-xl">{collab.name}</CardTitle>
+                          <CardDescription className="text-primary">{collab.role}</CardDescription>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <CardTitle className="text-xl">{collab.name}</CardTitle>
-                        <CardDescription className="text-primary">{collab.role}</CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="flex-grow flex flex-col">
-                    <p className="text-muted-foreground mb-6 leading-relaxed flex-grow">{collab.description}</p>
-                    {collab.link && collab.link !== "#" && (
-                      <Button variant="outline" className="w-full border-primary/30 text-primary hover:bg-primary/10 hover:text-primary" asChild>
-                        <a href={collab.link} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          Visit {collab.name}
-                        </a>
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </motion.section>
+                    </CardHeader>
+                    <CardContent className="flex-grow flex flex-col">
+                      <p className="text-muted-foreground mb-6 leading-relaxed flex-grow">{collab.description}</p>
+                      {collab.link && collab.link !== "#" && (
+                        <Button variant="outline" className="w-full border-primary/30 text-primary hover:bg-primary/10 hover:text-primary" asChild>
+                          <a href={collab.link} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            Visit {collab.name}
+                          </a>
+                        </Button>
+                      )}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </motion.section>
+      </div>
+
+      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
       {/* Achievements Section */}
       <motion.section
@@ -234,48 +240,54 @@ Fahmie's portfolio covers both international collaborations and competitive musi
           </div>
       </motion.section>
 
+      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+
       {/* Testimonials Section */}
-      <section className="py-20 px-6 bg-card">
-          <div className="container mx-auto">
-              <motion.h2
-                  className="text-3xl md:text-4xl font-headline font-bold text-center mb-12"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
-              >
-                  What My Clients Say
-              </motion.h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {bio.pressReleases.slice(0, 3).map((testimonial, index) => (
-                      <motion.div
-                          key={index}
-                          initial={{ opacity: 0, y: 30 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true, amount: 0.3 }}
-                          transition={{ duration: 0.6, delay: index * 0.1 }}
-                      >
-                          <Card className="bg-background/50 border-border/50 h-full flex flex-col p-6">
-                              <div className="flex-grow mb-4">
-                                  <p className="text-muted-foreground italic">"{testimonial.title}"</p>
-                              </div>
-                              <div className="flex items-center">
-                                  <div className="flex-shrink-0">
-                                      <div className="flex">
-                                          {[...Array(5)].map((_, i) => (
-                                              <Star key={i} className="w-5 h-5 text-primary fill-current" />
-                                          ))}
-                                      </div>
-                                      <p className="font-bold mt-2">{testimonial.publication}</p>
-                                      <p className="text-sm text-muted-foreground">{new Date(testimonial.date).toLocaleDateString()}</p>
-                                  </div>
-                              </div>
-                          </Card>
-                      </motion.div>
-                  ))}
-              </div>
-          </div>
-      </section>
+      <div className="py-12 bg-card rounded-lg">
+        <section className="px-6">
+            <div className="container mx-auto">
+                <motion.h2
+                    className="text-3xl md:text-4xl font-headline font-bold text-center mb-12"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                >
+                    What My Clients Say
+                </motion.h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                      {bio.pressReleases.slice(0, 3).map((testimonial, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.3 }}
+                            transition={{ duration: 0.6, delay: index * 0.1 }}
+                        >
+                            <Card className="bg-background/50 border-border/50 h-full flex flex-col p-6">
+                                <div className="flex-grow mb-4">
+                                    <p className="text-muted-foreground italic">"{testimonial.title}"</p>
+                                </div>
+                                <div className="flex items-center">
+                                    <div className="flex-shrink-0">
+                                        <div className="flex">
+                                            {[...Array(5)].map((_, i) => (
+                                                <Star key={i} className="w-5 h-5 text-primary fill-current" />
+                                            ))}
+                                        </div>
+                                        <p className="font-bold mt-2">{testimonial.publication}</p>
+                                        <p className="text-sm text-muted-foreground">{new Date(testimonial.date).toLocaleDateString()}</p>
+                                    </div>
+                                </div>
+                            </Card>
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+        </section>
+      </div>
+      
+       <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
        {/* CTA */}
        <section className="py-20 px-6">
