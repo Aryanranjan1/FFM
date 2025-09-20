@@ -1,13 +1,13 @@
 
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { addVideo, type AddVideoState, fetchYouTubeDetails } from "@/app/actions";
+import { addVideo, type VideoFormValues, fetchYouTubeDetails } from "@/app/actions";
 
 import { motion } from 'framer-motion';
 import { ArrowLeft, Loader2, Youtube } from 'lucide-react';
@@ -29,17 +29,10 @@ const videoSchema = z.object({
   isFeatured: z.boolean().default(false),
 });
 
-type VideoFormValues = z.infer<typeof videoSchema>;
-
-const initialState: AddVideoState = {
-  message: null,
-  errors: {},
-};
-
 export default function NewVideoPage() {
-  const [state, formAction] = useActionState(addVideo, initialState);
   const router = useRouter();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
   const form = useForm<VideoFormValues>({
@@ -94,23 +87,25 @@ export default function NewVideoPage() {
     setIsFetching(false);
   };
 
-  useEffect(() => {
-    if (state.message) {
-      if (state.errors && Object.keys(state.errors).length > 0) {
-        toast({
-          title: "Error",
-          description: state.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Success",
-          description: state.message,
-        });
-        router.push('/admin/videos');
-      }
+  const onSubmit = async (values: VideoFormValues) => {
+    setIsSubmitting(true);
+    const result = await addVideo(values);
+    setIsSubmitting(false);
+
+    if (result.success) {
+      toast({
+        title: "Success",
+        description: result.message,
+      });
+      router.push('/admin/videos');
+    } else {
+      toast({
+        title: "Error",
+        description: result.message,
+        variant: "destructive",
+      });
     }
-  }, [state, toast, router]);
+  };
 
   return (
     <motion.div
@@ -135,7 +130,7 @@ export default function NewVideoPage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form action={formAction} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
                 name="videoUrl"
@@ -153,7 +148,7 @@ export default function NewVideoPage() {
                            </Button>
                         )}
                     </div>
-                    <FormMessage>{state.errors?.videoUrl?.[0]}</FormMessage>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -166,7 +161,7 @@ export default function NewVideoPage() {
                     <FormControl>
                       <Input placeholder="Enter video title" {...field} />
                     </FormControl>
-                    <FormMessage>{state.errors?.title?.[0]}</FormMessage>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -179,7 +174,7 @@ export default function NewVideoPage() {
                     <FormControl>
                       <Textarea placeholder="Video description" {...field} rows={5} />
                     </FormControl>
-                    <FormMessage>{state.errors?.description?.[0]}</FormMessage>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -192,7 +187,7 @@ export default function NewVideoPage() {
                     <FormControl>
                       <Input placeholder="e.g., cinematic, tutorial, live" {...field} />
                     </FormControl>
-                    <FormMessage>{state.errors?.tags?.[0]}</FormMessage>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -206,7 +201,7 @@ export default function NewVideoPage() {
                     <FormControl>
                       <Input placeholder="https://example.com/thumbnail.jpg" {...field} />
                     </FormControl>
-                    <FormMessage>{state.errors?.thumbnailUrl?.[0]}</FormMessage>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -255,7 +250,10 @@ export default function NewVideoPage() {
                 )}
               />
 
-              <Button type="submit" className="btn-gold">Create Video</Button>
+              <Button type="submit" disabled={isSubmitting} className="btn-gold">
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Create Video
+              </Button>
             </form>
           </Form>
         </CardContent>

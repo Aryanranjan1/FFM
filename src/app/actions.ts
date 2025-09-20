@@ -61,65 +61,29 @@ export async function submitContactForm(prevState: any, formData: FormData) {
 const musicTrackSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters."),
   musicUrl: z.string().url("Please enter a valid URL."),
-  coverImageUrl: z.string().url("Please enter a valid URL for the cover image.").optional().or(z.literal('')),
+  coverImageUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
   isFeatured: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
   isPublished: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
 });
 
-export type AddMusicTrackState = {
-  errors?: {
-    title?: string[];
-    musicUrl?: string[];
-    coverImageUrl?: string[];
-    isFeatured?: string[];
-    isPublished?: string[];
-    _form?: string[];
-  };
-  message: string | null;
-};
+export type MusicTrackFormValues = z.infer<typeof musicTrackSchema>;
 
-export async function addMusicTrack(prevState: AddMusicTrackState, formData: FormData): Promise<AddMusicTrackState> {
-    const validatedFields = musicTrackSchema.safeParse({
-        title: formData.get('title'),
-        musicUrl: formData.get('musicUrl'),
-        coverImageUrl: formData.get('coverImageUrl'),
-        isFeatured: formData.get('isFeatured'),
-        isPublished: formData.get('isPublished'),
-    });
-    
-    if (!validatedFields.success) {
-        return {
-          errors: validatedFields.error.flatten().fieldErrors,
-          message: 'Validation failed. Please check your input.',
-        };
-    }
-
+export async function addMusicTrack(values: MusicTrackFormValues) {
     try {
         await addDoc(collection(db, 'music'), {
-            ...validatedFields.data,
+            ...values,
             createdAt: serverTimestamp(),
         });
+        
+        revalidatePath('/music');
+        revalidatePath('/admin/music');
+        
+        return { success: true, message: "Successfully added new music track." };
 
     } catch (e) {
         console.error(e);
-        return {
-            errors: { _form: ["Something went wrong. Please try again."] },
-            message: "Failed to add music track.",
-        };
+        return { success: false, message: "Failed to add music track." };
     }
-
-    try {
-        revalidatePath('/music');
-        revalidatePath('/admin/music');
-    } catch (error) {
-        console.error("Failed to revalidate paths:", error);
-    }
-    
-
-    return {
-        message: "Successfully added new music track.",
-        errors: {},
-    };
 }
 
 
@@ -144,57 +108,21 @@ const videoSchema = z.object({
   isFeatured: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
 });
 
-export type AddVideoState = {
-  errors?: {
-    title?: string[];
-    videoUrl?: string[];
-    description?: string[];
-    tags?: string[];
-    thumbnailUrl?: string[];
-    isPublished?: string[];
-    isFeatured?: string[];
-    _form?: string[];
-  };
-  message: string | null;
-};
+export type VideoFormValues = z.infer<typeof videoSchema>;
 
-export async function addVideo(prevState: AddVideoState, formData: FormData): Promise<AddVideoState> {
-  const validatedFields = videoSchema.safeParse({
-    title: formData.get('title'),
-    videoUrl: formData.get('videoUrl'),
-    description: formData.get('description'),
-    tags: formData.get('tags'),
-    thumbnailUrl: formData.get('thumbnailUrl'),
-    isPublished: formData.get('isPublished'),
-    isFeatured: formData.get('isFeatured'),
-  });
-
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Validation failed. Please check your input.',
-    };
-  }
-
+export async function addVideo(values: VideoFormValues) {
   try {
     await addDoc(collection(db, 'videos'), {
-      ...validatedFields.data,
+      ...values,
       createdAt: serverTimestamp(),
     });
-  } catch (e) {
-    console.error(e);
-    return {
-      errors: { _form: ["Something went wrong. Please try again."] },
-      message: "Failed to add video.",
-    };
-  }
 
-  try {
     revalidatePath('/videos');
     revalidatePath('/admin/videos');
-  } catch (error) {
-    console.error("Failed to revalidate paths:", error);
+    
+    return { success: true, message: "Successfully added new video." };
+  } catch (e) {
+    console.error(e);
+    return { success: false, message: "Failed to add video." };
   }
-
-  return { message: "Successfully added new video.", errors: {} };
 }

@@ -1,19 +1,22 @@
+
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
-import { albums, bio } from '@/lib/data';
 import type { Album, Track, Collaboration, Achievement } from '@/lib/types';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useMusicPlayer } from '@/context/music-player-context';
 import { cn } from '@/lib/utils';
+import { db } from "@/lib/firebase";
+import { collection, getDocs, orderBy, query, Timestamp } from "firebase/firestore";
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink, Heart, Share2 } from 'lucide-react';
+import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink, Heart, Share2, Loader2 } from 'lucide-react';
+import { bio } from '@/lib/data';
+
 
 const musicCategories = ['All', 'Cinematic', 'Orchestral', 'Gamelan', 'Ambient', 'Electronic'];
 
@@ -75,33 +78,45 @@ const achievements: Achievement[] = [
 
 export default function MusicPage() {
     const { play } = useMusicPlayer();
-    const [latestAlbum, ...otherAlbums] = [...albums].sort((a, b) => b.releaseYear - a.releaseYear);
-    const heroImage = PlaceHolderImages.find(p => p.id === 'music-hero');
     const [filter, setFilter] = useState('All');
+    const [tracks, setTracks] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchTracks = async () => {
+            setLoading(true);
+            const musicCol = collection(db, 'music');
+            const q = query(musicCol, orderBy("createdAt", "desc"));
+            const musicSnapshot = await getDocs(q);
+            const musicList = musicSnapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    ...data,
+                    createdAt: data.createdAt.toDate(),
+                };
+            });
+            setTracks(musicList);
+            setLoading(false);
+        };
+
+        fetchTracks();
+    }, []);
     
-    const getCategoryForAlbum = (albumId: string) => {
-        const cats = ['Cinematic', 'Orchestral', 'Gamelan', 'Ambient', 'Electronic'];
-        let hash = 0;
-        for (let i = 0; i < albumId.length; i++) {
-            hash = albumId.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        return cats[Math.abs(hash) % cats.length];
-    }
-    
-    const allAlbumsWithCats = albums.map(album => ({
-        ...album,
-        category: getCategoryForAlbum(album.id),
-    }));
-
-    const filteredAlbums = filter === 'All' ? allAlbumsWithCats : allAlbumsWithCats.filter(p => p.category === filter);
+    const filteredTracks = filter === 'All' ? tracks : tracks.filter(p => p.category === filter);
 
 
-    const handlePlayAlbum = (album: Album) => {
-        play(album.tracks[0], album.tracks);
-    };
-
-    const handlePlayTrack = (track: Track, album: Album) => {
-        play(track, album.tracks);
+    const handlePlayTrack = (track: any) => {
+        // This is a simplified play handler. A real implementation would
+        // need to manage a playlist and the audio source properly.
+        const audioTrack: Track = {
+            id: track.id,
+            title: track.title,
+            artist: 'FFM', // Assuming artist is always FFM
+            duration: '0:00', // Placeholder
+            audioSrc: track.musicUrl,
+        };
+        play(audioTrack, [audioTrack]);
     };
 
     const fadeInUp: Variants = {
@@ -123,15 +138,13 @@ export default function MusicPage() {
                 animate="visible"
                 variants={staggerContainer}
             >
-                {heroImage && (
-                    <Image
-                        src={heroImage.imageUrl}
-                        alt={heroImage.description}
-                        fill
-                        className="object-cover opacity-20"
-                        data-ai-hint={heroImage.imageHint}
-                    />
-                )}
+                <Image
+                    src="https://picsum.photos/seed/music-hero/1920/1080"
+                    alt="Music hero background"
+                    fill
+                    className="object-cover opacity-20"
+                    data-ai-hint="sound waves"
+                />
                 <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/50 to-background z-0"></div>
                 <div className="relative z-10">
                     <motion.h1 className="text-5xl md:text-7xl font-headline font-bold" variants={fadeInUp}>Music</motion.h1>
@@ -168,54 +181,56 @@ export default function MusicPage() {
                         ))}
                     </motion.div>
 
-                    <motion.div 
-                        layout 
-                        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8"
-                    >
-                        {filteredAlbums.map((album) => {
-                            const coverArt = PlaceHolderImages.find(p => p.id === album.coverArtId);
-                            return (
-                                <motion.div layout key={album.id} variants={fadeInUp}>
-                                    <Card className="overflow-hidden group bg-card border-border/50 h-full flex flex-col">
-                                        {coverArt && (
+                    {loading ? (
+                         <div className="flex justify-center items-center h-64">
+                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        </div>
+                    ) : (
+                        <motion.div 
+                            layout 
+                            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8"
+                        >
+                            {filteredTracks.map((track) => {
+                                return (
+                                    <motion.div layout key={track.id} variants={fadeInUp}>
+                                        <Card className="overflow-hidden group bg-card border-border/50 h-full flex flex-col">
                                             <div className="overflow-hidden relative">
                                                 <Image
-                                                    src={coverArt.imageUrl}
-                                                    alt={`Cover for ${album.title}`}
+                                                    src={track.coverImageUrl || "https://placehold.co/600x400"}
+                                                    alt={`Cover for ${track.title}`}
                                                     width={600}
                                                     height={400}
                                                     className="object-cover w-full h-auto aspect-[16/9] group-hover:scale-105 transition-transform duration-300"
-                                                    data-ai-hint={coverArt.imageHint}
                                                 />
                                                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <Button size="icon" className="h-12 w-12 rounded-full" onClick={() => handlePlayAlbum(album)}>
+                                                    <Button size="icon" className="h-12 w-12 rounded-full" onClick={() => handlePlayTrack(track)}>
                                                         <PlayCircle className="h-6 w-6" />
                                                     </Button>
                                                 </div>
                                             </div>
-                                        )}
-                                        <CardContent className="p-4 flex-grow flex flex-col">
-                                            <h3 className="font-bold text-lg truncate">{album.title}</h3>
-                                            <p className="text-sm text-primary mb-2">{album.category}</p>
-                                            <div className="flex justify-start items-center gap-2 text-muted-foreground mt-auto">
-                                                <Button variant="ghost" size="icon" className="w-8 h-8">
-                                                    <Heart className="h-4 w-4" />
-                                                </Button>
-                                                <Button variant="ghost" size="icon" className="w-8 h-8">
-                                                    <Share2 className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                </motion.div>
-                            );
-                        })}
-                    </motion.div>
+                                            <CardContent className="p-4 flex-grow flex flex-col">
+                                                <h3 className="font-bold text-lg truncate">{track.title}</h3>
+                                                <p className="text-sm text-primary mb-2">{track.category || 'Music'}</p>
+                                                <div className="flex justify-start items-center gap-2 text-muted-foreground mt-auto">
+                                                    <Button variant="ghost" size="icon" className="w-8 h-8">
+                                                        <Heart className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button variant="ghost" size="icon" className="w-8 h-8">
+                                                        <Share2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    </motion.div>
+                                );
+                            })}
+                        </motion.div>
+                    )}
                 </div>
             </motion.section>
 
             {/* Latest Release Section */}
-            {latestAlbum && (
+            {tracks.length > 0 && (
                 <motion.section
                     className="py-20 px-6 bg-card"
                     initial="hidden"
@@ -228,47 +243,28 @@ export default function MusicPage() {
                             <Card className="overflow-hidden bg-transparent border-0 md:border md:bg-card md:border-border/50">
                                 <CardContent className="p-0 md:p-6 grid md:grid-cols-2 gap-8 items-center">
                                     <div className="relative group aspect-square md:aspect-auto">
-                                        {(() => {
-                                            const coverArt = PlaceHolderImages.find(p => p.id === latestAlbum.coverArtId);
-                                            return coverArt && (
-                                                <Image
-                                                    src={coverArt.imageUrl}
-                                                    alt={`Cover for ${latestAlbum.title}`}
-                                                    width={600}
-                                                    height={600}
-                                                    className="w-full h-full object-cover md:rounded-lg"
-                                                    data-ai-hint={coverArt.imageHint}
-                                                />
-                                            );
-                                        })()}
+                                        <Image
+                                            src={tracks[0].coverImageUrl || "https://placehold.co/600x600"}
+                                            alt={`Cover for ${tracks[0].title}`}
+                                            width={600}
+                                            height={600}
+                                            className="w-full h-full object-cover md:rounded-lg"
+                                        />
                                         <div className="absolute inset-0 bg-black/20 md:rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Button size="icon" className="h-20 w-20 rounded-full" onClick={() => handlePlayAlbum(latestAlbum)}>
+                                            <Button size="icon" className="h-20 w-20 rounded-full" onClick={() => handlePlayTrack(tracks[0])}>
                                                 <PlayCircle className="h-10 w-10" />
                                             </Button>
                                         </div>
                                     </div>
                                     <div className="p-6 md:p-0">
                                         <Badge variant="default" className="mb-4">Latest Release</Badge>
-                                        <h3 className="font-headline text-4xl font-bold">{latestAlbum.title}</h3>
-                                        <p className="text-muted-foreground mt-2 text-lg">{latestAlbum.releaseYear}</p>
+                                        <h3 className="font-headline text-4xl font-bold">{tracks[0].title}</h3>
+                                        <p className="text-muted-foreground mt-2 text-lg">{new Date(tracks[0].createdAt).getFullYear()}</p>
                                         <p className="mt-4 text-muted-foreground leading-relaxed">
-                                            Celestial Echoes takes you on a journey through starlit soundscapes and cosmic ambiances. A blend of electronic waves and orchestral arrangements perfect for storytelling.
+                                            {tracks[0].description || `Listen to the latest track, ${tracks[0].title}.`}
                                         </p>
                                         <div className="mt-6">
-                                            <h4 className="font-bold mb-3">Tracklist</h4>
-                                            <ul className="space-y-3">
-                                                {latestAlbum.tracks.map((track) => (
-                                                    <li key={track.id} className="flex items-center justify-between hover:bg-accent/50 p-2 rounded-md transition-colors">
-                                                        <div className="flex items-center gap-4">
-                                                            <Music className="h-5 w-5 text-primary" />
-                                                            <button onClick={() => handlePlayTrack(track, latestAlbum)} className="text-left hover:text-primary transition-colors">
-                                                                <span className="font-medium">{track.title}</span>
-                                                            </button>
-                                                        </div>
-                                                        <span className="text-sm text-muted-foreground">{track.duration}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
+                                            <Button onClick={() => handlePlayTrack(tracks[0])}>Play Now</Button>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -422,5 +418,3 @@ export default function MusicPage() {
         </div>
     );
 }
-
-    

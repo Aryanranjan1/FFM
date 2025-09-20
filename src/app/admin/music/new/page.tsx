@@ -1,13 +1,13 @@
 
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { addMusicTrack, type AddMusicTrackState, fetchYouTubeDetails } from "@/app/actions";
+import { addMusicTrack, type MusicTrackFormValues, fetchYouTubeDetails } from "@/app/actions";
 
 import { motion } from 'framer-motion';
 import { ArrowLeft, Loader2, Youtube } from 'lucide-react';
@@ -26,17 +26,10 @@ const musicTrackSchema = z.object({
   isPublished: z.boolean().default(false),
 });
 
-type MusicTrackFormValues = z.infer<typeof musicTrackSchema>;
-
-const initialState: AddMusicTrackState = {
-  message: null,
-  errors: {},
-};
-
 export default function NewMusicTrackPage() {
-  const [state, formAction] = useActionState(addMusicTrack, initialState);
   const router = useRouter();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
   const form = useForm<MusicTrackFormValues>({
@@ -88,24 +81,25 @@ export default function NewMusicTrackPage() {
     setIsFetching(false);
   };
 
+  const onSubmit = async (values: MusicTrackFormValues) => {
+    setIsSubmitting(true);
+    const result = await addMusicTrack(values);
+    setIsSubmitting(false);
 
-  useEffect(() => {
-    if (state.message) {
-      if (state.errors && Object.keys(state.errors).length > 0) {
-        toast({
-          title: "Error",
-          description: state.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Success",
-          description: state.message,
-        });
-        router.push('/admin/music');
-      }
+    if (result.success) {
+      toast({
+        title: "Success",
+        description: result.message,
+      });
+      router.push('/admin/music');
+    } else {
+      toast({
+        title: "Error",
+        description: result.message,
+        variant: "destructive",
+      });
     }
-  }, [state, toast, router]);
+  };
 
   return (
     <motion.div
@@ -130,7 +124,7 @@ export default function NewMusicTrackPage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form action={formAction} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                <FormField
                 control={form.control}
                 name="musicUrl"
@@ -148,7 +142,7 @@ export default function NewMusicTrackPage() {
                            </Button>
                         )}
                     </div>
-                     <FormMessage>{state.errors?.musicUrl?.[0]}</FormMessage>
+                     <FormMessage />
                   </FormItem>
                 )}
               />
@@ -161,7 +155,7 @@ export default function NewMusicTrackPage() {
                     <FormControl>
                       <Input placeholder="Enter track title" {...field} />
                     </FormControl>
-                    <FormMessage>{state.errors?.title?.[0]}</FormMessage>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -175,7 +169,7 @@ export default function NewMusicTrackPage() {
                     <FormControl>
                       <Input placeholder="https://example.com/cover.jpg" {...field} />
                     </FormControl>
-                    <FormMessage>{state.errors?.coverImageUrl?.[0]}</FormMessage>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -224,7 +218,10 @@ export default function NewMusicTrackPage() {
                 )}
               />
               
-              <Button type="submit" className="btn-gold">Create Track</Button>
+              <Button type="submit" disabled={isSubmitting} className="btn-gold">
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Create Track
+              </Button>
             </form>
           </Form>
         </CardContent>
