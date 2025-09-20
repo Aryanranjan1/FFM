@@ -94,7 +94,6 @@ export default function BlogPage() {
     let sorted = [...filtered];
     switch (sortBy) {
         case 'popular':
-            // Note: popularity is random for now. In a real app, this would be based on views/likes.
             sorted.sort(() => Math.random() - 0.5);
             break;
         case 'title':
@@ -128,7 +127,7 @@ export default function BlogPage() {
 
   useEffect(() => {
     const el = scrollRef.current;
-    checkScrollability(); // Check on initial render
+    checkScrollability(); 
     if (el) {
       el.addEventListener("scroll", checkScrollability);
       window.addEventListener("resize", checkScrollability);
@@ -138,7 +137,7 @@ export default function BlogPage() {
         window.removeEventListener("resize", checkScrollability);
       };
     }
-  }, [checkScrollability, loading, posts]); // Re-check when posts load
+  }, [checkScrollability, loading, posts]); 
 
   const handleScroll = (direction: "left" | "right") => {
     const el = scrollRef.current;
@@ -428,7 +427,7 @@ export default function BlogPage() {
                     <p>No articles found. Check back later!</p>
                 </div>
             )
-          )}
+          }
         </div>
       </motion.section>
     </div>
