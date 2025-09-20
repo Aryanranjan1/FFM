@@ -85,7 +85,7 @@ export default function MusicPage() {
         const fetchTracks = async () => {
             setLoading(true);
             const musicCol = collection(db, 'music');
-            const q = query(musicCol, where("isPublished", "==", true), orderBy("createdAt", "desc"));
+            const q = query(musicCol, orderBy("createdAt", "desc"));
             const musicSnapshot = await getDocs(q);
             const musicList = musicSnapshot.docs.map(doc => {
                 const data = doc.data();
@@ -94,7 +94,7 @@ export default function MusicPage() {
                     ...data,
                     createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
                 } as MusicTrack;
-            });
+            }).filter(track => track.isPublished);
             setTracks(musicList);
             setLoading(false);
         };
