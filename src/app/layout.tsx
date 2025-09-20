@@ -1,7 +1,6 @@
 
 "use client";
 
-import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Header } from '@/components/layout/header';
@@ -12,6 +11,20 @@ import MusicPlayer from '@/components/music-player';
 import { PageTransition } from '@/components/page-transition';
 import { Particles } from '@/components/particles';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+
+function ClientOnly({ children }: { children: React.ReactNode }) {
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+  if (!hasMounted) {
+    return null;
+  }
+  return <>{children}</>;
+}
+
 
 export default function RootLayout({
   children,
@@ -33,7 +46,9 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Alegreya&family=Belleza&display=swap" rel="stylesheet" />
       </head>
       <body className={cn('font-body antialiased min-h-screen flex flex-col', { 'bg-background': isAdminPage })}>
-        <Particles />
+        <ClientOnly>
+          <Particles />
+        </ClientOnly>
         <MusicPlayerProvider>
           {isAdminPage ? (
             <div className="flex-1">{children}</div>
