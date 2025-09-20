@@ -60,6 +60,16 @@ export async function submitContactForm(prevState: any, formData: FormData) {
   }
 }
 
+export async function deleteContactSubmission(id: string) {
+  try {
+    await deleteDoc(doc(db, 'contacts', id));
+    revalidatePath('/admin/contacts');
+    return { success: true, message: "Contact submission deleted successfully." };
+  } catch (e) {
+    return { success: false, message: "Failed to delete contact submission." };
+  }
+}
+
 export async function fetchYouTubeDetails(videoUrl: string): Promise<{ success: boolean, data?: FetchYouTubeDetailsOutput, error?: string }> {
   try {
     const result = await fetchYouTubeDetailsFlow({ videoUrl });
