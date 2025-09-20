@@ -1,27 +1,45 @@
 
 "use client";
 
-import { Button } from '@/components/ui/button';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-import Image from 'next/image';
-import Link from 'next/link';
-import { ArrowRight, Award, Play, Star, Music, Heart, Share2, PlayCircle, Mail, Phone, MapPin, Diamond, Youtube, Instagram, Headphones, Send, Newspaper, Link as LinkIcon, Music2 as SoundcloudIconLucide, Pause } from 'lucide-react';
-import { useRef, useEffect, useState, useActionState } from 'react';
-import { motion } from 'framer-motion';
-import { useMusicPlayer } from '@/context/music-player-context';
-import type { Album, Track, Project } from '@/lib/types';
-import { albums, bio, projects } from '@/lib/data';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { SoundcloudIcon } from '@/components/icons';
+import { useState, useEffect, useRef, useActionState } from "react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { db } from "@/lib/firebase";
+import { collection, getDocs, query, where, orderBy, Timestamp } from 'firebase/firestore';
+import type { MusicTrack as MusicTrackType, SocialLink as SocialLinkType, Testimonial as TestimonialType } from "@/lib/admin-types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { submitContactForm } from "@/app/actions";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { FloatingNotes } from '@/components/floating-notes';
+
+import Image from "next/image";
+import {
+    Music,
+    Mail,
+    Youtube,
+    Instagram,
+    User,
+    Phone,
+    MapPin,
+    Send,
+    Play,
+    Pause,
+    Volume2,
+    VolumeX,
+    Heart,
+    Share2,
+    Award,
+    Star,
+    Headphones,
+    Link as LinkIcon,
+} from "lucide-react";
+import { SoundcloudIcon } from "@/components/icons";
+import { FloatingNotes } from "@/components/floating-notes";
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -37,300 +55,487 @@ const initialState = {
   errors: {},
 };
 
+const iconComponents: { [key: string]: React.FC<any> } = {
+    Music,
+    User,
+    Award,
+    Headphones,
+    Youtube,
+    Instagram,
+    Soundcloud: SoundcloudIcon,
+    Default: LinkIcon,
+};
+
 
 export default function Home() {
-  const orbsRef = useRef<HTMLDivElement>(null);
-  const { play, pause, currentTrack, isPlaying } = useMusicPlayer();
-  const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
-  const aboutImage = PlaceHolderImages.find(p => p.id === 'about-artist');
+    const orbsRef = useRef<HTMLDivElement>(null);
+    
+    // Data state
+    const [socialLinks, setSocialLinks] = useState<SocialLinkType[]>([]);
+    const [testimonials, setTestimonials] = useState<TestimonialType[]>([]);
+    const [allMusicTracks, setAllMusicTracks] = useState<MusicTrackType[]>([]);
+    
+    // UI State
+    const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
+    const [activeTab, setActiveTab] = useState('All');
+    const [categories, setCategories] = useState<string[]>(['All']);
 
-  const [state, formAction] = useActionState(submitContactForm, initialState);
-  const { toast } = useToast();
+    // Audio Player State
+    const [featuredMusicTrack, setFeaturedMusicTrack] = useState<MusicTrackType | null>(null);
+    const audioRef = useRef<HTMLAudioElement>(null);
+    const [audioPlaying, setAudioPlaying] = useState(false);
+    const [audioProgress, setAudioProgress] = useState(0);
+    const [audioDuration, setAudioDuration] = useState(0);
+    const [isMuted, setIsMuted] = useState(false);
+    const [likedTracks, setLikedTracks] = useState<string[]>([]);
 
-  const form = useForm<ContactFormValues>({
-    resolver: zodResolver(contactFormSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      message: "",
-      subject: "",
-    },
-  });
+    const [state, formAction] = useActionState(submitContactForm, initialState);
+    const { toast } = useToast();
 
-  useEffect(() => {
-    if (state.message) {
-      if (Object.keys(state.errors).length > 0) {
-        toast({
-          title: "Error",
-          description: state.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Success",
-          description: state.message,
-        });
-        form.reset();
-      }
-    }
-  }, [state, toast, form]);
+    const form = useForm<ContactFormValues>({
+        resolver: zodResolver(contactFormSchema),
+        defaultValues: {
+            name: "",
+            email: "",
+            message: "",
+            subject: "",
+        },
+    });
 
-  useEffect(() => {
-    if (orbsRef.current) {
-      orbsRef.current.innerHTML = '';
-      for (let i = 0; i < 8; i++) {
-        const orb = document.createElement("div");
-        orb.className = "orb";
-        const size = Math.random() * 100 + 50;
-        orb.style.width = `${size}px`;
-        orb.style.height = `${size}px`;
-        orb.style.left = `${Math.random() * 90}%`;
-        orb.style.top = `${Math.random() * 90}%`;
-        orb.style.animationDuration = `${Math.random() * 15 + 10}s`;
-        orb.style.animationDelay = `${Math.random() * 5}s`;
-        orbsRef.current.appendChild(orb);
-      }
-    }
-  }, []);
-
-  const handlePlayAlbum = (album: Album) => {
-    play(album.tracks[0], album.tracks);
-  };
-  
-  const playTrackFromPortfolio = (track: Track, album: Album) => {
-    play(track, album.tracks);
-     const player = document.getElementById('music-player');
-    if (player) {
-      player.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  };
+    useEffect(() => {
+        if (state.message) {
+            if (Object.keys(state.errors).length > 0) {
+                toast({
+                title: "Error",
+                description: state.message,
+                variant: "destructive",
+                });
+            } else {
+                toast({
+                title: "Success",
+                description: state.message,
+                });
+                form.reset();
+            }
+        }
+    }, [state, toast, form]);
 
 
-  return (
-    <>
-      <div className="relative min-h-screen flex items-center justify-center pt-20 pb-20 px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-background to-black/80"></div>
-        <div className="floating-orbs" ref={orbsRef}></div>
-        <FloatingNotes />
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Fetch Social Links
+                const socialLinksQuery = query(collection(db, "social-links"), orderBy("createdAt", "desc"));
+                const socialLinksSnapshot = await getDocs(socialLinksQuery);
+                const socialLinksData = socialLinksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as SocialLinkType[];
+                setSocialLinks(socialLinksData);
 
-        <div className="relative z-10 text-center px-4">
-          <motion.h1 
-            className="text-4xl md:text-6xl font-bold mb-6 text-white"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <span className="text-primary">Fahmie Farhan</span>
-          </motion.h1>
-          <motion.h2 
-              className="text-2xl md:text-4xl font-bold mb-6 text-white"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-          >
-              Epic Orchestral &amp; Malay Gamelan Composer
-          </motion.h2>
-          <motion.p 
-            className="text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            Crafting cinematic soundscapes that blend epic orchestral arrangements with the rich cultural heritage of Malay gamelan music. <span className="text-primary">Experience the fusion of tradition and innovation.</span>
-          </motion.p>
-          <motion.div
-            className="flex justify-center items-center space-x-6 mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
-              <Link href="#" className="group flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-                  <div className="w-16 h-16 rounded-full border-2 border-primary/30 flex items-center justify-center bg-card/50 hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/20">
-                    <Youtube className="w-8 h-8" />
-                  </div>
-                  <span className="text-xs group-hover:text-primary transition-colors">YouTube</span>
-              </Link>
-               <Link href="#" className="group flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-                  <div className="w-16 h-16 rounded-full border-2 border-primary/30 flex items-center justify-center bg-card/50 hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/20">
-                    <SoundcloudIcon className="w-8 h-8" />
-                  </div>
-                  <span className="text-xs group-hover:text-primary transition-colors">SoundCloud</span>
-              </Link>
-               <Link href="#" className="group flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-                  <div className="w-16 h-16 rounded-full border-2 border-primary/30 flex items-center justify-center bg-card/50 hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/20">
-                    <Instagram className="w-8 h-8" />
-                  </div>
-                  <span className="text-xs group-hover:text-primary transition-colors">Instagram</span>
-              </Link>
-          </motion.div>
-          <motion.div 
-            className="flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-muted-foreground mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-          >
-            <a href="mailto:contact@fahmiefarhan.com" className="flex items-center gap-2 hover:text-primary"><Mail className="w-4 h-4 text-primary" /> contact@fahmiefarhan.com</a>
-            <span className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary" /> +60 11-31377753</span>
-            <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /> Malaysia</span>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.0 }}
-            className="flex justify-center space-x-4"
-          >
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button asChild size="lg" className="btn-gold px-6 py-3 rounded-md flex items-center">
-                  <Link href="#music-portfolio">
-                    <Diamond className="w-5 h-5 mr-2" />
-                    Explore Works
-                  </Link>
-                </Button>
-            </motion.div>
-             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button variant="outline" size="lg" asChild className="btn-outline-gold px-6 py-3 rounded-md flex items-center border-2">
-                    <Link href="#contact">
-                      <Send className="w-5 h-5 mr-2" />
-                      Contact Me
-                    </Link>
-                </Button>
-            </motion.div>
-          </motion.div>
-        </div>
-      </div>
-      
-      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+                // Fetch Testimonials
+                const testimonialsQuery = query(collection(db, "testimonials"), orderBy("createdAt", "desc"));
+                const testimonialsSnapshot = await getDocs(testimonialsQuery);
+                const testimonialsData = testimonialsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as TestimonialType[];
+                setTestimonials(testimonialsData);
+                
+                // Fetch Music Tracks
+                const musicTracksQuery = query(collection(db, "music"), where("isPublished", "==", true), orderBy("createdAt", "desc"));
+                const musicTracksSnapshot = await getDocs(musicTracksQuery);
+                const musicTracksData = musicTracksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MusicTrackType));
+                setAllMusicTracks(musicTracksData);
 
-       <section id="music-player" className="py-20 px-6 bg-card scroll-mt-20">
-           <div className="max-w-7xl mx-auto">
-               <div className="text-center mb-12">
-                   <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Music Track</h2>
-                   <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Discover a featured track from my collection. Select any song from the portfolio below to play it here.</p>
-               </div>
-               {currentTrack ? (
-                   <motion.div className="max-w-4xl mx-auto" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-                       <Card className="bg-card/90 backdrop-blur-sm border-primary/30 overflow-hidden">
-                           <CardContent className="p-8">
-                               <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
-                                   <div className="relative group w-48 h-48 flex-shrink-0">
-                                       {(() => {
-                                          const album = albums.find(a => a.tracks.some(t => t.id === currentTrack.id));
-                                          const coverArt = PlaceHolderImages.find(p => p.id === album?.coverArtId);
-                                          return coverArt && <Image
-                                             src={coverArt.imageUrl}
-                                             alt={currentTrack.title}
-                                             width={192}
-                                             height={192}
-                                             className="w-full h-full object-cover rounded-lg"
-                                             data-ai-hint={coverArt.imageHint}
-                                          />
-                                       })()}
-                                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg">
-                                           <Button
-                                               size="lg"
-                                               onClick={() => isPlaying ? pause() : play(currentTrack)}
-                                               className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full w-16 h-16 flex items-center justify-center"
-                                           >
-                                               {isPlaying ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8" />}
-                                           </Button>
-                                       </div>
-                                   </div>
-                                   <div className="flex-1 text-center md:text-left w-full">
-                                       <h3 className="text-2xl font-bold text-foreground mb-2">{currentTrack.title}</h3>
-                                       <p className="text-lg text-muted-foreground mb-2">{albums.find(a => a.tracks.some(t => t.id === currentTrack.id))?.title}</p>
-                                       <p className="text-sm text-muted-foreground mb-4">An atmospheric electronic track with dreamy synths.</p>
-                                      
-                                   </div>
-                               </div>
-                           </CardContent>
-                       </Card>
-                   </motion.div>
-               ) : ( <div className="text-center text-muted-foreground">Loading featured music...</div> )}
-           </div>
-       </section>
-      
-      <div className="section-divider"><div className="divider-content">♫ ♪ ♫</div></div>
-      
-      <section id="music-portfolio" className="py-20 px-6 bg-transparent">
-          <div className="max-w-7xl mx-auto">
-              <div className="text-center mb-12">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-4">Music Portfolio</h2>
-                  <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                      Explore my diverse collection of compositions spanning multiple genres and styles.
-                  </p>
-              </div>
+                if (musicTracksData.length > 0) {
+                    const featuredTracks = musicTracksData.filter(track => track.isFeatured);
+                    if (featuredTracks.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * featuredTracks.length);
+                        setFeaturedMusicTrack(featuredTracks[randomIndex]);
+                    } else {
+                        const randomIndex = Math.floor(Math.random() * musicTracksData.length);
+                        setFeaturedMusicTrack(musicTracksData[randomIndex]);
+                    }
+                    const uniqueCategories = ['All', ...new Set(musicTracksData.map(track => track.category).filter(Boolean) as string[])];
+                    setCategories(uniqueCategories);
+                }
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {albums.map((album, index) => {
-                    const coverArt = PlaceHolderImages.find(p => p.id === album.coverArtId);
-                    return (
-                      <motion.div
-                          key={album.id}
-                          initial={{ opacity: 0, y: 30 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.6, delay: index * 0.1 }}
-                          onMouseEnter={() => setHoveredMusicCard(album.id)}
-                          onMouseLeave={() => setHoveredMusicCard(null)}
-                      >
-                          <Card className={`music-card bg-card rounded-lg overflow-hidden transition-all duration-300 h-full flex flex-col ${
-                              hoveredMusicCard === album.id ? 'transform scale-105 border-primary/50' : 'border-transparent'
-                          }`}>
-                              <div className="relative">
-                                  {coverArt && <Image src={coverArt.imageUrl} 
-                                      alt={album.title} 
-                                      width={400}
-                                      height={400}
-                                      className="w-full h-48 object-cover"
-                                      data-ai-hint={coverArt.imageHint}
-                                      loading="eager" />}
-                                  <div className={`absolute inset-0 bg-black/50 flex items-center justify-center transition-opacity ${
-                                      hoveredMusicCard === album.id ? 'opacity-100' : 'opacity-0'
-                                  }`}>
-                                      <Button 
-                                          size="lg"
-                                          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full w-16 h-16"
-                                          onClick={() => handlePlayAlbum(album)}
-                                      >
-                                          <Play className="w-8 h-8" />
-                                      </Button>
-                                  </div>
-                              </div>
-                              <CardContent className="p-6 flex-grow flex flex-col">
-                                  <h3 className="text-xl font-bold text-foreground mb-2">{album.title}</h3>
-                                  <p className="text-primary text-sm mb-4">{album.releaseYear}</p>
-                                  <div className="flex items-center justify-between text-sm text-muted-foreground mt-auto border-t border-border/10 pt-4">
-                                      <div className="flex items-center space-x-4">
-                                          <span className="flex items-center space-x-1"><Play className="w-4 h-4" /><span>{album.tracks.length} tracks</span></span>
-                                      </div>
-                                      <span>{album.tracks.reduce((acc, track) => {
-                                          const [min, sec] = track.duration.split(':').map(Number);
-                                          return acc + min * 60 + sec;
-                                      }, 0) / 60 > 1 ? `${Math.floor((album.tracks.reduce((acc, track) => {
-                                          const [min, sec] = track.duration.split(':').map(Number);
-                                          return acc + min * 60 + sec;
-                                      }, 0)) / 60)} min` : ''}</span>
-                                  </div>
-                              </CardContent>
-                          </Card>
-                      </motion.div>
-                  )})}
-              </div>
-          </div>
-      </section>
+            } catch (error) {
+                console.error("Failed to fetch data for landing page:", error);
+            }
+        };
+        fetchData();
+    }, []);
 
-      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio) return;
+        const setAudioData = () => { setAudioDuration(audio.duration); setAudioProgress(audio.currentTime); };
+        const setAudioTime = () => setAudioProgress(audio.currentTime);
+        audio.addEventListener('loadeddata', setAudioData);
+        audio.addEventListener('timeupdate', setAudioTime);
+        audio.addEventListener('ended', () => setAudioPlaying(false));
+        return () => {
+            audio.removeEventListener('loadeddata', setAudioData);
+            audio.removeEventListener('timeupdate', setAudioTime);
+            audio.removeEventListener('ended', () => setAudioPlaying(false));
+        };
+    }, [featuredMusicTrack]);
 
-      <section id="about" className="py-20 px-6 bg-card">
-          <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                  <motion.div
-                      initial={{ opacity: 0, x: -50 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true, amount: 0.3 }}
-                      transition={{ duration: 0.8 }}
-                  >
-                      <h2 className="text-3xl md:text-4xl font-bold mb-6">About the Composer</h2>
-                       <p className="text-lg text-muted-foreground mb-4">
+    useEffect(() => {
+        if (orbsRef.current) {
+            orbsRef.current.innerHTML = '';
+            for (let i = 0; i < 8; i++) {
+                const orb = document.createElement("div");
+                orb.className = "orb";
+                const size = Math.random() * 100 + 50;
+                orb.style.width = `${size}px`;
+                orb.style.height = `${size}px`;
+                orb.style.left = `${Math.random() * 90}%`;
+                orb.style.top = `${Math.random() * 90}%`;
+                orb.style.animationDuration = `${Math.random() * 15 + 10}s`;
+                orb.style.animationDelay = `${Math.random() * 5}s`;
+                orbsRef.current.appendChild(orb);
+            }
+        }
+    }, []);
+
+    const playTrackFromPortfolio = (track: MusicTrackType) => {
+        setFeaturedMusicTrack(track);
+        setAudioPlaying(true);
+        setTimeout(() => {
+            audioRef.current?.play();
+            document.getElementById('music-player')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    };
+
+    const toggleLike = (trackId: string) => {
+        setLikedTracks(prev => 
+            prev.includes(trackId) 
+            ? prev.filter(id => id !== trackId)
+            : [...prev, trackId]
+        );
+    };
+
+    const filteredTracks = activeTab === 'All'
+        ? allMusicTracks
+        : allMusicTracks.filter(track => track.category === activeTab);
+
+    const toggleAudioPlay = () => {
+        const audio = audioRef.current;
+        if (audio) {
+            if (audioPlaying) {
+                audio.pause();
+            } else {
+                audio.play();
+            }
+            setAudioPlaying(!audioPlaying);
+        }
+    };
+    
+    const formatTime = (seconds: number) => {
+        if (isNaN(seconds) || seconds === 0) return "0:00";
+        const minutes = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    };
+    
+    return (
+        <div className="min-h-screen bg-background text-foreground">
+            {/* --- HERO SECTION --- */}
+            <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 pb-20 px-6 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-background to-black/80"></div>
+                <div className="floating-orbs" ref={orbsRef}></div>
+                <FloatingNotes />
+                
+                <div className="relative z-10 max-w-7xl mx-auto text-center">
+                    <motion.h1 
+                        className="text-4xl md:text-6xl font-bold mb-6 text-white font-headline"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                    >
+                        <span className="text-primary">Fahmie Farhan</span>
+                    </motion.h1>
+                    <motion.h2 
+                        className="text-2xl md:text-4xl font-bold mb-6 text-white font-headline"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                    >
+                        Epic Orchestral & Malay Gamelan Composer
+                    </motion.h2>
+                    <motion.p 
+                        className="text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.4 }}
+                    >
+                        Crafting cinematic soundscapes that blend epic orchestral arrangements with the rich cultural heritage of Malay gamelan music. 
+                        <span className="text-primary"> Experience the fusion of tradition and innovation.</span>
+                    </motion.p>
+                    
+                    <motion.div className="flex justify-center space-x-4 mb-12"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.6 }}
+                    >
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                           <a href="#music-portfolio">
+                             <Button size="lg" className="btn-gold px-6 py-3 rounded-md flex items-center">
+                                <span className="mr-2">⟡</span> Explore Works
+                             </Button>
+                           </a>
+                        </motion.div>
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            <a href="#contact">
+                              <Button variant="outline" size="lg" className="btn-outline-gold px-6 py-3 rounded-md flex items-center border-2">
+                                <Send className="w-5 h-5 mr-2" /> Contact Me
+                              </Button>
+                            </a>
+                        </motion.div>
+                    </motion.div>
+
+                     <motion.div className="flex justify-center space-x-6 mb-12"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.8 }}
+                    >
+                        {socialLinks.map((social, index) => {
+                           const Icon = iconComponents[social.platform] || iconComponents.Default;
+                           if (!Icon) return null;
+                           return (
+                                <motion.a
+                                    key={social.id}
+                                    href={social.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="group transform transition-all duration-300 hover:scale-110"
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 1 + index * 0.1 }}
+                                >
+                                    <div className="w-16 h-16 bg-card rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/20">
+                                        <Icon className="w-8 h-8" />
+                                    </div>
+                                    <p className="text-xs text-muted-foreground mt-2 group-hover:text-primary transition-colors">
+                                        {social.platform}
+                                    </p>
+                                </motion.a>
+                            );
+                        })}
+                    </motion.div>
+
+                    <motion.div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8 text-sm"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 1.2 }}
+                    >
+                        <div className="flex items-center space-x-2">
+                            <Mail className="w-4 h-4 text-primary" />
+                            <span className="text-muted-foreground">contact@fahmiefarhan.com</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <Phone className="w-4 h-4 text-primary" />
+                            <span className="text-muted-foreground">+60 11-31377753</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <MapPin className="w-4 h-4 text-primary" />
+                            <span className="text-muted-foreground">Malaysia</span>
+                        </div>
+                    </motion.div>
+                </div>
+            </section>
+            
+            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+
+            {/* --- FEATURED MUSIC TRACK SECTION --- */}
+            <section id="music-player" className="py-20 px-6 bg-card scroll-mt-20">
+                 <div className="max-w-7xl mx-auto">
+                     <div className="text-center mb-12">
+                         <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Featured Music Track</h2>
+                         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Discover a featured track from my collection. Select any song from the portfolio below to play it here.</p>
+                     </div>
+                     {featuredMusicTrack ? (
+                         <motion.div className="max-w-4xl mx-auto" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+                             <Card className="bg-background/50 backdrop-blur-sm border-primary/30 overflow-hidden">
+                                 <CardContent className="p-8">
+                                     <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+                                         <div className="relative group w-48 h-48 flex-shrink-0">
+                                            <Image
+                                                src={featuredMusicTrack.coverImageUrl || "https://placehold.co/400x400"}
+                                                alt={featuredMusicTrack.title}
+                                                width={192}
+                                                height={192}
+                                                className="w-full h-full object-cover rounded-lg"
+                                            />
+                                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg">
+                                                 <Button
+                                                     size="lg"
+                                                     onClick={toggleAudioPlay}
+                                                     className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full w-16 h-16 flex items-center justify-center"
+                                                 >
+                                                     {audioPlaying ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8" />}
+                                                 </Button>
+                                             </div>
+                                         </div>
+                                         <div className="flex-1 text-center md:text-left w-full">
+                                             <h3 className="text-2xl font-bold text-white mb-2 font-headline">{featuredMusicTrack.title}</h3>
+                                             <p className="text-lg text-muted-foreground mb-2">{featuredMusicTrack.category}</p>
+                                             <audio ref={audioRef} src={featuredMusicTrack.musicUrl} preload="metadata"></audio>
+                                             <div className="mb-4">
+                                                 <input
+                                                     type="range"
+                                                     min="0"
+                                                     max={audioDuration}
+                                                     value={audioProgress}
+                                                     onChange={(e) => {
+                                                         if(audioRef.current) audioRef.current.currentTime = Number(e.target.value)
+                                                     }}
+                                                     className="w-full h-2 bg-background rounded-lg appearance-none cursor-pointer range-lg"
+                                                 />
+                                                 <div className="flex justify-between text-sm text-muted-foreground mt-1">
+                                                     <span>{formatTime(audioProgress)}</span>
+                                                     <span>{formatTime(audioDuration)}</span>
+                                                 </div>
+                                             </div>
+                                             <div className="flex items-center justify-center md:justify-start space-x-4 mb-4">
+                                                 <Button size="sm" onClick={toggleAudioPlay} className="btn-gold">
+                                                     {audioPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                                                 </Button>
+                                                 <Button
+                                                     variant="ghost" size="sm"
+                                                     onClick={() => {
+                                                         if (audioRef.current) {
+                                                             const newMutedState = !isMuted;
+                                                             audioRef.current.muted = newMutedState;
+                                                             setIsMuted(newMutedState);
+                                                         }
+                                                     }}
+                                                     className="text-primary hover:text-white"
+                                                 >
+                                                     {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                                                 </Button>
+                                             </div>
+                                             <div className="flex items-center justify-center md:justify-start space-x-6 text-sm text-muted-foreground">
+                                                 <div className="flex items-center space-x-1 cursor-pointer hover:text-primary" onClick={() => toggleLike(featuredMusicTrack.id)}>
+                                                     <Heart className={`w-4 h-4 ${likedTracks.includes(featuredMusicTrack.id) ? 'text-red-500 fill-current' : ''}`} />
+                                                     <span>Like</span>
+                                                 </div>
+                                                 <div className="flex items-center space-x-1 cursor-pointer hover:text-primary">
+                                                     <Share2 className="w-4 h-4" />
+                                                     <span>Share</span>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </CardContent>
+                             </Card>
+                         </motion.div>
+                     ) : ( <div className="text-center text-muted-foreground">Loading featured music...</div> )}
+                 </div>
+             </section>
+
+            <div className="section-divider"><div className="divider-content">♫ ♪ ♫</div></div>
+
+            {/* --- MUSIC PORTFOLIO SECTION --- */}
+            <section id="music-portfolio" className="py-20 px-6 bg-background">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Music Portfolio</h2>
+                        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                            Explore my diverse collection of compositions spanning multiple genres and styles.
+                        </p>
+                    </div>
+
+                    <div className="flex flex-wrap justify-center gap-4 mb-12">
+                        {categories.map((tab) => (
+                            <Button
+                                key={tab}
+                                variant={activeTab === tab ? "default" : "outline"}
+                                onClick={() => setActiveTab(tab)}
+                                className={`capitalize ${
+                                    activeTab === tab 
+                                    ? 'btn-gold' 
+                                    : 'border-primary/30 text-primary hover:bg-primary/10'
+                                }`}
+                            >
+                                {tab}
+                            </Button>
+                        ))}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {filteredTracks.map((track, index) => (
+                            <motion.div
+                                key={track.id}
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6, delay: index * 0.1 }}
+                                onMouseEnter={() => setHoveredMusicCard(track.id)}
+                                onMouseLeave={() => setHoveredMusicCard(null)}
+                            >
+                                <Card className={`music-card bg-card rounded-lg overflow-hidden transition-all duration-300 h-full flex flex-col ${
+                                    hoveredMusicCard === track.id ? 'transform scale-105 border-primary/50' : 'border-transparent'
+                                }`}>
+                                    <div className="relative">
+                                        <Image src={track.coverImageUrl || `https://placehold.co/400x400`} 
+                                            alt={track.title} 
+                                            width={400}
+                                            height={400}
+                                            className="w-full h-48 object-cover"
+                                            loading="eager" />
+                                        <div className={`absolute inset-0 bg-black/50 flex items-center justify-center transition-opacity ${
+                                            hoveredMusicCard === track.id ? 'opacity-100' : 'opacity-0'
+                                        }`}>
+                                            <Button 
+                                                size="lg"
+                                                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full w-16 h-16"
+                                                onClick={() => playTrackFromPortfolio(track)}
+                                            >
+                                                <Play className="w-8 h-8" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <CardContent className="p-6 flex-grow flex flex-col">
+                                        <h3 className="text-xl font-bold text-white mb-2 font-headline">{track.title}</h3>
+                                        <p className="text-primary text-sm mb-2">{track.category}</p>
+                                        <div className="flex items-center justify-between text-sm text-muted-foreground mt-auto">
+                                            <div className="flex items-center space-x-4">
+                                                <span className="flex items-center space-x-1"><Headphones className="w-4 h-4" /><span>{Math.floor(Math.random() * 20000)}</span></span>
+                                                <span className="flex items-center space-x-1"><Heart className="w-4 h-4" /><span>{Math.floor(Math.random() * 5000)}</span></span>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center justify-start space-x-2 mt-4 border-t border-primary/10 pt-4">
+                                            <Button variant="ghost" size="sm" onClick={() => toggleLike(track.id)} className={`p-2 ${likedTracks.includes(track.id) ? 'text-red-500' : 'text-primary'}`}>
+                                                <Heart className={`w-5 h-5 ${likedTracks.includes(track.id) ? 'fill-current' : ''}`} />
+                                            </Button>
+                                            <Button variant="ghost" size="sm" className="text-primary p-2">
+                                                <Share2 className="w-5 h-5" />
+                                            </Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </motion.div>
+                        ))}
+                    </div>
+                    {allMusicTracks.length === 0 && (
+                        <div className="text-center text-muted-foreground pt-8">Loading music portfolio...</div>
+                     )}
+                </div>
+            </section>
+
+            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+            
+            {/* --- ABOUT SECTION --- */}
+            <section className="py-20 px-6 bg-card">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <motion.div
+                            initial={{ opacity: 0, x: -50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, amount: 0.3 }}
+                            transition={{ duration: 0.8 }}
+                        >
+                            <h2 className="text-3xl md:text-4xl font-bold mb-6 font-headline">About the Composer</h2>
+                            <p className="text-lg text-muted-foreground mb-4">
                                 Fahmie Farhan is a Malaysian composer who specializes in creating epic orchestral music and modern interpretations of traditional Malay gamelan.
                             </p>
                             <p className="text-lg text-muted-foreground mb-4">
@@ -339,234 +544,207 @@ export default function Home() {
                             <p className="text-lg text-muted-foreground mb-6">
                                 With a unique blend of Western orchestral techniques and traditional Malay instruments, Fahmie creates immersive soundscapes that transport listeners to different worlds and emotions.
                             </p>
-                      <div className="grid grid-cols-2 gap-4 mb-6">
-                          <div className="flex items-center space-x-3">
-                              <Award className="w-8 h-8 text-primary" />
-                              <div>
-                                  <div className="font-semibold">Award Winning</div>
-                                  <div className="text-sm text-muted-foreground">Multiple compositions</div>
-                              </div>
-                          </div>
-                          <div className="flex items-center space-x-3">
-                              <Star className="w-8 h-8 text-primary" />
-                              <div>
-                                  <div className="font-semibold">Top Rated</div>
-                                  <div className="text-sm text-muted-foreground">5-star reviews</div>
-                              </div>
-                          </div>
-                      </div>
-                  </motion.div>
-                  <motion.div
-                      initial={{ opacity: 0, x: 50 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true, amount: 0.3 }}
-                      transition={{ duration: 0.8, delay: 0.2 }}
-                      className="relative group"
-                  >
-                      <div 
-                        className="relative mx-auto max-w-md transition-transform duration-500 group-hover:-rotate-3"
-                        style={{ transformStyle: 'preserve-3d' }}
-                      >
-                          {aboutImage && <Image src={aboutImage.imageUrl}
-                              alt="Composer at work"
-                              width={600}
-                              height={400}
-                              data-ai-hint={aboutImage.imageHint}
-                              className="w-full rounded-xl shadow-xl" />}
-                          <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent rounded-xl"></div>
-                      </div>
-                  </motion.div>
-              </div>
-          </div>
-      </section>
-
-      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
-
-      <section id="testimonials" className="py-20 px-6 bg-transparent">
-          <div className="max-w-7xl mx-auto">
-              <div className="text-center mb-12">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-4">What People Say</h2>
-                  <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                      Hear from clients and collaborators who have experienced the magic of my compositions.
-                  </p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {bio.pressReleases.map((testimonial, index) => (
-                      <motion.div
-                          key={index}
-                          initial={{ opacity: 0, y: 30 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true, amount: 0.3 }}
-                          transition={{ duration: 0.6, delay: index * 0.1 }}
-                          className="group"
-                      >
-                          <Card 
-                            className="bg-card/90 backdrop-blur-sm border-primary/30 h-full transition-transform duration-500 group-hover:[transform:rotateY(-5deg)_rotateX(2deg)_scale(1.05)]"
-                            style={{ transformStyle: 'preserve-3d' }}
-                          >
-                              <CardContent className="p-6 flex flex-col h-full">
-                                  <div className="flex items-center mb-4">
-                                      <div>
-                                          <h4 className="font-semibold text-foreground">{testimonial.publication}</h4>
-                                          <p className="text-sm text-primary">{new Date(testimonial.date).toLocaleDateString()}</p>
-                                      </div>
-                                  </div>
-                                  <p className="text-muted-foreground flex-grow">"{testimonial.title}"</p>
-                                  <div className="flex mt-4">
-                                      {[...Array(5)].map((_, i) => (
-                                          <Star key={i} className="w-5 h-5 text-primary fill-current" />
-                                      ))}
-                                  </div>
-                              </CardContent>
-                          </Card>
-                      </motion.div>
-                  ))}
-              </div>
-          </div>
-      </section>
-
-      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
-      
-      <section id="contact" className="py-20 px-6 bg-transparent">
-        <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-                <h2 className="font-headline text-4xl md:text-5xl font-bold mb-4">GET IN TOUCH</h2>
-                <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                    Interested in collaborating on a project or licensing music? I'd love to hear from you!
-                </p>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-                <motion.div
-                    initial={{ opacity: 0, x: -50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.8 }}
-                >
-                    <h3 className="font-headline text-3xl font-bold mb-6 text-primary">LET'S CONNECT</h3>
-                    <p className="text-lg text-muted-foreground mb-8">
-                        Whether you're looking for custom compositions, music licensing, or just want to discuss musical ideas, I'm here to help bring your vision to life.
-                    </p>
-                    <div className="space-y-6">
-                        <div className="flex items-start space-x-4">
-                            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                                <Mail className="w-6 h-6 text-primary" />
-                            </div>
-                            <div>
-                                <h4 className="text-lg font-semibold mb-1">EMAIL</h4>
-                                <p className="text-muted-foreground">contact@fahmiefarhan.com</p>
-                            </div>
-                        </div>
-                        <div className="flex items-start space-x-4">
-                            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                                <Phone className="w-6 h-6 text-primary" />
-                            </div>
-                            <div>
-                                <h4 className="text-lg font-semibold mb-1">PHONE</h4>
-                                <p className="text-muted-foreground">+60 11-31377753</p>
-                            </div>
-                        </div>
-                        <div className="flex items-start space-x-4">
-                            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                                <MapPin className="w-6 h-6 text-primary" />
-                            </div>
-                            <div>
-                                <h4 className="text-lg font-semibold mb-1">LOCATION</h4>
-                                <p className="text-muted-foreground">Malaysia</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="mt-8">
-                        <h4 className="text-lg font-semibold mb-4">Follow Me</h4>
-                        <div className="flex space-x-4">
-                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                                <Youtube className="w-8 h-8" />
-                            </Link>
-                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                                <SoundcloudIcon className="w-8 h-8" />
-                            </Link>
-                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                                <Instagram className="w-8 h-8" />
-                            </Link>
-                        </div>
-                    </div>
-                </motion.div>
-                <motion.div
-                    initial={{ opacity: 0, x: 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                >
-                    <Card className="bg-card/80 p-8 rounded-lg">
-                        <CardContent className="p-0">
-                            <Form {...form}>
-                              <form action={formAction} className="space-y-6">
-                                <FormField
-                                  control={form.control}
-                                  name="name"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Name</FormLabel>
-                                      <FormControl>
-                                        <Input placeholder="Your name" {...field} className="contact-input" />
-                                      </FormControl>
-                                      <FormMessage>{state.errors?.name}</FormMessage>
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={form.control}
-                                  name="email"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Email</FormLabel>
-                                      <FormControl>
-                                        <Input placeholder="your@email.com" {...field} className="contact-input"/>
-                                      </FormControl>
-                                      <FormMessage>{state.errors?.email}</FormMessage>
-                                    </FormItem>
-                                  )}
-                                />
-                                 <FormField
-                                  control={form.control}
-                                  name="subject"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Subject</FormLabel>
-                                      <FormControl>
-                                        <Input placeholder="What's this about?" {...field} className="contact-input"/>
-                                      </FormControl>
-                                      <FormMessage>{state.errors?.subject}</FormMessage>
-                                    </FormItem>
-                                  )}
-                                />
-                                <FormField
-                                  control={form.control}
-                                  name="message"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Message</FormLabel>
-                                      <FormControl>
-                                        <Textarea placeholder="Your message..." {...field} rows={5} className="contact-input" />
-                                      </FormControl>
-                                      <FormMessage>{state.errors?.message}</FormMessage>
-                                    </FormItem>
-                                  )}
-                                />
-                                <div className="text-right">
-                                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                                      <Button type="submit" size="lg" className="w-full btn-gold px-6 py-3 rounded-md flex items-center justify-center">
-                                          <Send className="w-5 h-5 mr-2" />Send Message
-                                      </Button>
-                                  </motion.div>
+                            <div className="grid grid-cols-2 gap-4 mb-6">
+                                <div className="flex items-center space-x-3">
+                                    <Award className="w-8 h-8 text-primary" />
+                                    <div>
+                                        <div className="font-semibold">Award Winning</div>
+                                        <div className="text-sm text-muted-foreground">Multiple compositions</div>
+                                    </div>
                                 </div>
-                              </form>
-                            </Form>
-                        </CardContent>
-                    </Card>
+                                <div className="flex items-center space-x-3">
+                                    <Star className="w-8 h-8 text-primary" />
+                                    <div>
+                                        <div className="font-semibold">Top Rated</div>
+                                        <div className="text-sm text-muted-foreground">5-star reviews</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                        <motion.div
+                            initial={{ opacity: 0, x: 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, amount: 0.3 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className="relative"
+                        >
+                            <div className="relative mx-auto max-w-md">
+                                <Image src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&h=400&fit=crop" 
+                                    alt="Composer at work" 
+                                    width={600}
+                                    height={400}
+                                    className="w-full rounded-xl shadow-xl" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent rounded-xl"></div>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+
+            {/* --- TESTIMONIALS SECTION --- */}
+            <section className="py-20 px-6 bg-background">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">What People Say</h2>
+                        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                            Hear from clients and collaborators who have experienced the magic of my compositions.
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {testimonials.map((testimonial, index) => (
+                            <motion.div
+                                key={testimonial.id}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, amount: 0.3 }}
+                                transition={{ duration: 0.6, delay: index * 0.1 }}
+                            >
+                                <Card className="bg-card/90 backdrop-blur-sm border-primary/30 h-full">
+                                    <CardContent className="p-6 flex flex-col h-full">
+                                        <div className="flex items-center mb-4">
+                                            <div>
+                                                <h4 className="font-semibold text-white">{testimonial.author}</h4>
+                                                {testimonial.publication && <p className="text-sm text-primary">{testimonial.publication}</p>}
+                                            </div>
+                                        </div>
+                                        <p className="text-muted-foreground flex-grow">"{testimonial.quote}"</p>
+                                        <div className="flex mt-4">
+                                            {[...Array(5)].map((_, i) => (
+                                                <Star key={i} className="w-5 h-5 text-primary fill-current" />
+                                            ))}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+
+            {/* --- CONTACT SECTION --- */}
+            <section id="contact" className="py-20 px-6">
+                <motion.div 
+                    className="max-w-7xl mx-auto"
+                    initial="hidden" 
+                    whileInView="visible" 
+                    viewport={{ once: true, amount: 0.1 }}
+                >
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Get in Touch</h2>
+                        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                            Interested in collaborating on a project or licensing music? I'd love to hear from you!
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <motion.div>
+                            <h3 className="text-3xl font-bold mb-6 text-primary font-headline">Let's Connect</h3>
+                            <p className="text-lg text-muted-foreground mb-8">
+                                Whether you're looking for custom compositions, music licensing, or just want to discuss musical ideas, I'm here to help bring your vision to life.
+                            </p>
+                            <div className="space-y-6">
+                                <div className="flex items-start space-x-4">
+                                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <Mail className="w-6 h-6 text-primary" />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-lg font-semibold mb-1">Email</h4>
+                                        <p className="text-muted-foreground">contact@fahmiefarhan.com</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start space-x-4">
+                                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <Phone className="w-6 h-6 text-primary" />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-lg font-semibold mb-1">Phone</h4>
+                                        <p className="text-muted-foreground">+60 11-31377753</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start space-x-4">
+                                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <MapPin className="w-6 h-6 text-primary" />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-lg font-semibold mb-1">Location</h4>
+                                        <p className="text-muted-foreground">Malaysia</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                        <motion.div>
+                            <Card className="bg-card/80 backdrop-blur-sm border-primary/30">
+                                <CardContent className="p-8">
+                                     <Form {...form}>
+                                        <form action={formAction} className="space-y-6">
+                                            <FormField
+                                            control={form.control}
+                                            name="name"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                <FormLabel>Name</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="Your name" {...field} />
+                                                </FormControl>
+                                                <FormMessage>{state.errors?.name}</FormMessage>
+                                                </FormItem>
+                                            )}
+                                            />
+                                            <FormField
+                                            control={form.control}
+                                            name="email"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                <FormLabel>Email</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="your@email.com" {...field} />
+                                                </FormControl>
+                                                <FormMessage>{state.errors?.email}</FormMessage>
+                                                </FormItem>
+                                            )}
+                                            />
+                                            <FormField
+                                            control={form.control}
+                                            name="subject"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                <FormLabel>Subject</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="What's this about?" {...field} />
+                                                </FormControl>
+                                                <FormMessage>{state.errors?.subject}</FormMessage>
+                                                </FormItem>
+                                            )}
+                                            />
+                                            <FormField
+                                            control={form.control}
+                                            name="message"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                <FormLabel>Message</FormLabel>
+                                                <FormControl>
+                                                    <Textarea placeholder="Your message..." {...field} rows={5} />
+                                                </FormControl>
+                                                <FormMessage>{state.errors?.message}</FormMessage>
+                                                </FormItem>
+                                            )}
+                                            />
+                                            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                                                <Button type="submit" size="lg" className="w-full btn-gold px-6 py-3 rounded-md flex items-center justify-center">
+                                                    <Send className="w-5 h-5 mr-2" />Send Message
+                                                </Button>
+                                            </motion.div>
+                                        </form>
+                                    </Form>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
+                    </div>
                 </motion.div>
-            </div>
+            </section>
         </div>
-      </section>
-    </>
-  );
+    );
 }
