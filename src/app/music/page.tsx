@@ -15,7 +15,7 @@ import type { Video } from '@/lib/admin-types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink, Heart, Share2, Loader2, X } from 'lucide-react';
+import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink, Heart, Share2, Loader2, X, Play } from 'lucide-react';
 import { bio } from '@/lib/data';
 
 const collaborations: Collaboration[] = [
@@ -79,6 +79,8 @@ export default function MusicPage() {
     const [videos, setVideos] = useState<Video[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+    const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
+    const [likedTracks, setLikedTracks] = useState<string[]>([]);
 
     useEffect(() => {
         const fetchVideos = async () => {
@@ -119,6 +121,14 @@ export default function MusicPage() {
       const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
       const match = url.match(regExp);
       return (match && match[2].length === 11) ? match[2] : null;
+    };
+    
+    const toggleLike = (trackId: string) => {
+        setLikedTracks(prev => 
+            prev.includes(trackId) 
+            ? prev.filter(id => id !== trackId)
+            : [...prev, trackId]
+        );
     };
 
     const fadeInUp: Variants = {
@@ -229,33 +239,53 @@ export default function MusicPage() {
                             layout 
                             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8"
                         >
-                            {filteredVideos.map((video) => {
+                            {filteredVideos.map((video, index) => {
                                 return (
-                                    <motion.div layout key={video.id} variants={fadeInUp}>
-                                        <Card className="overflow-hidden group bg-card border-border/50 h-full flex flex-col cursor-pointer" onClick={() => handlePlayVideo(video)}>
-                                            <div className="overflow-hidden relative">
-                                                <Image
-                                                    src={video.thumbnailUrl || "https://placehold.co/600x400"}
-                                                    alt={`Cover for ${video.title}`}
-                                                    width={600}
+                                     <motion.div
+                                        key={video.id}
+                                        initial={{ opacity: 0, y: 30 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.6, delay: index * 0.1 }}
+                                        onMouseEnter={() => setHoveredMusicCard(video.id)}
+                                        onMouseLeave={() => setHoveredMusicCard(null)}
+                                        onClick={() => handlePlayVideo(video)}
+                                    >
+                                        <Card className={`music-card bg-card rounded-lg overflow-hidden transition-all duration-300 h-full flex flex-col cursor-pointer ${
+                                            hoveredMusicCard === video.id ? 'transform scale-105 border-primary/50' : 'border-transparent'
+                                        }`}>
+                                            <div className="relative">
+                                                <Image src={video.thumbnailUrl || `https://placehold.co/400x400`} 
+                                                    alt={video.title} 
+                                                    width={400}
                                                     height={400}
-                                                    className="object-cover w-full h-auto aspect-[16/9] group-hover:scale-105 transition-transform duration-300"
-                                                />
-                                                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <Button size="icon" className="h-12 w-12 rounded-full">
-                                                        <PlayCircle className="h-6 w-6" />
+                                                    className="w-full h-48 object-cover"
+                                                    loading="eager" />
+                                                <div className={`absolute inset-0 bg-black/50 flex items-center justify-center transition-opacity ${
+                                                    hoveredMusicCard === video.id ? 'opacity-100' : 'opacity-0'
+                                                }`}>
+                                                    <Button 
+                                                        size="lg"
+                                                        className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full w-16 h-16"
+                                                    >
+                                                        <Play className="w-8 h-8" />
                                                     </Button>
                                                 </div>
                                             </div>
-                                            <CardContent className="p-4 flex-grow flex flex-col">
-                                                <h3 className="font-bold text-lg truncate">{video.title}</h3>
-                                                <p className="text-sm text-primary mb-2">{video.category || 'Video'}</p>
-                                                <div className="flex justify-start items-center gap-2 text-muted-foreground mt-auto">
-                                                    <Button variant="ghost" size="icon" className="w-8 h-8">
-                                                        <Heart className="h-4 w-4" />
+                                            <CardContent className="p-6 flex-grow flex flex-col">
+                                                <h3 className="text-xl font-bold text-white mb-2 font-headline">{video.title}</h3>
+                                                <p className="text-primary text-sm mb-2">{video.category}</p>
+                                                <div className="flex items-center justify-between text-sm text-muted-foreground mt-auto">
+                                                    <div className="flex items-center space-x-4">
+                                                        <span className="flex items-center space-x-1"><Headphones className="w-4 h-4" /><span>{Math.floor(Math.random() * 20000)}</span></span>
+                                                        <span className="flex items-center space-x-1"><Heart className="w-4 h-4" /><span>{Math.floor(Math.random() * 5000)}</span></span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center justify-start space-x-2 mt-4 border-t border-primary/10 pt-4">
+                                                    <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); toggleLike(video.id); }} className={`p-2 ${likedTracks.includes(video.id) ? 'text-red-500' : 'text-primary'}`}>
+                                                        <Heart className={`w-5 h-5 ${likedTracks.includes(video.id) ? 'fill-current' : ''}`} />
                                                     </Button>
-                                                    <Button variant="ghost" size="icon" className="w-8 h-8">
-                                                        <Share2 className="h-4 w-4" />
+                                                    <Button variant="ghost" size="sm" className="text-primary p-2">
+                                                        <Share2 className="w-5 h-5" />
                                                     </Button>
                                                 </div>
                                             </CardContent>
@@ -268,7 +298,7 @@ export default function MusicPage() {
                 </div>
             </motion.section>
 
-            {/* Latest Release Section */}
+             {/* Latest Release Section */}
             {!loading && latestRelease && (
                 <motion.section
                     className="py-20 bg-gradient-to-br from-gray-900 to-black relative overflow-hidden"
@@ -281,10 +311,10 @@ export default function MusicPage() {
                     <div className="container mx-auto px-4 md:px-12 relative z-10">
                         <motion.div variants={fadeInUp}>
                             <Card className="overflow-hidden bg-transparent border-0 md:border md:bg-card md:border-border/50">
-                                <CardContent className="p-0 md:p-6 grid md:grid-cols-2 gap-8 items-center">
-                                    <div className="relative group aspect-video cursor-pointer" onClick={() => handlePlayVideo(latestRelease)}>
+                                 <CardContent className="p-0 md:p-6 grid md:grid-cols-2 gap-8 items-center">
+                                    <div className="relative group aspect-video md:aspect-[16/9] cursor-pointer" onClick={() => handlePlayVideo(latestRelease)}>
                                         <Image
-                                            src={latestRelease.thumbnailUrl || "https://placehold.co/600x338"}
+                                            src={latestRelease.thumbnailUrl || "https://placehold.co/600/338"}
                                             alt={`Cover for ${latestRelease.title}`}
                                             width={600}
                                             height={338}
