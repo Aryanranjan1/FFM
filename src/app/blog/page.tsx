@@ -232,12 +232,27 @@ export default function BlogPage() {
         variants={staggerContainer}
       >
         <div className="container mx-auto">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-12">
-                <div className="relative w-full md:max-w-xs">
-                    <Input placeholder="Search articles..." className="pl-10" />
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <div className="flex flex-col gap-4 mb-12">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div className="relative w-full md:max-w-xs">
+                        <Input placeholder="Search articles..." className="pl-10" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm text-muted-foreground">Sort by:</span>
+                        <Select defaultValue="recent">
+                            <SelectTrigger className="w-[120px]">
+                                <SelectValue placeholder="Recent" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="recent">Recent</SelectItem>
+                                <SelectItem value="popular">Popular</SelectItem>
+                                <SelectItem value="title">Title</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
-                <div className="flex-1 w-full overflow-hidden">
+                <div className="w-full">
                     <ScrollArea className="w-full">
                         <div className="flex w-max space-x-2 pb-2.5">
                             {categories.map((category) => (
@@ -252,19 +267,6 @@ export default function BlogPage() {
                             ))}
                         </div>
                     </ScrollArea>
-                </div>
-                <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Sort by:</span>
-                    <Select defaultValue="recent">
-                        <SelectTrigger className="w-[120px]">
-                            <SelectValue placeholder="Recent" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="recent">Recent</SelectItem>
-                            <SelectItem value="popular">Popular</SelectItem>
-                            <SelectItem value="title">Title</SelectItem>
-                        </SelectContent>
-                    </Select>
                 </div>
             </div>
 
