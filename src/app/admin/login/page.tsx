@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -13,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -25,6 +27,13 @@ export default function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const { login, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/admin/dashboard');
+    }
+  }, [isAuthenticated, router]);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -35,13 +44,12 @@ export default function AdminLoginPage() {
   });
 
   const onSubmit = (data: LoginFormValues) => {
-    if (data.email === 'admin@fahmiefarhan.com' && data.password === 'Zxcvbnm@123') {
+    if (login(data.email, data.password)) {
       toast({
         title: 'Login Successful',
         description: 'Redirecting to dashboard...',
       });
-      // Replace with your actual dashboard path
-      // router.push('/admin/dashboard'); 
+      router.push('/admin/dashboard');
     } else {
       toast({
         title: 'Login Failed',
