@@ -3,7 +3,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useActionState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from 'next/link';
 import YouTube from 'react-youtube';
@@ -31,11 +31,6 @@ import {
     MapPin,
     Send,
     Play,
-    Pause,
-    Volume2,
-    VolumeX,
-    Heart,
-    Share2,
     Award,
     Star,
     Headphones,
@@ -78,8 +73,6 @@ export default function Home() {
 
     // Player State
     const [featuredVideo, setFeaturedVideo] = useState<VideoType | null>(null);
-    const playerRef = useRef<YouTubePlayer>(null);
-    const [likedTracks, setLikedTracks] = useState<string[]>([]);
     const [autoplay, setAutoplay] = useState(true); // Control autoplay for player
     
     const [state, formAction] = useActionState(submitContactForm, initialState);
@@ -164,19 +157,11 @@ export default function Home() {
     const videoId = featuredVideo ? getYouTubeId(featuredVideo.videoUrl) : null;
     
     const playTrackFromPortfolio = (track: VideoType) => {
-        setAutoplay(true); // Ensure next track autoplays
+        setAutoplay(true);
         setFeaturedVideo(track);
         setTimeout(() => {
              document.getElementById('music-player')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 100);
-    };
-
-    const toggleLike = (trackId: string) => {
-        setLikedTracks(prev => 
-            prev.includes(trackId) 
-            ? prev.filter(id => id !== trackId)
-            : [...prev, trackId]
-        );
     };
 
     const filteredTracks = allVideos.filter(video => video.isFeatured);
@@ -300,11 +285,10 @@ export default function Home() {
                      {featuredVideo && videoId ? (
                          <motion.div className="max-w-4xl mx-auto" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
                              <Card className="bg-background/50 backdrop-blur-sm border-primary/30 overflow-hidden">
-                                <div className="aspect-video">
+                                 <div className="aspect-video">
                                      <YouTube
-                                         key={videoId} // Key change will force re-render and obey new autoplay prop
+                                         key={videoId}
                                          videoId={videoId}
-                                         onReady={(e) => playerRef.current = e.target}
                                          opts={{
                                              height: '100%',
                                              width: '100%',
@@ -323,16 +307,6 @@ export default function Home() {
                                  <CardContent className="p-4 md:p-6">
                                      <h3 className="text-2xl font-bold text-white mb-1 font-headline">{featuredVideo.title}</h3>
                                      <p className="text-lg text-muted-foreground mb-4">{featuredVideo.category}</p>
-                                     <div className="flex items-center justify-start space-x-6 text-sm text-muted-foreground">
-                                         <div className="flex items-center space-x-1 cursor-pointer hover:text-primary" onClick={() => toggleLike(featuredVideo.id)}>
-                                             <Heart className={`w-4 h-4 ${likedTracks.includes(featuredVideo.id) ? 'text-red-500 fill-current' : ''}`} />
-                                             <span>Like</span>
-                                         </div>
-                                         <div className="flex items-center space-x-1 cursor-pointer hover:text-primary">
-                                             <Share2 className="w-4 h-4" />
-                                             <span>Share</span>
-                                         </div>
-                                     </div>
                                  </CardContent>
                              </Card>
                          </motion.div>
@@ -386,20 +360,6 @@ export default function Home() {
                                     <CardContent className="p-6 flex-grow flex flex-col">
                                         <h3 className="text-xl font-bold text-white mb-2 font-headline">{track.title}</h3>
                                         <p className="text-primary text-sm mb-2">{track.category}</p>
-                                        <div className="flex items-center justify-between text-sm text-muted-foreground mt-auto">
-                                            <div className="flex items-center space-x-4">
-                                                <span className="flex items-center space-x-1"><Headphones className="w-4 h-4" /><span>{Math.floor(Math.random() * 20000)}</span></span>
-                                                <span className="flex items-center space-x-1"><Heart className="w-4 h-4" /><span>{Math.floor(Math.random() * 5000)}</span></span>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center justify-start space-x-2 mt-4 border-t border-primary/10 pt-4">
-                                            <Button variant="ghost" size="sm" onClick={() => toggleLike(track.id)} className={`p-2 ${likedTracks.includes(track.id) ? 'text-red-500' : 'text-primary'}`}>
-                                                <Heart className={`w-5 h-5 ${likedTracks.includes(track.id) ? 'fill-current' : ''}`} />
-                                            </Button>
-                                            <Button variant="ghost" size="sm" className="text-primary p-2">
-                                                <Share2 className="w-5 h-5" />
-                                            </Button>
-                                        </div>
                                     </CardContent>
                                 </Card>
                             </motion.div>
@@ -637,4 +597,3 @@ export default function Home() {
         </div>
     );
 }
-
