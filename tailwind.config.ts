@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -14,7 +15,8 @@ export default {
         DEFAULT: '1rem',
         sm: '2rem',
         lg: '4rem',
-        xl: '6.25rem',
+        xl: '5rem',
+        '2xl': '6rem',
       },
     },
     extend: {
