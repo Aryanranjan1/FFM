@@ -93,8 +93,9 @@ Fahmie's portfolio covers both international collaborations and competitive musi
 
   return (
     <div className="bg-background text-foreground">
-        <section className="py-20 text-center bg-gradient-to-br from-gray-900 to-black">
-            <div className="container mx-auto px-4 md:px-12">
+        <section className="py-20 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
+            <div className="hero-bg"></div>
+            <div className="container mx-auto px-4 md:px-12 relative z-10">
                 <h1 className="font-headline text-5xl md:text-7xl font-bold text-primary">ABOUT</h1>
                 <p className="text-muted-foreground text-lg mt-4 max-w-3xl mx-auto">
                     Discover the journey of a Malaysian composer who bridges cultural heritage with contemporary musical innovation
@@ -103,7 +104,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
         </section>
 
         <div className="py-20 container mx-auto px-4 md:px-12">
-            <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
+            <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12 items-start">
             <div className="md:col-span-1 flex flex-col items-center">
                 <div className="relative w-full max-w-xs md:max-w-full transition-transform duration-300 hover:-rotate-3">
                 {artistImage && (
@@ -231,7 +232,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
                             {achievement.year}
                             </CardDescription>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="p-4 pt-0">
                             <p className="text-muted-foreground text-sm">{achievement.description}</p>
                         </CardContent>
                         </Card>
@@ -310,5 +311,3 @@ Fahmie's portfolio covers both international collaborations and competitive musi
     </div>
   );
 }
-
-    

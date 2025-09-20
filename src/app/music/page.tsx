@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
@@ -145,6 +146,7 @@ export default function MusicPage() {
         <div className="bg-background text-foreground">
             {/* Hero Section */}
             <section className="py-24 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
+                <div className="hero-bg"></div>
                 <div className="relative z-10 container mx-auto px-4 md:px-12">
                     <motion.h1 
                         className="text-5xl md:text-7xl font-headline font-bold text-primary" 
@@ -359,7 +361,7 @@ export default function MusicPage() {
                             {achievement.year}
                             </CardDescription>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="p-4 pt-0">
                             <p className="text-muted-foreground text-sm">{achievement.description}</p>
                         </CardContent>
                         </Card>
@@ -429,5 +431,3 @@ export default function MusicPage() {
         </div>
     );
 }
-
-    

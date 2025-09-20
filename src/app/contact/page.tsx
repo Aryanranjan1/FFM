@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useActionState, useEffect } from "react";
@@ -12,8 +13,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, Mail, Phone, MapPin, Youtube, Instagram } from "lucide-react";
-import { SoundcloudIcon } from "@/components/icons";
+import { Send, Mail, Phone, MapPin } from "lucide-react";
+import { SoundcloudIcon, Youtube, Instagram } from "@/components/icons";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -65,8 +66,9 @@ export default function ContactPage() {
 
   return (
     <div className="bg-background text-foreground">
-        <section className="py-20 text-center bg-gradient-to-br from-gray-900 to-black">
-             <div className="container mx-auto px-4 md:px-12">
+        <section className="py-20 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
+             <div className="hero-bg"></div>
+             <div className="container mx-auto px-4 md:px-12 relative z-10">
                 <motion.h2
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -215,5 +217,3 @@ export default function ContactPage() {
     </div>
   );
 }
-
-    
