@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
@@ -9,16 +9,14 @@ import type { Album, Track, Collaboration, Achievement } from '@/lib/types';
 import { useMusicPlayer } from '@/context/music-player-context';
 import { cn } from '@/lib/utils';
 import { db } from "@/lib/firebase";
-import { collection, getDocs, orderBy, query, Timestamp } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, where, Timestamp } from "firebase/firestore";
+import type { MusicTrack } from '@/lib/admin-types';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink, Heart, Share2, Loader2 } from 'lucide-react';
 import { bio } from '@/lib/data';
-
-
-const musicCategories = ['All', 'Cinematic', 'Orchestral', 'Gamelan', 'Ambient', 'Electronic'];
 
 const collaborations: Collaboration[] = [
     {
@@ -79,22 +77,22 @@ const achievements: Achievement[] = [
 export default function MusicPage() {
     const { play } = useMusicPlayer();
     const [filter, setFilter] = useState('All');
-    const [tracks, setTracks] = useState<any[]>([]);
+    const [tracks, setTracks] = useState<MusicTrack[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchTracks = async () => {
             setLoading(true);
             const musicCol = collection(db, 'music');
-            const q = query(musicCol, orderBy("createdAt", "desc"));
+            const q = query(musicCol, where("isPublished", "==", true), orderBy("createdAt", "desc"));
             const musicSnapshot = await getDocs(q);
             const musicList = musicSnapshot.docs.map(doc => {
                 const data = doc.data();
                 return {
                     id: doc.id,
                     ...data,
-                    createdAt: data.createdAt.toDate(),
-                };
+                    createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
+                } as MusicTrack;
             });
             setTracks(musicList);
             setLoading(false);
@@ -103,20 +101,32 @@ export default function MusicPage() {
         fetchTracks();
     }, []);
     
-    const filteredTracks = filter === 'All' ? tracks : tracks.filter(p => p.category === filter);
+    const musicCategories = useMemo(() => {
+        const categories = new Set(tracks.map(t => t.category).filter(Boolean));
+        return ['All', ...Array.from(categories)] as string[];
+    }, [tracks]);
 
+    const filteredTracks = useMemo(() => {
+        if (filter === 'All') return tracks;
+        return tracks.filter(p => p.category === filter);
+    }, [tracks, filter]);
 
-    const handlePlayTrack = (track: any) => {
-        // This is a simplified play handler. A real implementation would
-        // need to manage a playlist and the audio source properly.
+    const handlePlayTrack = (track: MusicTrack) => {
         const audioTrack: Track = {
             id: track.id,
             title: track.title,
-            artist: 'FFM', // Assuming artist is always FFM
+            artist: 'FFM',
             duration: '0:00', // Placeholder
             audioSrc: track.musicUrl,
         };
-        play(audioTrack, [audioTrack]);
+        const playlist = filteredTracks.map(t => ({
+             id: t.id,
+            title: t.title,
+            artist: 'FFM',
+            duration: '0:00',
+            audioSrc: t.musicUrl,
+        }));
+        play(audioTrack, playlist);
     };
 
     const fadeInUp: Variants = {
@@ -128,6 +138,8 @@ export default function MusicPage() {
         hidden: { opacity: 0 },
         visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
     };
+
+    const latestRelease = useMemo(() => tracks.find(t => t.isFeatured) || tracks[0], [tracks]);
 
     return (
         <div className="bg-transparent text-foreground">
@@ -230,7 +242,7 @@ export default function MusicPage() {
             </motion.section>
 
             {/* Latest Release Section */}
-            {tracks.length > 0 && (
+            {!loading && latestRelease && (
                 <motion.section
                     className="py-20 px-6 bg-card"
                     initial="hidden"
@@ -244,27 +256,27 @@ export default function MusicPage() {
                                 <CardContent className="p-0 md:p-6 grid md:grid-cols-2 gap-8 items-center">
                                     <div className="relative group aspect-square md:aspect-auto">
                                         <Image
-                                            src={tracks[0].coverImageUrl || "https://placehold.co/600x600"}
-                                            alt={`Cover for ${tracks[0].title}`}
+                                            src={latestRelease.coverImageUrl || "https://placehold.co/600x600"}
+                                            alt={`Cover for ${latestRelease.title}`}
                                             width={600}
                                             height={600}
                                             className="w-full h-full object-cover md:rounded-lg"
                                         />
                                         <div className="absolute inset-0 bg-black/20 md:rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Button size="icon" className="h-20 w-20 rounded-full" onClick={() => handlePlayTrack(tracks[0])}>
+                                            <Button size="icon" className="h-20 w-20 rounded-full" onClick={() => handlePlayTrack(latestRelease)}>
                                                 <PlayCircle className="h-10 w-10" />
                                             </Button>
                                         </div>
                                     </div>
                                     <div className="p-6 md:p-0">
                                         <Badge variant="default" className="mb-4">Latest Release</Badge>
-                                        <h3 className="font-headline text-4xl font-bold">{tracks[0].title}</h3>
-                                        <p className="text-muted-foreground mt-2 text-lg">{new Date(tracks[0].createdAt).getFullYear()}</p>
+                                        <h3 className="font-headline text-4xl font-bold">{latestRelease.title}</h3>
+                                        <p className="text-muted-foreground mt-2 text-lg">{new Date(latestRelease.createdAt).getFullYear()}</p>
                                         <p className="mt-4 text-muted-foreground leading-relaxed">
-                                            {tracks[0].description || `Listen to the latest track, ${tracks[0].title}.`}
+                                            {`Listen to the latest track, ${latestRelease.title}.`}
                                         </p>
                                         <div className="mt-6">
-                                            <Button onClick={() => handlePlayTrack(tracks[0])}>Play Now</Button>
+                                            <Button onClick={() => handlePlayTrack(latestRelease)}>Play Now</Button>
                                         </div>
                                     </div>
                                 </CardContent>

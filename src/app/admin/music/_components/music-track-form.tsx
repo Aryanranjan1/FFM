@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -21,6 +22,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 const musicTrackSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters."),
   musicUrl: z.string().url("Please enter a valid URL."),
+  category: z.string().optional(),
   coverImageUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
   isFeatured: z.boolean().default(false),
   isPublished: z.boolean().default(false),
@@ -41,6 +43,7 @@ export function MusicTrackForm({ track }: MusicTrackFormProps) {
     defaultValues: {
       title: track?.title || "",
       musicUrl: track?.musicUrl || "",
+      category: track?.category || "",
       coverImageUrl: track?.coverImageUrl || "",
       isFeatured: track?.isFeatured || false,
       isPublished: track?.isPublished ?? true,
@@ -87,7 +90,7 @@ export function MusicTrackForm({ track }: MusicTrackFormProps) {
     setIsFetching(false);
   };
 
-  const onSubmit = async (values: MusicTrackFormValues) => {
+  const onSubmit = async (values: z.infer<typeof musicTrackSchema>) => {
     setIsSubmitting(true);
     const result = track
       ? await updateMusicTrack(track.id, values)
@@ -162,6 +165,20 @@ export function MusicTrackForm({ track }: MusicTrackFormProps) {
                     <FormLabel>Title</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter track title" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+               <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. Cinematic, Gamelan" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

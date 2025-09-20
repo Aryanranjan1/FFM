@@ -1,7 +1,8 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { db } from "@/lib/firebase";
@@ -9,6 +10,7 @@ import { collection, getDocs, orderBy, query, Timestamp } from "firebase/firesto
 import type { Video } from "@/lib/admin-types";
 import { format } from "date-fns";
 import { DeleteVideoButton } from "./_components/delete-button";
+import { Badge } from "@/components/ui/badge";
 
 async function getVideos(): Promise<Video[]> {
     const videosCol = collection(db, 'videos');
@@ -16,17 +18,10 @@ async function getVideos(): Promise<Video[]> {
     const videoSnapshot = await getDocs(q);
     const videoList = videoSnapshot.docs.map(doc => {
         const data = doc.data();
-        const createdAt = data.createdAt as Timestamp;
         return {
             id: doc.id,
-            title: data.title,
-            videoUrl: data.videoUrl,
-            description: data.description,
-            tags: data.tags,
-            thumbnailUrl: data.thumbnailUrl,
-            isPublished: data.isPublished,
-            isFeatured: data.isFeatured,
-            createdAt: createdAt.toDate(),
+            ...data,
+            createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
         } as Video;
     });
     return videoList;
@@ -53,7 +48,9 @@ export default async function VideosManagementPage() {
                             <TableRow>
                                 <TableHead className="w-[120px]">Thumbnail</TableHead>
                                 <TableHead>Title</TableHead>
-                                <TableHead>Published Date</TableHead>
+                                <TableHead>Category</TableHead>
+                                <TableHead>Published</TableHead>
+                                <TableHead>Date</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -71,6 +68,12 @@ export default async function VideosManagementPage() {
                                             />
                                         </TableCell>
                                         <TableCell className="font-medium">{video.title}</TableCell>
+                                        <TableCell>{video.category || 'N/A'}</TableCell>
+                                        <TableCell>
+                                             <Badge variant={video.isPublished ? "default" : "secondary"}>
+                                                {video.isPublished ? 'Yes' : 'No'}
+                                            </Badge>
+                                        </TableCell>
                                         <TableCell>
                                             {video.createdAt ? format(new Date(video.createdAt as string), "PPP") : 'N/A'}
                                         </TableCell>
@@ -86,7 +89,7 @@ export default async function VideosManagementPage() {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={4} className="text-center h-24 text-muted-foreground">
+                                    <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
                                         No videos found.
                                     </TableCell>
                                 </TableRow>

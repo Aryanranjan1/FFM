@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -23,6 +24,7 @@ const videoSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters."),
   videoUrl: z.string().url("Please enter a valid YouTube URL."),
   description: z.string().optional(),
+  category: z.string().optional(),
   tags: z.string().optional(),
   thumbnailUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
   isPublished: z.boolean().default(true),
@@ -45,6 +47,7 @@ export function VideoForm({ video }: VideoFormProps) {
       title: video?.title || "",
       videoUrl: video?.videoUrl || "",
       description: video?.description || "",
+      category: video?.category || "",
       tags: video?.tags || "",
       thumbnailUrl: video?.thumbnailUrl || "",
       isPublished: video?.isPublished ?? true,
@@ -179,6 +182,20 @@ export function VideoForm({ video }: VideoFormProps) {
                     <FormLabel>Description (Optional)</FormLabel>
                     <FormControl>
                       <Textarea placeholder="Video description" {...field} rows={5} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category (Optional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. Live Performance, Tutorial" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -61,6 +61,7 @@ export async function submitContactForm(prevState: any, formData: FormData) {
 const musicTrackSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters."),
   musicUrl: z.string().url("Please enter a valid URL."),
+  category: z.string().optional(),
   coverImageUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
   isFeatured: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
   isPublished: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
@@ -132,6 +133,7 @@ const videoSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters."),
   videoUrl: z.string().url("Please enter a valid YouTube URL."),
   description: z.string().optional(),
+  category: z.string().optional(),
   tags: z.string().optional(),
   thumbnailUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
   isPublished: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
@@ -234,7 +236,7 @@ export async function addSocialLink(values: SocialLinkFormValues) {
 
 export async function deleteSocialLink(id: string) {
     try {
-        await deleteDoc(doc(db, 'social-links', id));
+        await deleteDoc(doc(db, 'social-links'), { ...values, createdAt: serverTimestamp() });
         revalidatePath('/admin/social-links');
         return { success: true, message: "Social link deleted successfully." };
     } catch (e) {
@@ -279,6 +281,7 @@ export async function updateBlogPost(id: string, values: BlogPostFormValues) {
     revalidatePath('/admin/blog');
     revalidatePath(`/admin/blog/edit/${id}`);
     revalidatePath('/blog');
+    revalidatePath(`/blog/${id}`);
     return { success: true, message: "Blog post updated successfully." };
   } catch (e) {
     console.error("Error updating blog post:", e);

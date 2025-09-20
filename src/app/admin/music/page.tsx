@@ -1,7 +1,8 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { db } from "@/lib/firebase";
@@ -18,12 +19,8 @@ async function getMusicTracks(): Promise<MusicTrack[]> {
         const data = doc.data();
         return {
             id: doc.id,
-            title: data.title,
-            musicUrl: data.musicUrl,
-            coverImageUrl: data.coverImageUrl,
-            isFeatured: data.isFeatured,
-            isPublished: data.isPublished,
-            createdAt: data.createdAt,
+            ...data,
+            createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
         } as MusicTrack;
     });
     return musicList;
@@ -50,6 +47,7 @@ export default async function MusicManagementPage() {
                             <TableRow>
                                 <TableHead className="w-[80px]">Cover</TableHead>
                                 <TableHead>Title</TableHead>
+                                <TableHead>Category</TableHead>
                                 <TableHead>Published</TableHead>
                                 <TableHead>Featured</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
@@ -69,6 +67,7 @@ export default async function MusicManagementPage() {
                                             />
                                         </TableCell>
                                         <TableCell className="font-medium">{track.title}</TableCell>
+                                        <TableCell>{track.category || 'N/A'}</TableCell>
                                         <TableCell>
                                             <Badge variant={track.isPublished ? "default" : "secondary"} className="text-xs">
                                                 {track.isPublished ? 'Yes' : 'No'}
@@ -91,7 +90,7 @@ export default async function MusicManagementPage() {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
+                                    <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
                                         No music tracks found.
                                     </TableCell>
                                 </TableRow>

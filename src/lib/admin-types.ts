@@ -5,6 +5,7 @@ export type MusicTrack = {
   id: string;
   title: string;
   musicUrl: string;
+  category?: string;
   coverImageUrl?: string;
   isFeatured: boolean;
   isPublished: boolean;
@@ -17,6 +18,7 @@ export type Video = {
   videoUrl: string;
   description?: string;
   tags?: string;
+  category?: string;
   thumbnailUrl?: string;
   isPublished: boolean;
   isFeatured: boolean;
