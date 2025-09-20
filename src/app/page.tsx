@@ -80,6 +80,7 @@ export default function Home() {
     const [featuredVideo, setFeaturedVideo] = useState<VideoType | null>(null);
     const playerRef = useRef<YouTubePlayer>(null);
     const [likedTracks, setLikedTracks] = useState<string[]>([]);
+    const [autoplay, setAutoplay] = useState(true); // Control autoplay for player
     
     const [state, formAction] = useActionState(submitContactForm, initialState);
     const { toast } = useToast();
@@ -163,12 +164,10 @@ export default function Home() {
     const videoId = featuredVideo ? getYouTubeId(featuredVideo.videoUrl) : null;
     
     const playTrackFromPortfolio = (track: VideoType) => {
+        setAutoplay(true); // Ensure next track autoplays
         setFeaturedVideo(track);
         setTimeout(() => {
-             if (playerRef.current) {
-                playerRef.current.playVideo();
-                document.getElementById('music-player')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+             document.getElementById('music-player')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 100);
     };
 
@@ -303,13 +302,15 @@ export default function Home() {
                              <Card className="bg-background/50 backdrop-blur-sm border-primary/30 overflow-hidden">
                                 <div className="aspect-video">
                                      <YouTube
+                                         key={videoId} // Key change will force re-render and obey new autoplay prop
                                          videoId={videoId}
                                          onReady={(e) => playerRef.current = e.target}
                                          opts={{
                                              height: '100%',
                                              width: '100%',
                                              playerVars: {
-                                                 autoplay: 0,
+                                                 autoplay: autoplay ? 1 : 0,
+                                                 mute: autoplay ? 1 : 0, // Mute to allow autoplay on page load
                                                  controls: 1,
                                                  rel: 0,
                                                  showinfo: 0,
@@ -364,7 +365,7 @@ export default function Home() {
                                 <Card className={`music-card bg-card rounded-lg overflow-hidden transition-all duration-300 h-full flex flex-col ${
                                     hoveredMusicCard === track.id ? 'transform scale-105 border-primary/50' : 'border-transparent'
                                 }`}>
-                                    <div className="relative">
+                                    <div className="relative cursor-pointer" onClick={() => playTrackFromPortfolio(track)}>
                                         <Image src={track.thumbnailUrl || `https://placehold.co/400x400`} 
                                             alt={track.title} 
                                             width={400}
@@ -377,7 +378,6 @@ export default function Home() {
                                             <Button 
                                                 size="lg"
                                                 className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full w-16 h-16"
-                                                onClick={() => playTrackFromPortfolio(track)}
                                             >
                                                 <Play className="w-8 h-8" />
                                             </Button>
@@ -637,3 +637,4 @@ export default function Home() {
         </div>
     );
 }
+
