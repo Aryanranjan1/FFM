@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import Image from 'next/image';
@@ -151,50 +152,50 @@ Fahmie's portfolio covers both international collaborations and competitive musi
       
       {/* Collaborations Section */}
       <motion.section
-          className="py-20 px-6 bg-transparent"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={staggerContainer}
+        className="py-20 px-6 bg-transparent"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={staggerContainer}
       >
-          <div className="container mx-auto">
-              <motion.div className="text-center mb-12" variants={fadeInUp}>
-                  <h2 className="text-4xl font-bold mb-4">Collaborations</h2>
-                  <p className="text-lg text-muted-foreground">
-                  Working with talented artists and ensembles to create extraordinary music
-                  </p>
+        <div className="container mx-auto">
+          <motion.div className="text-center mb-12" variants={fadeInUp}>
+            <h2 className="font-headline text-4xl font-bold mb-4">COLLABORATIONS</h2>
+            <p className="text-lg text-muted-foreground">
+              Working with talented artists and ensembles to create extraordinary music
+            </p>
+          </motion.div>
+          <motion.div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto" variants={staggerContainer}>
+            {collaborations.map((collab, index) => (
+              <motion.div key={index} variants={fadeInUp}>
+                <Card className="bg-card border border-primary/20 hover:border-primary/40 transition-all h-full flex flex-col">
+                  <CardHeader>
+                    <div className="flex items-center space-x-4">
+                      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                        <Image src={collab.image} alt={collab.name} width={64} height={64} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex-1">
+                        <CardTitle className="text-xl">{collab.name}</CardTitle>
+                        <CardDescription className="text-primary">{collab.role}</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="flex-grow flex flex-col">
+                    <p className="text-muted-foreground mb-6 leading-relaxed flex-grow">{collab.description}</p>
+                    {collab.link && collab.link !== "#" && (
+                      <Button variant="outline" className="w-full border-primary/30 text-primary hover:bg-primary/10 hover:text-primary" asChild>
+                        <a href={collab.link} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          Visit {collab.name}
+                        </a>
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
               </motion.div>
-              <motion.div className="grid md:grid-cols-2 gap-8" variants={staggerContainer}>
-                  {collaborations.map((collab, index) => (
-                  <motion.div key={index} variants={fadeInUp}>
-                      <Card className="bg-card border-primary/20 hover:border-primary/40 transition-all h-full">
-                      <CardHeader>
-                          <div className="flex items-center space-x-4">
-                          <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-purple-500/10 rounded-lg overflow-hidden flex-shrink-0">
-                              <Image src={collab.image} alt={collab.name} width={64} height={64} className="w-full h-full object-cover" />
-                          </div>
-                          <div className="flex-1">
-                              <CardTitle className="text-xl">{collab.name}</CardTitle>
-                              <CardDescription className="text-primary">{collab.role}</CardDescription>
-                          </div>
-                          </div>
-                      </CardHeader>
-                      <CardContent>
-                          <p className="text-muted-foreground mb-6 leading-relaxed">{collab.description}</p>
-                          {collab.link && collab.link !== "#" && (
-                          <Button variant="outline" className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground" asChild>
-                              <a href={collab.link} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="w-4 h-4 mr-2" />
-                              Visit {collab.name}
-                              </a>
-                          </Button>
-                          )}
-                      </CardContent>
-                      </Card>
-                  </motion.div>
-                  ))}
-              </motion.div>
-          </div>
+            ))}
+          </motion.div>
+        </div>
       </motion.section>
 
       {/* Achievements Section */}
