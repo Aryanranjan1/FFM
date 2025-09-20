@@ -140,8 +140,10 @@ export default function BlogManagementPage() {
                       {post.createdAt ? format(new Date(post.createdAt), 'PPP') : 'N/A'}
                     </TableCell>
                     <TableCell className="text-right">
-                       <Button variant="ghost" size="icon" disabled>
-                          <Edit className="h-4 w-4" />
+                       <Button asChild variant="ghost" size="icon">
+                          <Link href={`/admin/blog/edit/${post.id}`}>
+                            <Edit className="h-4 w-4" />
+                          </Link>
                         </Button>
                       <DeletePostButton postId={post.id} />
                     </TableCell>

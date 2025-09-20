@@ -272,6 +272,20 @@ export async function addBlogPost(values: BlogPostFormValues) {
   }
 }
 
+export async function updateBlogPost(id: string, values: BlogPostFormValues) {
+  try {
+    const postRef = doc(db, 'blog', id);
+    await updateDoc(postRef, values);
+    revalidatePath('/admin/blog');
+    revalidatePath(`/admin/blog/edit/${id}`);
+    revalidatePath('/blog');
+    return { success: true, message: "Blog post updated successfully." };
+  } catch (e) {
+    console.error("Error updating blog post:", e);
+    return { success: false, message: "Failed to update blog post." };
+  }
+}
+
 export async function deleteBlogPost(id: string) {
   try {
     await deleteDoc(doc(db, 'blog', id));
