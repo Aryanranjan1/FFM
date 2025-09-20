@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/select';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { collection, query, getDocs, orderBy } from 'firebase/firestore';
 import type { BlogPost } from '@/lib/admin-types';
 import { format } from 'date-fns';
 
@@ -38,7 +38,6 @@ export default function BlogPage() {
       const postsCollection = collection(db, 'blog');
       const q = query(
         postsCollection,
-        where('isPublished', '==', true),
         orderBy('createdAt', 'desc')
       );
       const querySnapshot = await getDocs(q);
@@ -50,7 +49,8 @@ export default function BlogPage() {
             ...data,
             createdAt: (data.createdAt as any)?.toDate ? (data.createdAt as any).toDate().toISOString() : data.createdAt,
             } as BlogPost;
-        });
+        })
+        .filter(post => post.isPublished);
 
       setPosts(postsData);
       setLoading(false);
@@ -326,7 +326,7 @@ export default function BlogPage() {
                 </motion.div>
             )}
         </div>
-      </motion.section>
+      </section>
     </div>
   );
 }
