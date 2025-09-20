@@ -6,13 +6,14 @@ import { Plus, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { db } from "@/lib/firebase";
-import { collection, getDocs, orderBy, Timestamp } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, Timestamp } from "firebase/firestore";
 import type { Video } from "@/lib/admin-types";
 import { format } from "date-fns";
 
 async function getVideos(): Promise<Video[]> {
     const videosCol = collection(db, 'videos');
-    const videoSnapshot = await getDocs(orderBy(videosCol, "createdAt", "desc"));
+    const q = query(videosCol, orderBy("createdAt", "desc"));
+    const videoSnapshot = await getDocs(q);
     const videoList = videoSnapshot.docs.map(doc => {
         const data = doc.data();
         return {
@@ -96,4 +97,3 @@ export default async function VideosManagementPage() {
         </div>
     );
 }
-

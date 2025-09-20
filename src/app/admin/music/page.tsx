@@ -6,13 +6,14 @@ import { Plus, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { db } from "@/lib/firebase";
-import { collection, getDocs, orderBy } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import type { MusicTrack } from "@/lib/admin-types";
 import { Badge } from "@/components/ui/badge";
 
 async function getMusicTracks(): Promise<MusicTrack[]> {
     const musicCol = collection(db, 'music');
-    const musicSnapshot = await getDocs(orderBy(musicCol, "createdAt", "desc"));
+    const q = query(musicCol, orderBy("createdAt", "desc"));
+    const musicSnapshot = await getDocs(q);
     const musicList = musicSnapshot.docs.map(doc => {
         const data = doc.data();
         return {
