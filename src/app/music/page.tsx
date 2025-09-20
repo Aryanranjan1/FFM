@@ -5,18 +5,17 @@
 import { useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, Variants } from 'framer-motion';
-import type { Album, Track, Collaboration, Achievement } from '@/lib/types';
-import { useMusicPlayer } from '@/context/music-player-context';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
+import type { Collaboration, Achievement } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { db } from "@/lib/firebase";
-import { collection, getDocs, orderBy, query, where, Timestamp } from "firebase/firestore";
-import type { MusicTrack } from '@/lib/admin-types';
+import { collection, getDocs, orderBy, query, Timestamp } from "firebase/firestore";
+import type { Video } from '@/lib/admin-types';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink, Heart, Share2, Loader2 } from 'lucide-react';
+import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink, Heart, Share2, Loader2, X } from 'lucide-react';
 import { bio } from '@/lib/data';
 
 const collaborations: Collaboration[] = [
@@ -76,58 +75,50 @@ const achievements: Achievement[] = [
 ];
 
 export default function MusicPage() {
-    const { play } = useMusicPlayer();
     const [filter, setFilter] = useState('All');
-    const [tracks, setTracks] = useState<MusicTrack[]>([]);
+    const [videos, setVideos] = useState<Video[]>([]);
     const [loading, setLoading] = useState(true);
+    const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
 
     useEffect(() => {
-        const fetchTracks = async () => {
+        const fetchVideos = async () => {
             setLoading(true);
-            const musicCol = collection(db, 'music');
-            const q = query(musicCol, orderBy("createdAt", "desc"));
-            const musicSnapshot = await getDocs(q);
-            const musicList = musicSnapshot.docs.map(doc => {
+            const videosCol = collection(db, 'videos');
+            const q = query(videosCol, orderBy("createdAt", "desc"));
+            const videoSnapshot = await getDocs(q);
+            const videoList = videoSnapshot.docs.map(doc => {
                 const data = doc.data();
                 return {
                     id: doc.id,
                     ...data,
                     createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
-                } as MusicTrack;
-            }).filter(track => track.isPublished);
-            setTracks(musicList);
+                } as Video;
+            }).filter(video => video.isPublished);
+            setVideos(videoList);
             setLoading(false);
         };
 
-        fetchTracks();
+        fetchVideos();
     }, []);
     
-    const musicCategories = useMemo(() => {
-        const categories = new Set(tracks.map(t => t.category).filter(Boolean));
+    const videoCategories = useMemo(() => {
+        const categories = new Set(videos.map(v => v.category).filter(Boolean));
         return ['All', ...Array.from(categories)] as string[];
-    }, [tracks]);
+    }, [videos]);
 
-    const filteredTracks = useMemo(() => {
-        if (filter === 'All') return tracks;
-        return tracks.filter(p => p.category === filter);
-    }, [tracks, filter]);
+    const filteredVideos = useMemo(() => {
+        if (filter === 'All') return videos;
+        return videos.filter(p => p.category === filter);
+    }, [videos, filter]);
 
-    const handlePlayTrack = (track: MusicTrack) => {
-        const audioTrack: Track = {
-            id: track.id,
-            title: track.title,
-            artist: 'FFM',
-            duration: '0:00', // Placeholder
-            audioSrc: track.musicUrl,
-        };
-        const playlist = filteredTracks.map(t => ({
-             id: t.id,
-            title: t.title,
-            artist: 'FFM',
-            duration: '0:00',
-            audioSrc: t.musicUrl,
-        }));
-        play(audioTrack, playlist);
+    const handlePlayVideo = (video: Video) => {
+        setSelectedVideo(video);
+    };
+
+    const getYouTubeId = (url: string) => {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : null;
     };
 
     const fadeInUp: Variants = {
@@ -140,10 +131,45 @@ export default function MusicPage() {
         visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
     };
 
-    const latestRelease = useMemo(() => tracks.find(t => t.isFeatured) || tracks[0], [tracks]);
+    const latestRelease = useMemo(() => videos.find(t => t.isFeatured) || videos[0], [videos]);
 
     return (
         <div className="bg-background text-foreground">
+             <AnimatePresence>
+                {selectedVideo && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100]"
+                        onClick={() => setSelectedVideo(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0.8 }}
+                            className="relative w-full max-w-4xl aspect-video"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="absolute -top-10 right-0 h-8 w-8 rounded-full bg-white/20 hover:bg-white/30 text-white"
+                                onClick={() => setSelectedVideo(null)}
+                            >
+                                <X className="h-5 w-5" />
+                            </Button>
+                            <iframe
+                                src={`https://www.youtube.com/embed/${getYouTubeId(selectedVideo.videoUrl)}?autoplay=1`}
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                className="w-full h-full rounded-lg"
+                            ></iframe>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
             {/* Hero Section */}
             <section className="py-24 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
                 <div className="hero-bg"></div>
@@ -181,16 +207,16 @@ export default function MusicPage() {
                         <motion.div variants={fadeInUp}>
                             <Card className="overflow-hidden bg-transparent border-0 md:border md:bg-card md:border-border/50">
                                 <CardContent className="p-0 md:p-6 grid md:grid-cols-2 gap-8 items-center">
-                                    <div className="relative group aspect-square md:aspect-auto">
+                                    <div className="relative group aspect-square md:aspect-auto cursor-pointer" onClick={() => handlePlayVideo(latestRelease)}>
                                         <Image
-                                            src={latestRelease.coverImageUrl || "https://placehold.co/600x600"}
+                                            src={latestRelease.thumbnailUrl || "https://placehold.co/600x600"}
                                             alt={`Cover for ${latestRelease.title}`}
                                             width={600}
                                             height={600}
                                             className="w-full h-full object-cover md:rounded-lg"
                                         />
                                         <div className="absolute inset-0 bg-black/20 md:rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Button size="icon" className="h-20 w-20 rounded-full" onClick={() => handlePlayTrack(latestRelease)}>
+                                            <Button size="icon" className="h-20 w-20 rounded-full" onClick={() => handlePlayVideo(latestRelease)}>
                                                 <PlayCircle className="h-10 w-10" />
                                             </Button>
                                         </div>
@@ -199,11 +225,11 @@ export default function MusicPage() {
                                         <Badge variant="default" className="mb-4">Latest Release</Badge>
                                         <h3 className="font-headline text-4xl font-bold">{latestRelease.title}</h3>
                                         <p className="text-muted-foreground mt-2 text-lg">{new Date(latestRelease.createdAt).getFullYear()}</p>
-                                        <p className="mt-4 text-muted-foreground leading-relaxed">
-                                            {`Listen to the latest track, ${latestRelease.title}.`}
+                                        <p className="mt-4 text-muted-foreground leading-relaxed line-clamp-3">
+                                            {latestRelease.description || `Listen to the latest track, ${latestRelease.title}.`}
                                         </p>
                                         <div className="mt-6">
-                                            <Button onClick={() => handlePlayTrack(latestRelease)}>Play Now</Button>
+                                            <Button onClick={() => handlePlayVideo(latestRelease)}>Play Now</Button>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -213,7 +239,7 @@ export default function MusicPage() {
                 </motion.section>
             )}
 
-            {/* Music Portfolio Section */}
+            {/* Video Portfolio Section */}
             <motion.section
                 className="py-20"
                 initial="hidden"
@@ -223,7 +249,7 @@ export default function MusicPage() {
             >
                 <div className="container mx-auto px-4 md:px-12">
                     <motion.div className="flex justify-center flex-wrap gap-2 mb-12" variants={fadeInUp}>
-                        {musicCategories.map(category => (
+                        {videoCategories.map(category => (
                             <Button
                                 key={category}
                                 variant={filter === category ? 'default' : 'outline'}
@@ -249,27 +275,27 @@ export default function MusicPage() {
                             layout 
                             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8"
                         >
-                            {filteredTracks.map((track) => {
+                            {filteredVideos.map((video) => {
                                 return (
-                                    <motion.div layout key={track.id} variants={fadeInUp}>
-                                        <Card className="overflow-hidden group bg-card border-border/50 h-full flex flex-col">
+                                    <motion.div layout key={video.id} variants={fadeInUp}>
+                                        <Card className="overflow-hidden group bg-card border-border/50 h-full flex flex-col cursor-pointer" onClick={() => handlePlayVideo(video)}>
                                             <div className="overflow-hidden relative">
                                                 <Image
-                                                    src={track.coverImageUrl || "https://placehold.co/600x400"}
-                                                    alt={`Cover for ${track.title}`}
+                                                    src={video.thumbnailUrl || "https://placehold.co/600x400"}
+                                                    alt={`Cover for ${video.title}`}
                                                     width={600}
                                                     height={400}
                                                     className="object-cover w-full h-auto aspect-[16/9] group-hover:scale-105 transition-transform duration-300"
                                                 />
                                                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <Button size="icon" className="h-12 w-12 rounded-full" onClick={() => handlePlayTrack(track)}>
+                                                    <Button size="icon" className="h-12 w-12 rounded-full">
                                                         <PlayCircle className="h-6 w-6" />
                                                     </Button>
                                                 </div>
                                             </div>
                                             <CardContent className="p-4 flex-grow flex flex-col">
-                                                <h3 className="font-bold text-lg truncate">{track.title}</h3>
-                                                <p className="text-sm text-primary mb-2">{track.category || 'Music'}</p>
+                                                <h3 className="font-bold text-lg truncate">{video.title}</h3>
+                                                <p className="text-sm text-primary mb-2">{video.category || 'Video'}</p>
                                                 <div className="flex justify-start items-center gap-2 text-muted-foreground mt-auto">
                                                     <Button variant="ghost" size="icon" className="w-8 h-8">
                                                         <Heart className="h-4 w-4" />

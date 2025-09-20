@@ -7,8 +7,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Search, Calendar, User, Heart, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { Clock, Search, Calendar, User, Heart, ChevronLeft, ChevronRight, Loader2, Star } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -24,9 +24,6 @@ import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import type { BlogPost } from '@/lib/admin-types';
 import { format } from 'date-fns';
 
-const categories = ["All", "Composition", "Cultural Heritage", "Behind the Scenes", "Industry Insights", "Business", "Collaboration", "Tutorials", "Film Scoring", "Technology"];
-
-
 export default function BlogPage() {
   const [activeTab, setActiveTab] = useState('All');
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -41,6 +38,7 @@ export default function BlogPage() {
       const postsCollection = collection(db, 'blog');
       const q = query(
         postsCollection,
+        where('isPublished', '==', true),
         orderBy('createdAt', 'desc')
       );
       const querySnapshot = await getDocs(q);
@@ -52,8 +50,7 @@ export default function BlogPage() {
             ...data,
             createdAt: (data.createdAt as any)?.toDate ? (data.createdAt as any).toDate().toISOString() : data.createdAt,
             } as BlogPost;
-        })
-        .filter(post => post.isPublished);
+        });
 
       setPosts(postsData);
       setLoading(false);
@@ -61,8 +58,19 @@ export default function BlogPage() {
     fetchPosts();
   }, []);
 
+  const categories = useMemo(() => {
+    const allCategories = posts.map(p => p.category).filter(Boolean);
+    return ["All", ...Array.from(new Set(allCategories))];
+  }, [posts]);
+
   const filteredPosts = activeTab === 'All' ? posts : posts.filter(p => p.category === activeTab);
-  const featuredArticles = posts.filter(p => p.isFeatured).slice(0, 2);
+  
+  const featuredPost = useMemo(() => {
+    const featured = posts.filter(p => p.isFeatured);
+    if (featured.length === 0 && posts.length > 0) return posts[0];
+    if (featured.length > 0) return featured[Math.floor(Math.random() * featured.length)];
+    return null;
+  }, [posts]);
 
 
   const checkScrollability = useCallback(() => {
@@ -131,78 +139,69 @@ export default function BlogPage() {
         </div>
       </section>
 
-      {/* Featured Articles Section */}
-      <motion.section
-        className="py-20 bg-card"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.1 }}
-        variants={staggerContainer}
-      >
-        <div className="container mx-auto px-4 md:px-12">
-          <motion.div className="text-center mb-12" variants={fadeInUp}>
-            <h2 className="text-3xl font-headline font-bold text-primary mb-4">
-              FEATURED ARTICLES
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Hand-picked posts that showcase the best of musical composition and cultural innovation
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
+       {/* Featured Post Section */}
+       {loading ? (
+        <div className="py-20 bg-card flex justify-center items-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+       ) : featuredPost && (
+        <motion.section
+            className="py-20 bg-card"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
             variants={staggerContainer}
-          >
-            {loading ? (
-                <div className="md:col-span-2 flex justify-center items-center h-64">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                </div>
-            ) : featuredArticles.length > 0 ? (
-                featuredArticles.map((article) => (
-                <motion.div key={article.id} variants={fadeInUp}>
-                  <Link href={`/blog/${article.id}`}>
-                    <Card className="bg-background border-border/50 hover:border-primary/50 transition-all duration-300 group overflow-hidden">
-                      <div className="relative">
-                          <Image
-                            src={article.coverImageUrl || 'https://placehold.co/600x400'}
-                            alt={article.title}
-                            width={600}
-                            height={400}
-                            className="object-cover w-full h-auto aspect-video group-hover:scale-105 transition-transform duration-300"
-                          />
-                        <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
-                          Featured
-                        </Badge>
-                      </div>
-                      <CardContent className="p-6 space-y-3">
-                        <div className="flex justify-between items-center text-sm">
-                          <Badge variant="outline" className="text-primary border-primary/50">
-                            {article.category}
-                          </Badge>
-                          <div className="flex items-center text-muted-foreground">
-                            <Clock className="h-4 w-4 mr-1.5" />
-                            <span>5 min read</span>
-                          </div>
-                        </div>
-                        <h3 className="font-headline text-2xl font-semibold text-foreground group-hover:text-primary transition-colors">
-                          {article.title}
-                        </h3>
-                        <p className="text-muted-foreground leading-relaxed line-clamp-2">
-                          {article.content}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </Link>
+        >
+            <div className="container mx-auto px-4 md:px-12">
+                <motion.div className="text-center mb-12" variants={fadeInUp}>
+                    <h2 className="text-3xl font-headline font-bold text-primary mb-4">
+                        FEATURED POST
+                    </h2>
+                    <p className="text-muted-foreground max-w-2xl mx-auto">
+                        A hand-picked article to spark your curiosity.
+                    </p>
                 </motion.div>
-              ))
-            ) : (
-                <div className="md:col-span-2 text-center text-muted-foreground">No featured articles found.</div>
-            )}
-          </motion.div>
-        </div>
-      </motion.section>
+                <motion.div variants={fadeInUp}>
+                    <Card className="bg-background border-border/50 hover:border-primary/50 transition-all duration-300 group overflow-hidden md:grid md:grid-cols-2 items-center max-w-4xl mx-auto">
+                        <div className="relative">
+                             <Link href={`/blog/${featuredPost.id}`}>
+                                <Image
+                                    src={featuredPost.coverImageUrl || 'https://placehold.co/600x400'}
+                                    alt={featuredPost.title}
+                                    width={600}
+                                    height={400}
+                                    className="object-cover w-full h-auto aspect-video md:aspect-[4/3] group-hover:scale-105 transition-transform duration-300"
+                                />
+                                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                            </Link>
+                            <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
+                                <Star className="h-3 w-3 mr-1.5" /> Featured
+                            </Badge>
+                        </div>
+                        <CardContent className="p-6 space-y-3">
+                            <Badge variant="outline" className="text-primary border-primary/50">{featuredPost.category}</Badge>
+                             <Link href={`/blog/${featuredPost.id}`}>
+                                <h3 className="font-headline text-3xl font-semibold text-foreground group-hover:text-primary transition-colors">
+                                    {featuredPost.title}
+                                </h3>
+                             </Link>
+                            <p className="text-muted-foreground leading-relaxed line-clamp-3">
+                                {featuredPost.content}
+                            </p>
+                            <div className="flex justify-between items-center text-sm text-muted-foreground pt-3 border-t border-border/50">
+                                <span className="flex items-center"><Calendar className="h-4 w-4 mr-1.5"/>{format(new Date(featuredPost.createdAt), 'PPP')}</span>
+                                <span className="flex items-center"><Clock className="h-4 w-4 mr-1.5"/>5 min read</span>
+                            </div>
+                             <Button asChild className="w-full btn-gold mt-2">
+                                <Link href={`/blog/${featuredPost.id}`}>Read Full Article</Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </motion.div>
+            </div>
+        </motion.section>
+       )}
 
-      {/* Published Articles Section */}
+
+      {/* All Articles Section */}
        <motion.section
         className="py-20 bg-background"
         initial="hidden"
@@ -212,6 +211,11 @@ export default function BlogPage() {
       >
         <div className="container mx-auto px-4 md:px-12">
             <div className="flex flex-col gap-4 mb-12">
+                 <motion.div className="text-center" variants={fadeInUp}>
+                    <h2 className="text-3xl font-headline font-bold text-primary mb-4">
+                        ALL ARTICLES
+                    </h2>
+                </motion.div>
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="relative w-full md:max-w-xs">
                         <Input placeholder="Search articles..." className="pl-10" />
@@ -273,16 +277,18 @@ export default function BlogPage() {
                         return (
                             <motion.div key={article.id} variants={fadeInUp}>
                                 <Card className="bg-card border-border/50 hover:border-primary/50 transition-all duration-300 group overflow-hidden flex flex-col h-full">
-                                    <div className="relative">
-                                        <Image
-                                            src={article.coverImageUrl || 'https://placehold.co/600x338'}
-                                            alt={article.title}
-                                            width={600}
-                                            height={338}
-                                            className="object-cover w-full h-auto aspect-video"
-                                        />
-                                        {article.isFeatured && <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground">Featured</Badge>}
-                                    </div>
+                                    <Link href={`/blog/${article.id}`} className="block">
+                                        <div className="relative">
+                                            <Image
+                                                src={article.coverImageUrl || 'https://placehold.co/600x338'}
+                                                alt={article.title}
+                                                width={600}
+                                                height={338}
+                                                className="object-cover w-full h-auto aspect-video"
+                                            />
+                                            {article.isFeatured && <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground">Featured</Badge>}
+                                        </div>
+                                    </Link>
                                     <CardHeader className="p-4 space-y-2">
                                         <div className="flex justify-between items-center text-sm">
                                             <Badge variant="outline" className="text-primary border-primary/50">
@@ -293,24 +299,20 @@ export default function BlogPage() {
                                                 <span>5 min read</span>
                                             </div>
                                         </div>
-                                        <h3 className="font-headline text-xl font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                                            {article.title}
-                                        </h3>
-                                        <p className="text-muted-foreground leading-relaxed text-sm line-clamp-2">
+                                        <Link href={`/blog/${article.id}`}>
+                                            <h3 className="font-headline text-xl font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                                                {article.title}
+                                            </h3>
+                                        </Link>
+                                    </CardHeader>
+                                    <CardContent className="p-4 pt-0 flex flex-col flex-grow">
+                                        <p className="text-muted-foreground leading-relaxed text-sm line-clamp-2 flex-grow">
                                             {article.content}
                                         </p>
-                                    </CardHeader>
-                                    <CardContent className="p-4 flex flex-col flex-grow">
-                                         <div className="flex flex-wrap gap-2 mb-4">
-                                            {article.tags?.split(',').map(tag => (
-                                                <Badge key={tag.trim()} variant="secondary" className="text-xs">{tag.trim()}</Badge>
-                                            ))}
-                                        </div>
-                                        <div className="mt-auto space-y-3 border-t border-border/50 pt-4 text-xs text-muted-foreground">
+                                        <div className="mt-4 space-y-3 border-t border-border/50 pt-4 text-xs text-muted-foreground">
                                             <div className="flex justify-between">
                                                 <span className="flex items-center"><User className="h-3 w-3 mr-1.5"/>Fahmie Farhan</span>
                                                 <span className="flex items-center"><Calendar className="h-3 w-3 mr-1.5"/>{format(new Date(article.createdAt), 'PPP')}</span>
-                                                <span className="flex items-center"><Heart className="h-3 w-3 mr-1.5"/>{Math.floor(Math.random()*500)}</span>
                                             </div>
                                              <Button asChild className="w-full btn-gold mt-2">
                                                 <Link href={`/blog/${article.id}`}>Read Article</Link>
@@ -328,5 +330,3 @@ export default function BlogPage() {
     </div>
   );
 }
-
-    
