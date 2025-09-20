@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { motion } from 'framer-motion';
@@ -66,29 +65,24 @@ export default function BlogPage() {
   const filteredPosts = activeTab === 'All' ? posts : posts.filter(p => p.category === activeTab);
   
   const featuredPost = useMemo(() => {
-    // Find a post that is specifically marked as featured
     const featured = posts.find(p => p.isFeatured);
     if (featured) return featured;
-
-    // Fallback to the most recent post if no featured post is found
     if (posts.length > 0) return posts[0];
-    
     return null;
   }, [posts]);
-
 
   const checkScrollability = useCallback(() => {
     const el = scrollRef.current;
     if (el) {
       setCanScrollLeft(el.scrollLeft > 0);
-      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 1); // -1 for precision
+      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 1);
     }
   }, []);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (el) {
-        checkScrollability(); // Initial check
+        checkScrollability();
         el.addEventListener('scroll', checkScrollability);
         window.addEventListener('resize', checkScrollability);
         
@@ -97,7 +91,7 @@ export default function BlogPage() {
             window.removeEventListener('resize', checkScrollability);
         };
     }
-  }, [checkScrollability, loading]); // Re-run when loading is done
+  }, [checkScrollability, loading]);
 
   const handleScroll = (direction: 'left' | 'right') => {
     const el = scrollRef.current;
