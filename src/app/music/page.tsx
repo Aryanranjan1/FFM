@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { db } from "@/lib/firebase";
 import { collection, getDocs, orderBy, query, Timestamp } from "firebase/firestore";
 import type { Video } from '@/lib/admin-types';
+import { useToast } from "@/hooks/use-toast";
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -83,6 +84,7 @@ export default function MusicPage() {
     const [likedTracks, setLikedTracks] = useState<string[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const videosPerPage = 9;
+    const { toast } = useToast();
 
     useEffect(() => {
         const fetchVideos = async () => {
@@ -123,6 +125,33 @@ export default function MusicPage() {
     const paginate = (pageNumber: number) => {
         if (pageNumber > 0 && pageNumber <= totalPages) {
             setCurrentPage(pageNumber);
+        }
+    };
+
+    const handleShare = async (e: React.MouseEvent, video: Video) => {
+        e.stopPropagation();
+        const shareData = {
+        title: video.title,
+        text: `Check out this track: ${video.title}`,
+        url: video.videoUrl,
+        };
+        try {
+        if (navigator.share) {
+            await navigator.share(shareData);
+        } else {
+            await navigator.clipboard.writeText(video.videoUrl);
+            toast({
+                title: "Link Copied!",
+                description: "The video URL has been copied to your clipboard.",
+            });
+        }
+        } catch (error) {
+        console.error('Error sharing:', error);
+        toast({
+                title: "Error",
+                description: "Could not share the track.",
+                variant: "destructive",
+            });
         }
     };
 
@@ -298,7 +327,7 @@ export default function MusicPage() {
                                                     <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); toggleLike(video.id); }} className={`p-2 ${likedTracks.includes(video.id) ? 'text-red-500' : 'text-primary'}`}>
                                                         <Heart className={`w-5 h-5 ${likedTracks.includes(video.id) ? 'fill-current' : ''}`} />
                                                     </Button>
-                                                    <Button variant="ghost" size="sm" className="text-primary p-2">
+                                                    <Button variant="ghost" size="sm" className="text-primary p-2" onClick={(e) => handleShare(e, video)}>
                                                         <Share2 className="w-5 h-5" />
                                                     </Button>
                                                 </div>

@@ -134,12 +134,10 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        // Fallback for browsers that don't support navigator.share
-        // The clipboard API is restricted in this environment, so we just log a message.
-        console.log("Web Share API not supported. URL to share: ", window.location.href);
+        await navigator.clipboard.writeText(window.location.href);
         toast({
-            title: "Share Not Available",
-            description: "Please copy the URL from your browser's address bar.",
+            title: "Link Copied!",
+            description: "The article URL has been copied to your clipboard.",
         });
       }
     } catch (error) {

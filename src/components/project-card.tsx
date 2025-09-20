@@ -1,9 +1,13 @@
+
+"use client";
+
 import Image from 'next/image';
 import type { Project } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Card, CardContent } from './ui/card';
 import { Heart, Share2 } from 'lucide-react';
 import { Button } from './ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProjectCardProps {
   project: Project;
@@ -11,6 +15,34 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const image = PlaceHolderImages.find(p => p.id === project.imageId);
+  const { toast } = useToast();
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const shareData = {
+      title: project.title,
+      text: `Check out this project: ${project.title}`,
+      url: window.location.origin + '/projects/' + project.id, // Assuming a project detail page exists
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        toast({
+            title: "Link Copied!",
+            description: "The project URL has been copied to your clipboard.",
+        });
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+       toast({
+            title: "Error",
+            description: "Could not share the project.",
+            variant: "destructive",
+        });
+    }
+  };
 
   return (
     <Card className="overflow-hidden group bg-card border-border/50">
@@ -33,7 +65,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <Button variant="ghost" size="icon" className="w-8 h-8">
             <Heart className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="w-8 h-8">
+          <Button variant="ghost" size="icon" className="w-8 h-8" onClick={handleShare}>
             <Share2 className="h-4 w-4" />
           </Button>
         </div>
