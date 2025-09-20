@@ -1,3 +1,6 @@
+
+"use client";
+
 import type { Metadata } from 'next';
 import { AuthGuard } from '@/components/auth-guard';
 import {
@@ -20,12 +23,7 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
-
-export const metadata: Metadata = {
-  title: 'Admin Dashboard - FFM',
-  description: 'Admin dashboard for FFM website',
-};
-
+import { usePathname } from 'next/navigation';
 
 function UserNav() {
   const { logout } = useAuth();
@@ -68,11 +66,30 @@ function UserNav() {
   )
 }
 
+const navLinks = [
+    { href: "/admin/dashboard", label: "Dashboard", icon: Home },
+    { href: "/admin/music", label: "Music", icon: Music },
+    { href: "/admin/videos", label: "Videos", icon: Video },
+    { href: "/admin/blog", label: "Blog", icon: Newspaper },
+    { href: "/admin/social-links", label: "Social Links", icon: LinkIcon },
+    { href: "/admin/testimonials", label: "Testimonials", icon: Star },
+];
+
 export default function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  
+  const getPageTitle = () => {
+    const activeLink = navLinks.find(link => pathname.startsWith(link.href));
+    if (activeLink) {
+        return activeLink.label;
+    }
+    return "Dashboard";
+  }
+
   return (
     <AuthGuard>
       <SidebarProvider>
@@ -85,42 +102,14 @@ export default function DashboardLayout({
               </SidebarBrand>
             </SidebarHeader>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton href="/admin/dashboard" isActive>
-                  <Home />
-                  Dashboard
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton href="#">
-                  <Music />
-                  Music
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton href="#">
-                  <Video />
-                  Videos
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton href="#">
-                  <Newspaper />
-                  Blog
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-               <SidebarMenuItem>
-                <SidebarMenuButton href="#">
-                  <LinkIcon />
-                  Social Links
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-               <SidebarMenuItem>
-                <SidebarMenuButton href="#">
-                  <Star />
-                  Testimonials
-                </SiderbarMenuButton>
-              </SidebarMenuItem>
+              {navLinks.map(link => (
+                 <SidebarMenuItem key={link.href}>
+                    <SidebarMenuButton href={link.href} isActive={pathname === link.href}>
+                      <link.icon />
+                      {link.label}
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
              <SidebarFooter>
                 <SidebarMenu>
@@ -128,13 +117,6 @@ export default function DashboardLayout({
                         <SidebarMenuButton href="#">
                         <Settings />
                         Settings
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton href="#">
-                          <Avatar className="h-8 w-8">
-                            <AvatarFallback>N</AvatarFallback>
-                          </Avatar>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
@@ -146,7 +128,7 @@ export default function DashboardLayout({
           <header className="flex h-14 items-center justify-between gap-4 border-b bg-background/95 px-6">
             <div className="flex items-center gap-4">
                 <SidebarTrigger />
-                <h1 className="text-xl font-semibold uppercase font-headline">Dashboard</h1>
+                <h1 className="text-xl font-semibold uppercase font-headline">{getPageTitle()}</h1>
             </div>
             <div className="flex items-center gap-4">
                 <span className="text-sm text-muted-foreground">Logged in as <span className="font-semibold text-foreground">Admin</span></span>
