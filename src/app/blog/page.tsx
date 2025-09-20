@@ -109,11 +109,10 @@ export default function BlogPage() {
   }, [posts, activeTab, searchTerm, sortBy]);
 
   const featuredPost = useMemo(() => {
+    if (posts.length === 0) return null;
     const sortedByDate = [...posts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     const featured = sortedByDate.find((p) => p.isFeatured);
-    if (featured) return featured;
-    if (sortedByDate.length > 0) return sortedByDate[0];
-    return null;
+    return featured || sortedByDate[0];
   }, [posts]);
 
   const checkScrollability = useCallback(() => {
