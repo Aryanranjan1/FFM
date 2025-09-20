@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/select";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { db } from "@/lib/firebase";
-import { collection, query, getDocs, orderBy } from "firebase/firestore";
+import { collection, query, getDocs, orderBy, where } from "firebase/firestore";
 import type { BlogPost } from "@/lib/admin-types";
 import { format } from "date-fns";
 
@@ -38,25 +38,29 @@ export default function BlogPage() {
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("recent");
 
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
       const postsCollection = collection(db, "blog");
-      const q = query(postsCollection, orderBy("createdAt", "desc"));
+      const q = query(
+        postsCollection,
+        where("isPublished", "==", true),
+        orderBy("createdAt", "desc")
+      );
       const querySnapshot = await getDocs(q);
-      const postsData = querySnapshot.docs
-        .map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            ...data,
-            createdAt: (data.createdAt as any)?.toDate
-              ? (data.createdAt as any).toDate().toISOString()
-              : data.createdAt,
-          } as BlogPost;
-        })
-        .filter((post) => post.isPublished);
+      const postsData = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: (data.createdAt as any)?.toDate
+            ? (data.createdAt as any).toDate().toISOString()
+            : data.createdAt,
+        } as BlogPost;
+      });
 
       setPosts(postsData);
       setLoading(false);
@@ -65,14 +69,40 @@ export default function BlogPage() {
   }, []);
 
   const categories = useMemo(() => {
+    if (loading) return ["All"];
     const allCategories = posts.map((p) => p.category).filter(Boolean);
     return ["All", ...Array.from(new Set(allCategories))];
-  }, [posts]);
+  }, [posts, loading]);
 
-  const filteredPosts =
-    activeTab === "All"
-      ? posts
-      : posts.filter((p) => p.category === activeTab);
+  const filteredAndSortedPosts = useMemo(() => {
+    let filtered = posts;
+
+    if (activeTab !== "All") {
+      filtered = filtered.filter((p) => p.category === activeTab);
+    }
+
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (p) =>
+          p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p.tags?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    switch (sortBy) {
+        case 'popular':
+            // Note: popularity is random for now. In a real app, this would be based on views/likes.
+            return filtered.sort(() => Math.random() - 0.5);
+        case 'title':
+            return filtered.sort((a, b) => a.title.localeCompare(b.title));
+        case 'recent':
+        default:
+            return filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+
+  }, [posts, activeTab, searchTerm, sortBy]);
 
   const featuredPost = useMemo(() => {
     const featured = posts.find((p) => p.isFeatured);
@@ -84,15 +114,16 @@ export default function BlogPage() {
   const checkScrollability = useCallback(() => {
     const el = scrollRef.current;
     if (el) {
+      const hasOverflow = el.scrollWidth > el.clientWidth;
       setCanScrollLeft(el.scrollLeft > 0);
-      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 1);
+      setCanScrollRight(hasOverflow && el.scrollLeft < el.scrollWidth - el.clientWidth - 1);
     }
   }, []);
 
   useEffect(() => {
     const el = scrollRef.current;
+    checkScrollability(); // Check on initial render
     if (el) {
-      checkScrollability();
       el.addEventListener("scroll", checkScrollability);
       window.addEventListener("resize", checkScrollability);
 
@@ -101,7 +132,7 @@ export default function BlogPage() {
         window.removeEventListener("resize", checkScrollability);
       };
     }
-  }, [checkScrollability, loading]);
+  }, [checkScrollability, loading, posts]); // Re-check when posts load
 
   const handleScroll = (direction: "left" | "right") => {
     const el = scrollRef.current;
@@ -184,7 +215,7 @@ export default function BlogPage() {
                       <Image
                         src={
                           featuredPost.coverImageUrl ||
-                          "https://placehold.co/600x400"
+                          "https://picsum.photos/seed/featured/600/400"
                         }
                         alt={featuredPost.title}
                         width={600}
@@ -251,12 +282,12 @@ export default function BlogPage() {
             </motion.div>
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="relative w-full md:max-w-xs">
-                <Input placeholder="Search articles..." className="pl-10" />
+                <Input placeholder="Search articles..." className="pl-10" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Sort by:</span>
-                <Select defaultValue="recent">
+                <Select value={sortBy} onValueChange={setSortBy}>
                   <SelectTrigger className="w-[120px]">
                     <SelectValue placeholder="Recent" />
                   </SelectTrigger>
@@ -273,7 +304,7 @@ export default function BlogPage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute left-0 z-10 rounded-full bg-card/80 hover:bg-card"
+                  className="absolute left-0 z-10 rounded-full bg-card/80 hover:bg-card -translate-x-1/2"
                   onClick={() => handleScroll("left")}
                 >
                   <ChevronLeft className="h-5 w-5" />
@@ -282,7 +313,7 @@ export default function BlogPage() {
               <ScrollArea className="w-full whitespace-nowrap">
                 <div
                   ref={scrollRef}
-                  className="flex w-max space-x-2 py-2.5 px-12"
+                  className="flex w-max space-x-2 py-2.5 px-4"
                 >
                   {categories.map((category) => (
                     <Button
@@ -301,7 +332,7 @@ export default function BlogPage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute right-0 z-10 rounded-full bg-card/80 hover:bg-card"
+                  className="absolute right-0 z-10 rounded-full bg-card/80 hover:bg-card translate-x-1/2"
                   onClick={() => handleScroll("right")}
                 >
                   <ChevronRight className="h-5 w-5" />
@@ -315,77 +346,83 @@ export default function BlogPage() {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : (
-            <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-              variants={staggerContainer}
-            >
-              {filteredPosts.map((article) => (
-                <motion.div key={article.id} variants={fadeInUp}>
-                  <Card className="bg-card border-border/50 hover:border-primary/50 transition-all duration-300 group overflow-hidden flex flex-col h-full">
-                    <Link href={`/blog/${article.id}`} className="block">
-                      <div className="relative">
-                        <Image
-                          src={
-                            article.coverImageUrl ||
-                            "https://placehold.co/600x338"
-                          }
-                          alt={article.title}
-                          width={600}
-                          height={338}
-                          className="object-cover w-full h-auto aspect-video"
-                        />
-                        {article.isFeatured && (
-                          <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground">
-                            Featured
-                          </Badge>
-                        )}
-                      </div>
-                    </Link>
-                    <CardHeader className="p-4 space-y-2">
-                      <div className="flex justify-between items-center text-sm">
-                        <Badge
-                          variant="outline"
-                          className="text-primary border-primary/50"
-                        >
-                          {article.category}
-                        </Badge>
-                        <div className="flex items-center text-muted-foreground">
-                          <Clock className="h-4 w-4 mr-1.5" />
-                          <span>5 min read</span>
+            posts.length > 0 ? (
+              <motion.div
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                variants={staggerContainer}
+              >
+                {filteredAndSortedPosts.map((article) => (
+                  <motion.div key={article.id} variants={fadeInUp}>
+                    <Card className="bg-card border-border/50 hover:border-primary/50 transition-all duration-300 group overflow-hidden flex flex-col h-full">
+                      <Link href={`/blog/${article.id}`} className="block">
+                        <div className="relative">
+                          <Image
+                            src={
+                              article.coverImageUrl ||
+                              `https://picsum.photos/seed/${article.id}/600/338`
+                            }
+                            alt={article.title}
+                            width={600}
+                            height={338}
+                            className="object-cover w-full h-auto aspect-video"
+                          />
+                          {article.isFeatured && (
+                            <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground">
+                              Featured
+                            </Badge>
+                          )}
                         </div>
-                      </div>
-                      <Link href={`/blog/${article.id}`}>
-                        <h3 className="font-headline text-xl font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                          {article.title}
-                        </h3>
                       </Link>
-                    </CardHeader>
-                    <CardContent className="p-4 pt-0 flex flex-col flex-grow">
-                      <p className="text-muted-foreground leading-relaxed text-sm line-clamp-2 flex-grow">
-                        {article.content}
-                      </p>
-                      <div className="mt-4 space-y-3 border-t border-border/50 pt-4 text-xs text-muted-foreground">
-                        <div className="flex justify-between">
-                          <span className="flex items-center">
-                            <User className="h-3 w-3 mr-1.5" />
-                            Fahmie Farhan
-                          </span>
-                          <span className="flex items-center">
-                            <Calendar className="h-3 w-3 mr-1.5" />
-                            {format(new Date(article.createdAt), "PPP")}
-                          </span>
+                      <CardHeader className="p-4 space-y-2">
+                        <div className="flex justify-between items-center text-sm">
+                          <Badge
+                            variant="outline"
+                            className="text-primary border-primary/50"
+                          >
+                            {article.category}
+                          </Badge>
+                          <div className="flex items-center text-muted-foreground">
+                            <Clock className="h-4 w-4 mr-1.5" />
+                            <span>5 min read</span>
+                          </div>
                         </div>
-                        <Button asChild className="w-full btn-gold mt-2">
-                          <Link href={`/blog/${article.id}`}>
-                            Read Article
-                          </Link>
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </motion.div>
+                        <Link href={`/blog/${article.id}`}>
+                          <h3 className="font-headline text-xl font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                            {article.title}
+                          </h3>
+                        </Link>
+                      </CardHeader>
+                      <CardContent className="p-4 pt-0 flex flex-col flex-grow">
+                        <p className="text-muted-foreground leading-relaxed text-sm line-clamp-2 flex-grow">
+                          {article.content}
+                        </p>
+                        <div className="mt-4 space-y-3 border-t border-border/50 pt-4 text-xs text-muted-foreground">
+                          <div className="flex justify-between">
+                            <span className="flex items-center">
+                              <User className="h-3 w-3 mr-1.5" />
+                              Fahmie Farhan
+                            </span>
+                            <span className="flex items-center">
+                              <Calendar className="h-3 w-3 mr-1.5" />
+                              {format(new Date(article.createdAt), "PPP")}
+                            </span>
+                          </div>
+                          <Button asChild className="w-full btn-gold mt-2">
+                            <Link href={`/blog/${article.id}`}>
+                              Read Article
+                            </Link>
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+                <div className="text-center py-16 text-muted-foreground">
+                    <p>No articles found. Check back later!</p>
+                </div>
+            )
           )}
         </div>
       </motion.section>
