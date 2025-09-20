@@ -105,20 +105,28 @@ export default function DashboardLayout({
             <SidebarMenu>
               {navLinks.map(link => (
                  <SidebarMenuItem key={link.href}>
-                    <SidebarMenuButton href={link.href} isActive={pathname.startsWith(link.href)}>
-                      <link.icon />
-                      {link.label}
-                    </SidebarMenuButton>
+                    <Link href={link.href} passHref>
+                        <SidebarMenuButton asChild isActive={pathname.startsWith(link.href)}>
+                          <div>
+                            <link.icon />
+                            {link.label}
+                          </div>
+                        </SidebarMenuButton>
+                    </Link>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
              <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton href="/admin/settings" isActive={pathname.startsWith('/admin/settings')}>
-                        <Settings />
-                        Settings
+                      <Link href="/admin/settings" passHref>
+                        <SidebarMenuButton asChild isActive={pathname.startsWith('/admin/settings')}>
+                          <div>
+                            <Settings />
+                            Settings
+                          </div>
                         </SidebarMenuButton>
+                      </Link>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>
