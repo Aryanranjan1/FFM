@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import React, { useEffect, useState } from 'react';
@@ -14,6 +15,9 @@ import { Particles } from '@/components/particles';
 import { usePathname } from 'next/navigation';
 import type { SiteSettingsFormValues } from '@/app/actions';
 import { getSiteSettings } from '@/app/actions';
+import type { SocialLink as SocialLinkType } from '@/lib/admin-types';
+import { db } from '@/lib/firebase';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
@@ -36,9 +40,22 @@ export default function RootLayout({
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith('/admin');
   const [settings, setSettings] = useState<SiteSettingsFormValues>({ email: '', phone: '', location: '' });
+  const [socialLinks, setSocialLinks] = useState<SocialLinkType[]>([]);
 
   useEffect(() => {
     getSiteSettings().then(setSettings);
+
+    const fetchSocialLinks = async () => {
+      try {
+        const socialLinksQuery = query(collection(db, "social-links"), orderBy("createdAt", "desc"));
+        const socialLinksSnapshot = await getDocs(socialLinksQuery);
+        const socialLinksData = socialLinksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as SocialLinkType[];
+        setSocialLinks(socialLinksData);
+      } catch (error) {
+        console.error("Failed to fetch social links for layout:", error);
+      }
+    };
+    fetchSocialLinks();
   }, []);
 
   return (
@@ -65,7 +82,7 @@ export default function RootLayout({
                   {children}
                 </PageTransition>
               </main>
-              <Footer settings={settings} />
+              <Footer settings={settings} socialLinks={socialLinks} />
             </div>
           )}
           <MusicPlayer />

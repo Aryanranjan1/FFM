@@ -1,8 +1,10 @@
 
-import { Mail, Phone, MapPin } from 'lucide-react';
+
+import { Mail, Phone, MapPin, Link as LinkIcon } from 'lucide-react';
 import Link from 'next/link';
-import { Logo, SoundcloudIcon, Youtube, Instagram } from '../icons';
+import { Logo, SoundcloudIcon, Youtube, Instagram, SpotifyIcon } from '../icons';
 import type { SiteSettingsFormValues } from '@/app/actions';
+import type { SocialLink as SocialLinkType } from '@/lib/admin-types';
 
 
 const services = [
@@ -12,29 +14,36 @@ const services = [
   { name: 'Malay Gamelan coaching', href: '#' },
 ];
 
+const iconComponents: { [key: string]: React.FC<any> } = {
+    YouTube: (props) => <Youtube {...props} />,
+    Instagram: (props) => <Instagram {...props} />,
+    Soundcloud: (props) => <SoundcloudIcon {...props} />,
+    Spotify: (props) => <SpotifyIcon {...props} />,
+    Default: LinkIcon,
+};
 
-export function Footer({ settings }: { settings: SiteSettingsFormValues }) {
+
+export function Footer({ settings, socialLinks }: { settings: SiteSettingsFormValues, socialLinks: SocialLinkType[] }) {
     return (
         <footer className="bg-card py-12">
             <div className="container mx-auto px-4 md:px-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div className="text-center md:text-left md:col-span-1 lg:col-span-1">
-                        <div className="flex justify-center md:justify-start mb-4">
-                        <Logo className="h-8 w-auto text-primary" />
+                    <div className="text-left md:col-span-1 lg:col-span-1">
+                        <div className="flex justify-start mb-4">
+                          <Logo className="h-8 w-auto text-primary" />
                         </div>
                         <p className="text-muted-foreground text-sm">
                         Fahmie Farhan Music - Epic orchestral compositions and modern Malay gamelan interpretations.
                         </p>
-                        <div className="flex justify-center md:justify-start space-x-4 mt-6">
-                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                                <Youtube className="w-6 h-6" />
-                            </Link>
-                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                                <SoundcloudIcon className="w-6 h-6" />
-                            </Link>
-                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                                <Instagram className="w-6 h-6" />
-                            </Link>
+                        <div className="flex justify-start space-x-4 mt-6">
+                            {socialLinks.map((social) => {
+                                const Icon = iconComponents[social.platform as keyof typeof iconComponents] || iconComponents.Default;
+                                return (
+                                    <Link key={social.id} href={social.url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                                        <Icon className="w-6 h-6" />
+                                    </Link>
+                                )
+                            })}
                         </div>
                     </div>
                     <div className="lg:col-start-2 lg:col-span-3 text-center md:text-left">
