@@ -7,7 +7,7 @@ export type MusicTrack = {
   coverImageUrl?: string;
   isFeatured: boolean;
   isPublished: boolean;
-  createdAt: Timestamp | string;
+  createdAt: string;
 };
 
 export type Video = {
@@ -19,7 +19,21 @@ export type Video = {
   thumbnailUrl?: string;
   isPublished: boolean;
   isFeatured: boolean;
-  createdAt: Timestamp | string;
+  createdAt: string;
+};
+
+export type BlogPost = {
+    id: string;
+    title: string;
+    content: string;
+    category: string;
+    tags: string;
+    coverImageUrl: string;
+    isPublished: boolean;
+    isFeatured: boolean;
+    seoTitle: string;
+    seoDescription: string;
+    createdAt: string;
 };
 
 export type Testimonial = {

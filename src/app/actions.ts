@@ -241,3 +241,44 @@ export async function deleteSocialLink(id: string) {
         return { success: false, message: "Failed to delete social link." };
     }
 }
+
+
+// Blog Post Actions
+const blogPostSchema = z.object({
+  title: z.string().min(2, "Title must be at least 2 characters."),
+  content: z.string().min(10, "Content must be at least 10 characters."),
+  category: z.string().min(2, "Category is required."),
+  tags: z.string().optional(),
+  coverImageUrl: z.string().url("A valid URL is required.").optional().or(z.literal('')),
+  seoTitle: z.string().optional(),
+  seoDescription: z.string().optional(),
+  isPublished: z.boolean().default(false),
+  isFeatured: z.boolean().default(false),
+});
+export type BlogPostFormValues = z.infer<typeof blogPostSchema>;
+
+export async function addBlogPost(values: BlogPostFormValues) {
+  try {
+    await addDoc(collection(db, 'blog'), {
+      ...values,
+      createdAt: serverTimestamp(),
+    });
+    revalidatePath('/admin/blog');
+    revalidatePath('/blog');
+    return { success: true, message: "Blog post added successfully." };
+  } catch (e) {
+    console.error("Error adding blog post:", e);
+    return { success: false, message: "Failed to add blog post." };
+  }
+}
+
+export async function deleteBlogPost(id: string) {
+  try {
+    await deleteDoc(doc(db, 'blog', id));
+    revalidatePath('/admin/blog');
+    revalidatePath('/blog');
+    return { success: true, message: "Blog post deleted successfully." };
+  } catch (e) {
+    return { success: false, message: "Failed to delete blog post." };
+  }
+}
