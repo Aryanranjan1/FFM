@@ -110,7 +110,7 @@ const blogPosts = [
         coverImageUrl: "https://picsum.photos/seed/blog10/1200/675",
         isPublished: true,
         isFeatured: false,
- seoTitle: "How AI is Shaping the Future of Music Composition",
+        seoTitle: "How AI is Shaping the Future of Music Composition",
         seoDescription: "An exploration of the role of artificial intelligence in music, and how composers can use it as a powerful collaborative tool.",
     },
 ];
@@ -126,6 +126,62 @@ const socialLinks = [
     { platform: 'SoundCloud', url: 'https://soundcloud.com' },
     { platform: 'Instagram', url: 'https://www.instagram.com' },
 ];
+
+const videos = [
+    { title: 'Attack on Titan S4 - "Ashes on The Fire" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=hXh3-G3j_2Y', thumbnailUrl: 'https://img.youtube.com/vi/hXh3-G3j_2Y/hqdefault.jpg' },
+    { title: 'NieR:Automata - "Weight of the World" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=5z62_y1k_pI', thumbnailUrl: 'https://img.youtube.com/vi/5z62_y1k_pI/hqdefault.jpg' },
+    { title: 'Genshin Impact - "Rex Incognito" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=VyBhzg-f6wA', thumbnailUrl: 'https://img.youtube.com/vi/VyBhzg-f6wA/hqdefault.jpg' },
+    { title: 'Demon Slayer - "Gurenge" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=D-v8k8gZ_q8', thumbnailUrl: 'https://img.youtube.com/vi/D-v8k8gZ_q8/hqdefault.jpg' },
+    { title: 'Kingdom Hearts - "Dearly Beloved" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=fXb9-bXhH5I', thumbnailUrl: 'https://img.youtube.com/vi/fXb9-bXhH5I/hqdefault.jpg' },
+    { title: 'Final Fantasy VII - "One-Winged Angel" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=2-G8I4S4r_E', thumbnailUrl: 'https://img.youtube.com/vi/2-G8I4S4r_E/hqdefault.jpg' },
+    { title: 'The Last of Us - "Main Theme" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=4yO9h41gYyA', thumbnailUrl: 'https://img.youtube.com/vi/4yO9h41gYyA/hqdefault.jpg' },
+    { title: 'Attack on Titan S3 - "YouSeeBIGGIRL/T:T" (Fahmie Farhan Cover)', videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg' },
+    { title: 'My Hero Academia - "You Say Run" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=O-s_5qCg7oU', thumbnailUrl: 'https://img.youtube.com/vi/O-s_5qCg7oU/hqdefault.jpg' },
+    { title: 'Jujutsu Kaisen - "Kaikai Kitan" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=7u8y7iJ7kE0', thumbnailUrl: 'https://img.youtube.com/vi/7u8y7iJ7kE0/hqdefault.jpg' },
+    { title: 'Neon Genesis Evangelion - "A Cruel Angel\'s Thesis" (Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=s1fT4_gB7wQ', thumbnailUrl: 'https://img.youtube.com/vi/s1fT4_gB7wQ/hqdefault.jpg' },
+    { title: 'Cyberpunk 2077 - "V" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=aG061_pE7o4', thumbnailUrl: 'https://img.youtube.com/vi/aG061_pE7o4/hqdefault.jpg' },
+    { title: 'The Witcher 3 - "Geralt of Rivia" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=6b1pYf26kX8', thumbnailUrl: 'https://img.youtube.com/vi/6b1pYf26kX8/hqdefault.jpg' },
+    { title: 'Game of Thrones - "Main Theme" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=p1a_c9g2h4Q', thumbnailUrl: 'https://img.youtube.com/vi/p1a_c9g2h4Q/hqdefault.jpg' },
+    { title: 'Interstellar - "Cornfield Chase" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=Q1jZ1x_0L5o', thumbnailUrl: 'https://img.youtube.com/vi/Q1jZ1x_0L5o/hqdefault.jpg' },
+    { title: 'Pirates of the Caribbean - "He\'s a Pirate" (Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=j3b_jGg-2-g', thumbnailUrl: 'https://img.youtube.com/vi/j3b_jGg-2-g/hqdefault.jpg' },
+    { title: 'Lord of the Rings - "Concerning Hobbits" (Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=y2yY1nL1y_A', thumbnailUrl: 'https://img.youtube.com/vi/y2yY1nL1y_A/hqdefault.jpg' },
+    { title: 'Star Wars - "Duel of the Fates" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=k6_b8wz_c-A', thumbnailUrl: 'https://img.youtube.com/vi/k6_b8wz_c-A/hqdefault.jpg' },
+    { title: 'Harry Potter - "Hedwig\'s Theme" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=O3u1_qG3_wY', thumbnailUrl: 'https://img.youtube.com/vi/O3u1_qG3_wY/hqdefault.jpg' },
+    { title: 'Naruto - "Sadness and Sorrow" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=wE6vQ_9_a-g', thumbnailUrl: 'https://img.youtube.com/vi/wE6vQ_9_a-g/hqdefault.jpg' },
+    { title: 'Bleach - "Number One" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=1LSoc4k9qjQ', thumbnailUrl: 'https://img.youtube.com/vi/1LSoc4k9qjQ/hqdefault.jpg' },
+    { title: 'Code Geass - "Colors" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=f-2gR_c8HwA', thumbnailUrl: 'https://img.youtube.com/vi/f-2gR_c8HwA/hqdefault.jpg' },
+    { title: 'Fullmetal Alchemist - "Again" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=pAd0zF8aQpA', thumbnailUrl: 'https://img.youtube.com/vi/pAd0zF8aQpA/hqdefault.jpg' },
+    { title: 'Sword Art Online - "Swordland" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=jZg-aA-1_A', thumbnailUrl: 'https://img.youtube.com/vi/jZg-aA-1_A/hqdefault.jpg' },
+    { title: 'Death Note - "The World" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=a-G_a_g-aA', thumbnailUrl: 'https://img.youtube.com/vi/a-G_a_g-aA/hqdefault.jpg' },
+    { title: 'Attack on Titan - "Guren no Yumiya" (Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=G_g-aA-1_A', thumbnailUrl: 'https://img.youtube.com/vi/G_g-aA-1_A/hqdefault.jpg' },
+    { title: 'Tokyo Ghoul - "Unravel" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=aA-1_a-G_g', thumbnailUrl: 'https://img.youtube.com/vi/aA-1_a-G_g/hqdefault.jpg' },
+    { title: 'One Punch Man - "The Hero!!" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=1_a-G_g-aA', thumbnailUrl: 'https://img.youtube.com/vi/1_a-G_g-aA/hqdefault.jpg' },
+    { title: 'Re:Zero - "Styx Helix" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=-G_g-aA-1_A', thumbnailUrl: 'https://img.youtube.com/vi/-G_g-aA-1_A/hqdefault.jpg' },
+    { title: 'Fate/Zero - "To the Beginning" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=g-aA-1_G_g', thumbnailUrl: 'https://img.youtube.com/vi/g-aA-1_G_g/hqdefault.jpg' },
+    { title: 'Genshin Impact - "Liyue" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=aA-1_G_g-aA', thumbnailUrl: 'https://img.youtube.com/vi/aA-1_G_g-aA/hqdefault.jpg' },
+    { title: 'Honkai Star Rail - "Wildfire" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=1_G_g-aA-aA', thumbnailUrl: 'https://img.youtube.com/vi/1_G_g-aA-aA/hqdefault.jpg' },
+    { title: 'Persona 5 - "Last Surprise" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=G_g-aA-aA-1', thumbnailUrl: 'https://img.youtube.com/vi/G_g-aA-aA-1/hqdefault.jpg' },
+    { title: 'Undertale - "Megalovania" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=aA-aA-1_G_g', thumbnailUrl: 'https://img.youtube.com/vi/aA-aA-1_G_g/hqdefault.jpg' },
+    { title: 'The Elder Scrolls V: Skyrim - "Dragonborn" (Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=A-1_G_g-aA', thumbnailUrl: 'https://img.youtube.com/vi/A-1_G_g-aA/hqdefault.jpg' },
+    { title: 'Halo - "Main Theme" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=-1_G_g-aA-aA', thumbnailUrl: 'https://img.youtube.com/vi/-1_G_g-aA-aA/hqdefault.jpg' },
+    { title: 'World of Warcraft - "Invincible" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=_G_g-aA-1_A', thumbnailUrl: 'https://img.youtube.com/vi/_G_g-aA-1_A/hqdefault.jpg' },
+    { title: 'Attack on Titan - "Vogel im Käfig" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=g-aA-aA-1_G', thumbnailUrl: 'https://img.youtube.com/vi/g-aA-aA-1_G/hqdefault.jpg' },
+    { title: 'Made in Abyss - "Hanezeve Caradhina" (Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=aA-1_g-aA-1', thumbnailUrl: 'https://img.youtube.com/vi/aA-1_g-aA-1/hqdefault.jpg' },
+    { title: 'Your Name - "Sparkle" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=1_g-aA-1_G', thumbnailUrl: 'https://img.youtube.com/vi/1_g-aA-1_G/hqdefault.jpg' },
+    { title: 'Weathering with You - "Is There Still Anything That Love Can Do?" (Cover)', videoUrl: 'https://www.youtube.com/watch?v=_g-aA-1_G_g', thumbnailUrl: 'https://img.youtube.com/vi/_g-aA-1_G_g/hqdefault.jpg' },
+    { title: 'Princess Mononoke - "The Legend of Ashitaka" (Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=aA-1_G_g-aA', thumbnailUrl: 'https://img.youtube.com/vi/aA-1_G_g-aA/hqdefault.jpg' },
+    { title: 'Howl\'s Moving Castle - "Merry-Go-Round of Life" (Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=1_G_g-aA-aA', thumbnailUrl: 'https://img.youtube.com/vi/1_G_g-aA-aA/hqdefault.jpg' },
+    { title: 'Spirited Away - "One Summer\'s Day" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=G_g-aA-aA-1', thumbnailUrl: 'https://img.youtube.com/vi/G_g-aA-aA-1/hqdefault.jpg' },
+    { title: 'Chainsaw Man - "Kick Back" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=aA-aA-1_G_g', thumbnailUrl: 'https://img.youtube.com/vi/aA-aA-1_G_g/hqdefault.jpg' },
+    { title: 'Vinland Saga - "Mukanjyo" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=A-1_G_g-aA', thumbnailUrl: 'https://img.youtube.com/vi/A-1_G_g-aA/hqdefault.jpg' },
+    { title: 'Blue Lock - "Chaos ga Kiwamaru" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=-1_G_g-aA-aA', thumbnailUrl: 'https://img.youtube.com/vi/-1_G_g-aA-aA/hqdefault.jpg' },
+    { title: 'Oshi no Ko - "Idol" (Fahmie Farhan Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=_G_g-aA-1_A', thumbnailUrl: 'https://img.youtube.com/vi/_G_g-aA-1_A/hqdefault.jpg' },
+    { title: 'Bocchi the Rock! - "Seishun Complex" (Orchestral Cover)', videoUrl: 'https://www.youtube.com/watch?v=g-aA-aA-1_G', thumbnailUrl: 'https://img.youtube.com/vi/g-aA-aA-1_G/hqdefault.jpg' }
+].map((video, index) => ({
+    ...video,
+    isPublished: true,
+    isFeatured: index < 6,
+}));
 
 async function clearCollection(collectionName: string) {
     const collectionRef = collection(db, collectionName);
@@ -165,11 +221,13 @@ async function main() {
     await clearCollection('blog');
     await clearCollection('testimonials');
     await clearCollection('social-links');
+    await clearCollection('videos');
 
     // Seed new data
     await seedCollection('blog', blogPosts);
     await seedCollection('testimonials', testimonials);
     await seedCollection('social-links', socialLinks);
+    await seedCollection('videos', videos);
 
     console.log('Database seeding finished successfully!');
 }
