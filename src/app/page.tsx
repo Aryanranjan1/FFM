@@ -6,14 +6,13 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Award, Play, Star, Music, Heart, Share2, PlayCircle, Mail, Phone, MapPin, Diamond, Youtube, Instagram, Headphones, Send, Newspaper, Link as LinkIcon, Music2 as SoundcloudIconLucide, Pause } from 'lucide-react';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useActionState } from 'react';
 import { motion } from 'framer-motion';
 import { useMusicPlayer } from '@/context/music-player-context';
 import type { Album, Track, Project } from '@/lib/types';
 import { albums, bio, projects } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SoundcloudIcon } from '@/components/icons';
-import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -45,7 +44,7 @@ export default function Home() {
   const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
   const aboutImage = PlaceHolderImages.find(p => p.id === 'about-artist');
 
-  const [state, formAction] = useFormState(submitContactForm, initialState);
+  const [state, formAction] = useActionState(submitContactForm, initialState);
   const { toast } = useToast();
 
   const form = useForm<ContactFormValues>({
