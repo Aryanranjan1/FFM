@@ -66,9 +66,13 @@ export default function BlogPage() {
   const filteredPosts = activeTab === 'All' ? posts : posts.filter(p => p.category === activeTab);
   
   const featuredPost = useMemo(() => {
-    const featured = posts.filter(p => p.isFeatured);
-    if (featured.length === 0 && posts.length > 0) return posts[0];
-    if (featured.length > 0) return featured[Math.floor(Math.random() * featured.length)];
+    // Find a post that is specifically marked as featured
+    const featured = posts.find(p => p.isFeatured);
+    if (featured) return featured;
+
+    // Fallback to the most recent post if no featured post is found
+    if (posts.length > 0) return posts[0];
+    
     return null;
   }, [posts]);
 
@@ -77,24 +81,23 @@ export default function BlogPage() {
     const el = scrollRef.current;
     if (el) {
       setCanScrollLeft(el.scrollLeft > 0);
-      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth);
+      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 1); // -1 for precision
     }
   }, []);
 
   useEffect(() => {
-    checkScrollability();
-    window.addEventListener('resize', checkScrollability);
     const el = scrollRef.current;
     if (el) {
+        checkScrollability(); // Initial check
         el.addEventListener('scroll', checkScrollability);
-    }
-    return () => {
-        window.removeEventListener('resize', checkScrollability);
-        if (el) {
+        window.addEventListener('resize', checkScrollability);
+        
+        return () => {
             el.removeEventListener('scroll', checkScrollability);
-        }
-    };
-  }, [checkScrollability]);
+            window.removeEventListener('resize', checkScrollability);
+        };
+    }
+  }, [checkScrollability, loading]); // Re-run when loading is done
 
   const handleScroll = (direction: 'left' | 'right') => {
     const el = scrollRef.current;
