@@ -139,7 +139,16 @@ export default function BlogPage() {
   useEffect(() => {
     checkScrollability();
     window.addEventListener('resize', checkScrollability);
-    return () => window.removeEventListener('resize', checkScrollability);
+    const el = scrollRef.current;
+    if (el) {
+        el.addEventListener('scroll', checkScrollability);
+    }
+    return () => {
+        window.removeEventListener('resize', checkScrollability);
+        if (el) {
+            el.removeEventListener('scroll', checkScrollability);
+        }
+    };
   }, [checkScrollability]);
 
   const handleScroll = (direction: 'left' | 'right') => {
@@ -283,7 +292,7 @@ export default function BlogPage() {
                        <ChevronLeft className="h-5 w-5"/>
                      </Button>
                    )}
-                   <ScrollArea className="w-full whitespace-nowrap" onScroll={checkScrollability}>
+                   <ScrollArea className="w-full whitespace-nowrap">
                      <div ref={scrollRef} className="flex w-max space-x-2 py-2.5 px-12">
                        {categories.map((category) => (
                          <Button
@@ -372,5 +381,3 @@ export default function BlogPage() {
     </div>
   );
 }
-
-    
