@@ -1,3 +1,4 @@
+
 "use client";
 
 import { motion } from "framer-motion";
@@ -47,8 +48,7 @@ export default function BlogPage() {
       const postsCollection = collection(db, "blog");
       const q = query(
         postsCollection,
-        where("isPublished", "==", true),
-        orderBy("createdAt", "desc")
+        where("isPublished", "==", true)
       );
       const querySnapshot = await getDocs(q);
       const postsData = querySnapshot.docs.map((doc) => {
@@ -91,23 +91,29 @@ export default function BlogPage() {
       );
     }
     
+    let sorted = [...filtered];
     switch (sortBy) {
         case 'popular':
             // Note: popularity is random for now. In a real app, this would be based on views/likes.
-            return filtered.sort(() => Math.random() - 0.5);
+            sorted.sort(() => Math.random() - 0.5);
+            break;
         case 'title':
-            return filtered.sort((a, b) => a.title.localeCompare(b.title));
+            sorted.sort((a, b) => a.title.localeCompare(b.title));
+            break;
         case 'recent':
         default:
-            return filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+            break;
     }
+    return sorted;
 
   }, [posts, activeTab, searchTerm, sortBy]);
 
   const featuredPost = useMemo(() => {
-    const featured = posts.find((p) => p.isFeatured);
+    const sortedByDate = [...posts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    const featured = sortedByDate.find((p) => p.isFeatured);
     if (featured) return featured;
-    if (posts.length > 0) return posts[0];
+    if (sortedByDate.length > 0) return sortedByDate[0];
     return null;
   }, [posts]);
 
