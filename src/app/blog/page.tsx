@@ -40,18 +40,20 @@ export default function BlogPage() {
       const postsCollection = collection(db, 'blog');
       const q = query(
         postsCollection,
-        where('isPublished', '==', true),
         orderBy('createdAt', 'desc')
       );
       const querySnapshot = await getDocs(q);
-      const postsData = querySnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          ...data,
-          createdAt: (data.createdAt as any)?.toDate ? (data.createdAt as any).toDate().toISOString() : data.createdAt,
-        } as BlogPost;
-      });
+      const postsData = querySnapshot.docs
+        .map(doc => {
+            const data = doc.data();
+            return {
+            id: doc.id,
+            ...data,
+            createdAt: (data.createdAt as any)?.toDate ? (data.createdAt as any).toDate().toISOString() : data.createdAt,
+            } as BlogPost;
+        })
+        .filter(post => post.isPublished);
+
       setPosts(postsData);
       setLoading(false);
     };
