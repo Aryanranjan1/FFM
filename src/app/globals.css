@@ -120,6 +120,14 @@
     opacity: 0.6;
     animation: float-up 20s linear infinite;
   }
+
+  .music-note {
+    position: absolute;
+    color: hsla(var(--primary) / 0.3);
+    animation: floatNote 15s linear infinite;
+    bottom: -100px;
+    user-select: none;
+  }
   
   @keyframes float-up {
     0% {
@@ -144,14 +152,6 @@
     border-radius: 50%;
     filter: blur(20px);
     animation: float linear infinite;
-    z-index: 0;
-  }
-
-  .floating-notes .music-note {
-    position: absolute;
-    font-size: 2rem;
-    color: hsla(var(--primary) / 0.3);
-    animation: floatNote linear infinite;
     z-index: 0;
   }
 
@@ -209,8 +209,6 @@
 }
 
 @keyframes floatNote {
-  0% { transform: translateY(0) scale(1); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+  from { transform: translateY(0vh) rotate(0deg); }
+  to { transform: translateY(-120vh) rotate(360deg); }
 }

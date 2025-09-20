@@ -21,6 +21,7 @@ import { submitContactForm } from "@/app/actions";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { FloatingNotes } from '@/components/floating-notes';
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -39,7 +40,6 @@ const initialState = {
 
 export default function Home() {
   const orbsRef = useRef<HTMLDivElement>(null);
-  const notesRef = useRef<HTMLDivElement>(null);
   const { play, pause, currentTrack, isPlaying } = useMusicPlayer();
   const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
   const aboutImage = PlaceHolderImages.find(p => p.id === 'about-artist');
@@ -91,21 +91,6 @@ export default function Home() {
         orbsRef.current.appendChild(orb);
       }
     }
-
-    if (notesRef.current) {
-      notesRef.current.innerHTML = '';
-      const noteChars = ["♪", "♫", "♬", "♩"];
-      for (let i = 0; i < 7; i++) {
-        const note = document.createElement("div");
-        note.className = "music-note";
-        note.textContent = noteChars[Math.floor(Math.random() * noteChars.length)];
-        note.style.left = `${Math.random() * 100}%`;
-        note.style.bottom = `-${Math.random() * 20}vh`;
-        note.style.animationDuration = `${Math.random() * 10 + 20}s`;
-        note.style.animationDelay = `${Math.random() * 10}s`;
-        notesRef.current.appendChild(note);
-      }
-    }
   }, []);
 
   const handlePlayAlbum = (album: Album) => {
@@ -126,7 +111,7 @@ export default function Home() {
       <div className="relative min-h-screen flex items-center justify-center pt-20 pb-20 px-6 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-background to-black/80"></div>
         <div className="floating-orbs" ref={orbsRef}></div>
-        <div className="absolute bottom-0 left-0 w-full h-1/2 floating-notes" ref={notesRef}></div>
+        <FloatingNotes />
 
         <div className="relative z-10 text-center px-4">
           <motion.h1 
