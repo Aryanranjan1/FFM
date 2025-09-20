@@ -47,10 +47,6 @@ function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
-          </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/admin/settings">
               <Settings className="mr-2 h-4 w-4" />
