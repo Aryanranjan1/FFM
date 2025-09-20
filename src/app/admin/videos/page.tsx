@@ -4,8 +4,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus } from "lucide-react";
+import { Plus, Edit, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function VideosManagementPage() {
   return (
@@ -17,9 +18,11 @@ export default function VideosManagementPage() {
     >
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-headline font-bold text-primary">VIDEO MANAGEMENT</h2>
-        <Button className="btn-gold">
-          <Plus className="mr-2 h-4 w-4" />
-          Add New Video
+        <Button className="btn-gold" asChild>
+           <Link href="#">
+            <Plus className="mr-2 h-4 w-4" />
+            Add New Video
+          </Link>
         </Button>
       </div>
       <Card>

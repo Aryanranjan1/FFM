@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus } from "lucide-react";
+import { Plus, Edit, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
