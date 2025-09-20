@@ -160,7 +160,7 @@ const testimonials = [
     { author: 'Diane Allen', quote: 'Fahmie\'s compositions are pure magic. He has an incredible talent for weaving emotion into every note.', publication: 'Violin Virtuoso' },
     { author: 'Ahmad Zahir', quote: 'Working with Fahmie on the Gamelan project was a revelation. His modern take on traditional music is groundbreaking.', publication: 'GEMAWAN KISAS' },
     { author: 'Indie Game Dev', quote: 'The score Fahmie created for our game was perfect. It elevated the entire experience.', publication: 'PixelHeart Studios' },
-];
+].map(item => ({ ...item, createdAt: new Date('2025-09-20T10:30:21Z') }));
 
 const socialLinks = [
     { platform: 'YouTube', url: 'https://www.youtube.com/@FahmieFarhanMusic' },
@@ -168,7 +168,7 @@ const socialLinks = [
     { platform: 'Instagram', url: 'https://www.instagram.com/fahmiefarhanmusic' },
     { platform: 'Website', url: 'https://www.fahmiefarhanmusic.com' },
     { platform: 'Pond5', url: 'https://www.pond5.com/artist/fforchestral' },
-];
+].map(item => ({ ...item, createdAt: new Date('2025-09-20T10:30:21Z') }));
 
 const videos = [
     { isFeatured: true, isPublished: true, thumbnailUrl: 'https://img.youtube.com/vi/APEX/hqdefault.jpg', title: 'Epic Heroic Motivational Music - OPERATION APEX by FF Orchestral Music', videoUrl: 'https://www.youtube.com/watch?v=APEX' },
