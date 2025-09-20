@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from "react";
@@ -22,7 +23,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 const videoSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters."),
   videoUrl: z.string().url("Please enter a valid YouTube URL."),
-  description: z.string().optional(),
   category: z.string().optional(),
   thumbnailUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
   isPublished: z.boolean().default(true),
@@ -44,7 +44,6 @@ export function VideoForm({ video }: VideoFormProps) {
     defaultValues: {
       title: video?.title || "",
       videoUrl: video?.videoUrl || "",
-      description: video?.description || "",
       category: video?.category || "",
       thumbnailUrl: video?.thumbnailUrl || "",
       isPublished: video?.isPublished ?? true,
@@ -70,7 +69,6 @@ export function VideoForm({ video }: VideoFormProps) {
       const details = await fetchYouTubeDetails(videoUrl);
       if (details.success && details.data) {
         form.setValue("title", details.data.title, { shouldValidate: true });
-        form.setValue("description", details.data.description, { shouldValidate: true });
         form.setValue("thumbnailUrl", details.data.thumbnailUrl, { shouldValidate: true });
         toast({
           title: "Success",
@@ -253,5 +251,3 @@ export function VideoForm({ video }: VideoFormProps) {
     </motion.div>
   );
 }
-
-    

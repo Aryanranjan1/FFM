@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { db } from "@/lib/firebase";
 import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
-import type { MusicTrack as MusicTrackType, SocialLink as SocialLinkType, Testimonial as TestimonialType } from "@/lib/admin-types";
+import type { Video as VideoType, SocialLink as SocialLinkType, Testimonial as TestimonialType } from "@/lib/admin-types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -71,21 +71,20 @@ export default function Home() {
     // Data state
     const [socialLinks, setSocialLinks] = useState<SocialLinkType[]>([]);
     const [testimonials, setTestimonials] = useState<TestimonialType[]>([]);
-    const [allMusicTracks, setAllMusicTracks] = useState<MusicTrackType[]>([]);
+    const [allVideos, setAllVideos] = useState<VideoType[]>([]);
     
     // UI State
     const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState('All');
-    const [categories, setCategories] = useState<string[]>(['All']);
 
     // Player State
-    const [featuredMusicTrack, setFeaturedMusicTrack] = useState<MusicTrackType | null>(null);
+    const [featuredVideo, setFeaturedVideo] = useState<VideoType | null>(null);
     const playerRef = useRef<YouTubePlayer>(null);
     const [playerState, setPlayerState] = useState<number | null>(null);
     const [audioProgress, setAudioProgress] = useState(0);
     const [audioDuration, setAudioDuration] = useState(0);
     const [isMuted, setIsMuted] = useState(false);
     const [likedTracks, setLikedTracks] = useState<string[]>([]);
+    const [volume, setVolume] = useState(0.3);
 
     const [state, formAction] = useActionState(submitContactForm, initialState);
     const { toast } = useToast();
@@ -134,23 +133,20 @@ export default function Home() {
                 const testimonialsData = testimonialsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as TestimonialType[];
                 setTestimonials(testimonialsData);
                 
-                // Fetch Music Tracks
-                const musicTracksQuery = query(collection(db, "music"), orderBy("createdAt", "desc"));
-                const musicTracksSnapshot = await getDocs(musicTracksQuery);
-                const musicTracksData = musicTracksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MusicTrackType)).filter(track => track.isPublished);
-                setAllMusicTracks(musicTracksData);
+                // Fetch Videos
+                const videosQuery = query(collection(db, "videos"), where("isPublished", "==", true), orderBy("createdAt", "desc"));
+                const videosSnapshot = await getDocs(videosQuery);
+                const videosData = videosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as VideoType));
+                setAllVideos(videosData);
 
-                if (musicTracksData.length > 0) {
-                    const featuredTracks = musicTracksData.filter(track => track.isFeatured);
-                    if (featuredTracks.length > 0) {
-                        const randomIndex = Math.floor(Math.random() * featuredTracks.length);
-                        setFeaturedMusicTrack(featuredTracks[randomIndex]);
+                if (videosData.length > 0) {
+                    const featuredVideos = videosData.filter(video => video.isFeatured);
+                    if (featuredVideos.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * featuredVideos.length);
+                        setFeaturedVideo(featuredVideos[randomIndex]);
                     } else {
-                        const randomIndex = Math.floor(Math.random() * musicTracksData.length);
-                        setFeaturedMusicTrack(musicTracksData[randomIndex]);
+                         setFeaturedVideo(videosData[0]);
                     }
-                    const uniqueCategories = ['All', ...new Set(musicTracksData.map(track => track.category).filter(Boolean) as string[])];
-                    setCategories(uniqueCategories);
                 }
 
             } catch (error) {
@@ -166,7 +162,7 @@ export default function Home() {
         return (match && match[2].length === 11) ? match[2] : null;
     };
     
-    const videoId = featuredMusicTrack ? getYouTubeId(featuredMusicTrack.musicUrl) : null;
+    const videoId = featuredVideo ? getYouTubeId(featuredVideo.videoUrl) : null;
     
     useEffect(() => {
         const interval = setInterval(async () => {
@@ -180,8 +176,8 @@ export default function Home() {
         return () => clearInterval(interval);
     }, [playerState]);
 
-    const playTrackFromPortfolio = (track: MusicTrackType) => {
-        setFeaturedMusicTrack(track);
+    const playTrackFromPortfolio = (track: VideoType) => {
+        setFeaturedVideo(track);
         setTimeout(() => {
              if (playerRef.current) {
                 playerRef.current.playVideo();
@@ -198,9 +194,7 @@ export default function Home() {
         );
     };
 
-    const filteredTracks = activeTab === 'All'
-        ? allMusicTracks
-        : allMusicTracks.filter(track => track.category === activeTab);
+    const filteredTracks = allVideos.filter(video => video.isFeatured);
 
     const toggleAudioPlay = () => {
         if (!playerRef.current) return;
@@ -227,12 +221,23 @@ export default function Home() {
     
     const onPlayerReady = (event: { target: YouTubePlayer }) => {
         playerRef.current = event.target;
-        if(isMuted) event.target.mute();
+        event.target.setVolume(volume * 100);
+        event.target.playVideo();
     };
 
     const onPlayerStateChange = (event: { data: number }) => {
         setPlayerState(event.data);
+        if (event.data === 0) { // ended
+            playerRef.current.playVideo(); // loop
+        }
     };
+    
+    const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!playerRef.current) return;
+        const newVolume = Number(e.target.value);
+        setVolume(newVolume);
+        playerRef.current.setVolume(newVolume * 100);
+    }
     
     return (
         <div className="min-h-screen bg-background text-foreground">
@@ -327,60 +332,52 @@ export default function Home() {
                              <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Featured Music Track</h2>
                              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Discover a featured track from my collection. Select any song from the portfolio below to play it here.</p>
                          </div>
-                         {featuredMusicTrack && videoId ? (
+                         {featuredVideo && videoId ? (
                              <motion.div className="max-w-4xl mx-auto" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
                                  <Card className="bg-background/50 backdrop-blur-sm border-primary/30 overflow-hidden">
                                      <CardContent className="p-4 md:p-8">
                                          <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
                                              <div className="relative group w-full md:w-48 h-auto md:h-48 flex-shrink-0 aspect-video md:aspect-square">
-                                                <AnimatePresence>
-                                                    { (playerState !== 1) && (
-                                                        <motion.div
-                                                            initial={{ opacity: 1 }}
-                                                            exit={{ opacity: 0 }}
-                                                            className="absolute inset-0"
-                                                        >
-                                                            <Image
-                                                                src={featuredMusicTrack.coverImageUrl || "https://placehold.co/400x400"}
-                                                                alt={featuredMusicTrack.title}
-                                                                layout="fill"
-                                                                objectFit="cover"
-                                                                className="rounded-lg"
-                                                            />
-                                                            <div className="absolute inset-0 bg-black/30 flex items-center justify-center rounded-lg">
-                                                                <Button
-                                                                    size="lg"
-                                                                    onClick={toggleAudioPlay}
-                                                                    className="bg-primary/80 text-primary-foreground hover:bg-primary rounded-full w-16 h-16 flex items-center justify-center"
-                                                                >
-                                                                    <Play className="w-8 h-8" />
-                                                                </Button>
-                                                            </div>
-                                                        </motion.div>
-                                                    )}
-                                                </AnimatePresence>
-                                                 <YouTube
-                                                     videoId={videoId}
-                                                     onReady={onPlayerReady}
-                                                     onStateChange={onPlayerStateChange}
-                                                     className="w-full h-full"
-                                                     iframeClassName="w-full h-full rounded-lg"
-                                                     opts={{
-                                                         height: '100%',
-                                                         width: '100%',
-                                                         playerVars: {
-                                                             autoplay: 0,
-                                                             controls: 0,
-                                                             rel: 0,
-                                                             showinfo: 0,
-                                                             modestbranding: 1,
-                                                         },
-                                                     }}
-                                                 />
+                                                <Image
+                                                    src={featuredVideo.thumbnailUrl || "https://placehold.co/400x400"}
+                                                    alt={featuredVideo.title}
+                                                    layout="fill"
+                                                    objectFit="cover"
+                                                    className="rounded-lg"
+                                                />
+                                                <div className="absolute inset-0 bg-black/30 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <Button
+                                                        size="lg"
+                                                        onClick={toggleAudioPlay}
+                                                        className="bg-primary/80 text-primary-foreground hover:bg-primary rounded-full w-16 h-16 flex items-center justify-center"
+                                                    >
+                                                        {playerState === 1 ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8" />}
+                                                    </Button>
+                                                </div>
+                                                <div className="absolute -z-10 w-0 h-0">
+                                                     <YouTube
+                                                         videoId={videoId}
+                                                         onReady={onPlayerReady}
+                                                         onStateChange={onPlayerStateChange}
+                                                         opts={{
+                                                             height: '0',
+                                                             width: '0',
+                                                             playerVars: {
+                                                                 autoplay: 1,
+                                                                 controls: 0,
+                                                                 rel: 0,
+                                                                 showinfo: 0,
+                                                                 modestbranding: 1,
+                                                                 loop: 1,
+                                                                 playlist: videoId,
+                                                             },
+                                                         }}
+                                                     />
+                                                 </div>
                                              </div>
                                              <div className="flex-1 text-center md:text-left w-full">
-                                                 <h3 className="text-2xl font-bold text-white mb-2 font-headline">{featuredMusicTrack.title}</h3>
-                                                 <p className="text-lg text-muted-foreground mb-2">{featuredMusicTrack.category}</p>
+                                                 <h3 className="text-2xl font-bold text-white mb-2 font-headline">{featuredVideo.title}</h3>
+                                                 <p className="text-lg text-muted-foreground mb-2">{featuredVideo.category}</p>
                                                  
                                                  <div className="mb-4">
                                                      <input
@@ -400,25 +397,24 @@ export default function Home() {
                                                      <Button size="sm" onClick={toggleAudioPlay} className="btn-gold">
                                                          {playerState === 1 ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
                                                      </Button>
-                                                     <Button
-                                                         variant="ghost" size="sm"
-                                                         onClick={() => {
-                                                            if (!playerRef.current) return;
-                                                            if (isMuted) {
-                                                                playerRef.current.unMute();
-                                                            } else {
-                                                                playerRef.current.mute();
-                                                            }
-                                                            setIsMuted(!isMuted);
-                                                         }}
-                                                         className="text-primary hover:text-white"
-                                                     >
-                                                         {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                                                     </Button>
+                                                     <div className="flex items-center gap-2 w-24">
+                                                         <button onClick={() => { if (playerRef.current) { isMuted ? playerRef.current.unMute() : playerRef.current.mute(); setIsMuted(!isMuted); } }}>
+                                                            {isMuted || volume === 0 ? <VolumeX className="w-5 h-5 text-primary" /> : <Volume2 className="w-5 h-5 text-primary" />}
+                                                         </button>
+                                                         <input
+                                                             type="range"
+                                                             min="0"
+                                                             max="1"
+                                                             step="0.01"
+                                                             value={isMuted ? 0 : volume}
+                                                             onChange={handleVolumeChange}
+                                                             className="w-full h-1 bg-background rounded-lg appearance-none cursor-pointer"
+                                                         />
+                                                     </div>
                                                  </div>
                                                  <div className="flex items-center justify-center md:justify-start space-x-6 text-sm text-muted-foreground">
-                                                     <div className="flex items-center space-x-1 cursor-pointer hover:text-primary" onClick={() => toggleLike(featuredMusicTrack.id)}>
-                                                         <Heart className={`w-4 h-4 ${likedTracks.includes(featuredMusicTrack.id) ? 'text-red-500 fill-current' : ''}`} />
+                                                     <div className="flex items-center space-x-1 cursor-pointer hover:text-primary" onClick={() => toggleLike(featuredVideo.id)}>
+                                                         <Heart className={`w-4 h-4 ${likedTracks.includes(featuredVideo.id) ? 'text-red-500 fill-current' : ''}`} />
                                                          <span>Like</span>
                                                      </div>
                                                      <div className="flex items-center space-x-1 cursor-pointer hover:text-primary">
@@ -448,23 +444,6 @@ export default function Home() {
                         </p>
                     </div>
 
-                    <div className="flex flex-wrap justify-center gap-4 mb-12">
-                        {categories.map((tab) => (
-                            <Button
-                                key={tab}
-                                variant={activeTab === tab ? "default" : "outline"}
-                                onClick={() => setActiveTab(tab)}
-                                className={`capitalize ${
-                                    activeTab === tab 
-                                    ? 'btn-gold' 
-                                    : 'border-primary/30 text-primary hover:bg-primary/10'
-                                }`}
-                            >
-                                {tab}
-                            </Button>
-                        ))}
-                    </div>
-
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filteredTracks.map((track, index) => (
                             <motion.div
@@ -479,7 +458,7 @@ export default function Home() {
                                     hoveredMusicCard === track.id ? 'transform scale-105 border-primary/50' : 'border-transparent'
                                 }`}>
                                     <div className="relative">
-                                        <Image src={track.coverImageUrl || `https://placehold.co/400x400`} 
+                                        <Image src={track.thumbnailUrl || `https://placehold.co/400x400`} 
                                             alt={track.title} 
                                             width={400}
                                             height={400}
@@ -519,7 +498,7 @@ export default function Home() {
                             </motion.div>
                         ))}
                     </div>
-                    {allMusicTracks.length === 0 && (
+                    {allVideos.length === 0 && (
                         <div className="text-center text-muted-foreground pt-8">Loading music portfolio...</div>
                      )}
                 </div>

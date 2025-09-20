@@ -1,23 +1,11 @@
 
-import type { Timestamp } from "firebase/firestore";
 
-export type MusicTrack = {
-  id: string;
-  title: string;
-  musicUrl: string;
-  category?: string;
-  coverImageUrl?: string;
-  isFeatured: boolean;
-  isPublished: boolean;
-  createdAt: string;
-};
+import type { Timestamp } from "firebase/firestore";
 
 export type Video = {
   id: string;
   title: string;
   videoUrl: string;
-  description?: string;
-  tags?: string;
   category?: string;
   thumbnailUrl?: string;
   isPublished: boolean;

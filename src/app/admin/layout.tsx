@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import type { ReactNode } from 'react';
@@ -16,7 +17,7 @@ import {
   SidebarInset,
   SidebarBrand,
 } from '@/components/ui/sidebar';
-import { Home, Music, Video, Newspaper, Link as LinkIcon, Star, Settings, User, LogOut, Mail } from 'lucide-react';
+import { Home, Video, Newspaper, Link as LinkIcon, Star, Settings, User, LogOut, Mail } from 'lucide-react';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -67,7 +68,6 @@ function UserNav() {
 
 const navLinks = [
     { href: "/admin/dashboard", label: "Dashboard", icon: Home },
-    { href: "/admin/music", label: "Music", icon: Music },
     { href: "/admin/videos", label: "Videos", icon: Video },
     { href: "/admin/blog", label: "Blog", icon: Newspaper },
     { href: "/admin/contacts", label: "Contacts", icon: Mail },

@@ -1,4 +1,5 @@
 
+
 "use server";
 
 import { suggestBioUpdates, type SuggestBioUpdatesInput } from "@/ai/flows/suggest-bio-updates";
@@ -59,66 +60,6 @@ export async function submitContactForm(prevState: any, formData: FormData) {
   }
 }
 
-const musicTrackSchema = z.object({
-  title: z.string().min(2, "Title must be at least 2 characters."),
-  musicUrl: z.string().url("Please enter a valid URL."),
-  category: z.string().optional(),
-  coverImageUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
-  isFeatured: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
-  isPublished: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
-});
-
-export type MusicTrackFormValues = z.infer<typeof musicTrackSchema>;
-
-export async function addMusicTrack(values: MusicTrackFormValues) {
-    try {
-        await addDoc(collection(db, 'music'), {
-            ...values,
-            createdAt: serverTimestamp(),
-        });
-        
-        revalidatePath('/music');
-        revalidatePath('/admin/music');
-        
-        return { success: true, message: "Successfully added new music track." };
-
-    } catch (e) {
-        console.error(e);
-        return { success: false, message: "Failed to add music track." };
-    }
-}
-
-export async function updateMusicTrack(id: string, values: MusicTrackFormValues) {
-  try {
-    const trackRef = doc(db, 'music', id);
-    await updateDoc(trackRef, values);
-    
-    revalidatePath('/music');
-    revalidatePath('/admin/music');
-    revalidatePath(`/admin/music/edit/${id}`);
-    
-    return { success: true, message: "Successfully updated music track." };
-  } catch (e) {
-    console.error(e);
-    return { success: false, message: "Failed to update music track." };
-  }
-}
-
-export async function deleteMusicTrack(id: string) {
-  try {
-    await deleteDoc(doc(db, 'music', id));
-    
-    revalidatePath('/music');
-    revalidatePath('/admin/music');
-    
-    return { success: true, message: "Successfully deleted music track." };
-  } catch (e) {
-    console.error(e);
-    return { success: false, message: "Failed to delete music track." };
-  }
-}
-
-
 export async function fetchYouTubeDetails(videoUrl: string): Promise<{ success: boolean, data?: FetchYouTubeDetailsOutput, error?: string }> {
   try {
     const result = await fetchYouTubeDetailsFlow({ videoUrl });
@@ -133,11 +74,10 @@ export async function fetchYouTubeDetails(videoUrl: string): Promise<{ success: 
 const videoSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters."),
   videoUrl: z.string().url("Please enter a valid YouTube URL."),
-  description: z.string().optional(),
-  category: z.string().optional(),
   thumbnailUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
   isPublished: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
   isFeatured: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
+  category: z.string().optional(),
 });
 
 export type VideoFormValues = z.infer<typeof videoSchema>;
@@ -343,5 +283,3 @@ export async function getSiteSettings() {
         return { email: 'contact@fahmiefarhan.com', phone: '+60 11-31377753', location: 'Malaysia' }; // Default values
     }
 }
-
-    

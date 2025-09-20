@@ -1,11 +1,11 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Music, Video, Newspaper, Users, Link as LinkIcon } from "lucide-react";
+import { Video, Newspaper, Users, Link as LinkIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
 const stats = [
-  { title: "Total Music Tracks", value: "0", icon: Music },
   { title: "YouTube Videos", value: "0", icon: Video },
   { title: "Blog Posts", value: "0", icon: Newspaper },
   { title: "Social Links", value: "0", icon: LinkIcon },
@@ -30,7 +30,7 @@ export default function AdminDashboardPage() {
       animate="visible"
     >
       <motion.div 
-        className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
+        className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
         variants={staggerContainer}
       >
         {stats.map((stat, index) => (
@@ -57,10 +57,10 @@ export default function AdminDashboardPage() {
         <motion.div variants={fadeInUp}>
           <Card>
             <CardHeader>
-              <CardTitle>Recent Music Tracks</CardTitle>
+              <CardTitle>Recent Videos</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">No music tracks found.</p>
+              <p className="text-sm text-muted-foreground">No videos found.</p>
             </CardContent>
           </Card>
         </motion.div>

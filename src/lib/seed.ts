@@ -181,6 +181,7 @@ const videos = [
     ...video,
     isPublished: true,
     isFeatured: index < 6,
+    category: "Orchestral Cover",
 }));
 
 async function clearCollection(collectionName: string) {
@@ -217,11 +218,10 @@ async function seedCollection(collectionName: string, data: any[]) {
 async function main() {
     console.log('Starting database seeding...');
     
-    // Clear existing data to prevent duplicates
-    await clearCollection('blog');
-    await clearCollection('testimonials');
-    await clearCollection('social-links');
-    await clearCollection('videos');
+    const collectionsToClear = ['blog', 'testimonials', 'social-links', 'videos'];
+    for (const collectionName of collectionsToClear) {
+        await clearCollection(collectionName);
+    }
 
     // Seed new data
     await seedCollection('blog', blogPosts);
