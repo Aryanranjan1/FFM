@@ -1,11 +1,10 @@
-
 "use server";
 
 import { suggestBioUpdates, type SuggestBioUpdatesInput } from "@/ai/flows/suggest-bio-updates";
 import { fetchYouTubeDetails as fetchYouTubeDetailsFlow, type FetchYouTubeDetailsOutput } from "@/ai/flows/fetch-youtube-details";
 import { z } from "zod";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
 
 export async function getBioSuggestions(input: SuggestBioUpdatesInput) {
@@ -86,6 +85,36 @@ export async function addMusicTrack(values: MusicTrackFormValues) {
     }
 }
 
+export async function updateMusicTrack(id: string, values: MusicTrackFormValues) {
+  try {
+    const trackRef = doc(db, 'music', id);
+    await updateDoc(trackRef, values);
+    
+    revalidatePath('/music');
+    revalidatePath('/admin/music');
+    revalidatePath(`/admin/music/edit/${id}`);
+    
+    return { success: true, message: "Successfully updated music track." };
+  } catch (e) {
+    console.error(e);
+    return { success: false, message: "Failed to update music track." };
+  }
+}
+
+export async function deleteMusicTrack(id: string) {
+  try {
+    await deleteDoc(doc(db, 'music', id));
+    
+    revalidatePath('/music');
+    revalidatePath('/admin/music');
+    
+    return { success: true, message: "Successfully deleted music track." };
+  } catch (e) {
+    console.error(e);
+    return { success: false, message: "Failed to delete music track." };
+  }
+}
+
 
 export async function fetchYouTubeDetails(videoUrl: string): Promise<{ success: boolean, data?: FetchYouTubeDetailsOutput, error?: string }> {
   try {
@@ -125,4 +154,89 @@ export async function addVideo(values: VideoFormValues) {
     console.error(e);
     return { success: false, message: "Failed to add video." };
   }
+}
+
+export async function updateVideo(id: string, values: VideoFormValues) {
+  try {
+    const videoRef = doc(db, 'videos', id);
+    await updateDoc(videoRef, values);
+    
+    revalidatePath('/videos');
+    revalidatePath('/admin/videos');
+    revalidatePath(`/admin/videos/edit/${id}`);
+    
+    return { success: true, message: "Successfully updated video." };
+  } catch (e) {
+    console.error(e);
+    return { success: false, message: "Failed to update video." };
+  }
+}
+
+export async function deleteVideo(id: string) {
+  try {
+    await deleteDoc(doc(db, 'videos', id));
+    
+    revalidatePath('/videos');
+    revalidatePath('/admin/videos');
+    
+    return { success: true, message: "Successfully deleted video." };
+  } catch (e) {
+    console.error(e);
+    return { success: false, message: "Failed to delete video." };
+  }
+}
+
+// Testimonial Actions
+const testimonialSchema = z.object({
+    author: z.string().min(2, "Author is required."),
+    publication: z.string().min(2, "Publication/Role is required."),
+    quote: z.string().min(10, "Quote must be at least 10 characters."),
+});
+export type TestimonialFormValues = z.infer<typeof testimonialSchema>;
+
+export async function addTestimonial(values: TestimonialFormValues) {
+    try {
+        await addDoc(collection(db, 'testimonials'), { ...values, createdAt: serverTimestamp() });
+        revalidatePath('/admin/testimonials');
+        return { success: true, message: "Testimonial added successfully." };
+    } catch (e) {
+        return { success: false, message: "Failed to add testimonial." };
+    }
+}
+
+export async function deleteTestimonial(id: string) {
+    try {
+        await deleteDoc(doc(db, 'testimonials', id));
+        revalidatePath('/admin/testimonials');
+        return { success: true, message: "Testimonial deleted successfully." };
+    } catch (e) {
+        return { success: false, message: "Failed to delete testimonial." };
+    }
+}
+
+// Social Link Actions
+const socialLinkSchema = z.object({
+    platform: z.string().min(2, "Platform is required."),
+    url: z.string().url("A valid URL is required."),
+});
+export type SocialLinkFormValues = z.infer<typeof socialLinkSchema>;
+
+export async function addSocialLink(values: SocialLinkFormValues) {
+    try {
+        await addDoc(collection(db, 'social-links'), { ...values, createdAt: serverTimestamp() });
+        revalidatePath('/admin/social-links');
+        return { success: true, message: "Social link added successfully." };
+    } catch (e) {
+        return { success: false, message: "Failed to add social link." };
+    }
+}
+
+export async function deleteSocialLink(id: string) {
+    try {
+        await deleteDoc(doc(db, 'social-links', id));
+        revalidatePath('/admin/social-links');
+        return { success: true, message: "Social link deleted successfully." };
+    } catch (e) {
+        return { success: false, message: "Failed to delete social link." };
+    }
 }

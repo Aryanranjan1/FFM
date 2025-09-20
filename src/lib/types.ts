@@ -58,3 +58,14 @@ export type Post = {
   isFeatured: boolean;
   imageId: string;
 };
+
+export type Testimonial = {
+  author: string;
+  publication: string;
+  quote: string;
+};
+
+export type SocialLink = {
+  platform: string;
+  url: string;
+};

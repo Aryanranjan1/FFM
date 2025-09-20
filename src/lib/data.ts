@@ -1,4 +1,4 @@
-import type { Album, Bio, Project } from './types';
+import type { Album, Bio, Project, Testimonial, SocialLink } from './types';
 
 export const albums: Album[] = [
   {
@@ -57,3 +57,15 @@ export const bio: Bio = {
     { title: 'An Interview with FFM', publication: 'The Music Journal', date: '2021-07-19', url: '#' },
   ],
 };
+
+export const testimonials: Testimonial[] = [
+    { author: 'Diane Allen', quote: 'Fahmie\'s compositions are pure magic. He has an incredible talent for weaving emotion into every note.', publication: 'Violin Virtuoso' },
+    { author: 'Ahmad Zahir', quote: 'Working with Fahmie on the Gamelan project was a revelation. His modern take on traditional music is groundbreaking.', publication: 'GEMAWAN KISAS' },
+    { author: 'Indie Game Dev', quote: 'The score Fahmie created for our game was perfect. It elevated the entire experience.', publication: 'PixelHeart Studios' },
+];
+
+export const socialLinks: SocialLink[] = [
+    { platform: 'YouTube', url: 'https://www.youtube.com/channel/UC-some-id' },
+    { platform: 'SoundCloud', url: 'https://soundcloud.com/fahmiefarhan' },
+    { platform: 'Instagram', url: 'https://www.instagram.com/fahmiefarhan' },
+];

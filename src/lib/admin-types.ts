@@ -1,4 +1,3 @@
-
 import type { Timestamp } from "firebase/firestore";
 
 export type MusicTrack = {
@@ -20,5 +19,20 @@ export type Video = {
   thumbnailUrl?: string;
   isPublished: boolean;
   isFeatured: boolean;
+  createdAt: Timestamp;
+};
+
+export type Testimonial = {
+  id: string;
+  author: string;
+  publication: string;
+  quote: string;
+  createdAt: Timestamp;
+};
+
+export type SocialLink = {
+  id: string;
+  platform: string;
+  url: string;
   createdAt: Timestamp;
 };

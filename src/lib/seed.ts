@@ -1,7 +1,6 @@
-
 import { db } from './firebase';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
-import { albums, projects } from './data';
+import { albums, projects, testimonials, socialLinks } from './data';
 import { PlaceHolderImages } from './placeholder-images';
 
 async function seedMusic() {
@@ -51,10 +50,45 @@ async function seedVideos() {
   console.log('Video seeding complete.');
 }
 
+async function seedTestimonials() {
+  const testimonialsCollection = collection(db, 'testimonials');
+  console.log('Seeding testimonials...');
+
+  for (const testimonial of testimonials) {
+    const testimonialData = {
+      ...testimonial,
+      createdAt: Timestamp.now(),
+    };
+    await addDoc(testimonialsCollection, testimonialData);
+    console.log(`Added testimonial from: ${testimonial.author}`);
+  }
+
+  console.log('Testimonials seeding complete.');
+}
+
+async function seedSocialLinks() {
+  const socialLinksCollection = collection(db, 'social-links');
+  console.log('Seeding social links...');
+
+  for (const socialLink of socialLinks) {
+    const socialLinkData = {
+      ...socialLink,
+      createdAt: Timestamp.now(),
+    };
+    await addDoc(socialLinksCollection, socialLinkData);
+    console.log(`Added social link: ${socialLink.platform}`);
+  }
+
+  console.log('Social links seeding complete.');
+}
+
+
 async function main() {
   console.log('Starting database seeding...');
   await seedMusic();
   await seedVideos();
+  await seedTestimonials();
+  await seedSocialLinks();
   console.log('Database seeding finished successfully!');
 }
 

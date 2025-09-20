@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -9,6 +8,7 @@ import { db } from "@/lib/firebase";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import type { MusicTrack } from "@/lib/admin-types";
 import { Badge } from "@/components/ui/badge";
+import { DeleteMusicTrackButton } from "./_components/delete-button";
 
 async function getMusicTracks(): Promise<MusicTrack[]> {
     const musicCol = collection(db, 'music');
@@ -80,12 +80,12 @@ export default async function MusicManagementPage() {
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            <Button variant="ghost" size="icon">
-                                                <Edit className="h-4 w-4" />
+                                            <Button variant="ghost" size="icon" asChild>
+                                                <Link href={`/admin/music/edit/${track.id}`}>
+                                                    <Edit className="h-4 w-4" />
+                                                </Link>
                                             </Button>
-                                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
+                                            <DeleteMusicTrackButton trackId={track.id} />
                                         </TableCell>
                                     </TableRow>
                                 ))

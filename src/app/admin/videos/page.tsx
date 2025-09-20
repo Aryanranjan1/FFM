@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -9,6 +8,7 @@ import { db } from "@/lib/firebase";
 import { collection, getDocs, orderBy, query, Timestamp } from "firebase/firestore";
 import type { Video } from "@/lib/admin-types";
 import { format } from "date-fns";
+import { DeleteVideoButton } from "./_components/delete-button";
 
 async function getVideos(): Promise<Video[]> {
     const videosCol = collection(db, 'videos');
@@ -74,12 +74,12 @@ export default async function VideosManagementPage() {
                                             {video.createdAt ? format(video.createdAt.toDate(), "PPP") : 'N/A'}
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            <Button variant="ghost" size="icon">
-                                                <Edit className="h-4 w-4" />
+                                            <Button variant="ghost" size="icon" asChild>
+                                                <Link href={`/admin/videos/edit/${video.id}`}>
+                                                    <Edit className="h-4 w-4" />
+                                                </Link>
                                             </Button>
-                                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
+                                            <DeleteVideoButton videoId={video.id} />
                                         </TableCell>
                                     </TableRow>
                                 ))

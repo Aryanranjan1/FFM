@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -18,9 +17,9 @@ const FetchYouTubeDetailsInputSchema = z.object({
 export type FetchYouTubeDetailsInput = z.infer<typeof FetchYouTubeDetailsInputSchema>;
 
 const FetchYouTubeDetailsOutputSchema = z.object({
-  title: z.string().describe('The title of the YouTube video.'),
-  description: z.string().describe('The description of the YouTube video.'),
-  thumbnailUrl: z.string().url().describe('The URL of the high-quality thumbnail image.'),
+  title: z.string().describe('The full, exact title of the YouTube video.'),
+  description: z.string().describe('The full, exact description of the YouTube video.'),
+  thumbnailUrl: z.string().url().describe('The URL of the high-quality thumbnail image (maxresdefault.jpg).'),
 });
 export type FetchYouTubeDetailsOutput = z.infer<typeof FetchYouTubeDetailsOutputSchema>;
 
@@ -34,13 +33,13 @@ const prompt = ai.definePrompt({
   name: 'fetchYouTubeDetailsPrompt',
   input: { schema: FetchYouTubeDetailsInputSchema },
   output: { schema: FetchYouTubeDetailsOutputSchema },
-  prompt: `You are an expert at extracting information from web pages.
-    Given the following YouTube video URL, extract the video title, description, and the highest quality thumbnail URL.
+  prompt: `You are an expert assistant that extracts metadata from YouTube videos.
+    Given the following YouTube video URL, extract the video's full and exact title, its full and exact description, and the highest quality thumbnail URL.
 
     YouTube Video URL: {{{videoUrl}}}
     
-    Analyze the content of the linked page to find the requested information.
-    The thumbnail URL should be for the highest resolution available (e.g., maxresdefault.jpg).
+    Do not summarize, shorten, or alter the title or description. Extract them exactly as they appear on the page.
+    The thumbnail URL should be for the highest resolution available (typically maxresdefault.jpg).
     `,
 });
 
