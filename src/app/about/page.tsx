@@ -92,68 +92,72 @@ Fahmie's portfolio covers both international collaborations and competitive musi
   };
 
   return (
-    <div className="container mx-auto py-12">
-      <div className="text-center mb-12">
-        <h1 className="font-headline text-5xl md:text-7xl font-bold text-primary">ABOUT</h1>
-        <p className="text-muted-foreground text-lg mt-4 max-w-3xl mx-auto">
-          Discover the journey of a Malaysian composer who bridges cultural heritage with contemporary musical innovation
-        </p>
-      </div>
-
-      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
-        <div className="md:col-span-1 flex flex-col items-center">
-          <div className="relative w-full max-w-xs md:max-w-full">
-            {artistImage && (
-              <Image
-                src={artistImage.imageUrl}
-                alt={artistImage.description}
-                width={500}
-                height={600}
-                className="rounded-lg object-cover w-full h-auto shadow-lg"
-                data-ai-hint={artistImage.imageHint}
-              />
-            )}
-          </div>
-          <div className="mt-6 space-y-3 text-center text-muted-foreground">
-            <div className="flex items-center justify-center gap-2">
-              <MapPin className="w-4 h-4" />
-              <span>Malaysia</span>
-            </div>
-            <div className="flex items-center justify-center gap-2">
-              <Music className="w-4 h-4" />
-              <span>Composer & Producer</span>
-            </div>
-          </div>
+    <div className="py-12">
+      <div className="container mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="font-headline text-5xl md:text-7xl font-bold text-primary">ABOUT</h1>
+          <p className="text-muted-foreground text-lg mt-4 max-w-3xl mx-auto">
+            Discover the journey of a Malaysian composer who bridges cultural heritage with contemporary musical innovation
+          </p>
         </div>
 
-        <div className="md:col-span-2 space-y-8 text-foreground/90">
-          <div>
-            <h2 className="font-headline text-3xl font-bold text-white mb-4">{bioContent.name}</h2>
-            <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
-              {bioContent.main}
-            </p>
+        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
+          <div className="md:col-span-1 flex flex-col items-center">
+            <div className="relative w-full max-w-xs md:max-w-full">
+              {artistImage && (
+                <Image
+                  src={artistImage.imageUrl}
+                  alt={artistImage.description}
+                  width={500}
+                  height={600}
+                  className="rounded-lg object-cover w-full h-auto shadow-lg"
+                  data-ai-hint={artistImage.imageHint}
+                />
+              )}
+            </div>
+            <div className="mt-6 space-y-3 text-center text-muted-foreground">
+              <div className="flex items-center justify-center gap-2">
+                <MapPin className="w-4 h-4" />
+                <span>Malaysia</span>
+              </div>
+              <div className="flex items-center justify-center gap-2">
+                <Music className="w-4 h-4" />
+                <span>Composer & Producer</span>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <h3 className="font-headline text-2xl font-bold text-primary mb-3">TRADITIONAL EXCELLENCE</h3>
-            <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
-              {bioContent.traditional}
-            </p>
-          </div>
+          <div className="md:col-span-2 space-y-8 text-foreground/90">
+            <div>
+              <h2 className="font-headline text-3xl font-bold text-white mb-4">{bioContent.name}</h2>
+              <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
+                {bioContent.main}
+              </p>
+            </div>
 
-          <div>
-            <h3 className="font-headline text-2xl font-bold text-primary mb-3">DIGITAL PRESENCE</h3>
-            <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
-              {bioContent.digital}
-            </p>
+            <div>
+              <h3 className="font-headline text-2xl font-bold text-primary mb-3">TRADITIONAL EXCELLENCE</h3>
+              <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
+                {bioContent.traditional}
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-headline text-2xl font-bold text-primary mb-3">DIGITAL PRESENCE</h3>
+              <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
+                {bioContent.digital}
+              </p>
+            </div>
           </div>
         </div>
       </div>
       
-      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+      <div className="container mx-auto">
+        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+      </div>
 
       {/* Collaborations Section */}
-      <div className="py-12 bg-card rounded-lg">
+      <div className="py-12 bg-card">
         <motion.section
           className="px-6"
           initial="hidden"
@@ -202,48 +206,54 @@ Fahmie's portfolio covers both international collaborations and competitive musi
         </motion.section>
       </div>
 
-      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+      <div className="container mx-auto">
+        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+      </div>
 
       {/* Achievements Section */}
-      <motion.section
-          className="py-20 px-6 bg-transparent"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={staggerContainer}
-      >
-          <div className="container mx-auto">
-          <motion.div className="text-center mb-12" variants={fadeInUp}>
-              <h2 className="text-4xl font-bold mb-4">Achievements</h2>
-              <p className="text-lg text-muted-foreground">
-              Recognition and awards received throughout my musical journey
-              </p>
-          </motion.div>
-          <motion.div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" variants={staggerContainer}>
-              {achievements.map((achievement, index) => (
-              <motion.div key={index} variants={fadeInUp}>
-                  <Card className="bg-card border-primary/20 text-center hover:border-primary/40 transition-colors h-full">
-                  <CardHeader>
-                      <div className="text-4xl mb-4">{achievement.icon}</div>
-                      <CardTitle className="text-lg">{achievement.title}</CardTitle>
-                      <CardDescription className="text-primary">
-                      {achievement.year}
-                      </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                      <p className="text-muted-foreground text-sm">{achievement.description}</p>
-                  </CardContent>
-                  </Card>
-              </motion.div>
-              ))}
-          </motion.div>
-          </div>
-      </motion.section>
-
-      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+      <div className="container mx-auto">
+        <motion.section
+            className="py-20 px-6 bg-transparent"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+        >
+            <div className="container mx-auto">
+            <motion.div className="text-center mb-12" variants={fadeInUp}>
+                <h2 className="text-4xl font-bold mb-4">Achievements</h2>
+                <p className="text-lg text-muted-foreground">
+                Recognition and awards received throughout my musical journey
+                </p>
+            </motion.div>
+            <motion.div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" variants={staggerContainer}>
+                {achievements.map((achievement, index) => (
+                <motion.div key={index} variants={fadeInUp}>
+                    <Card className="bg-card border-primary/20 text-center hover:border-primary/40 transition-colors h-full">
+                    <CardHeader>
+                        <div className="text-4xl mb-4">{achievement.icon}</div>
+                        <CardTitle className="text-lg">{achievement.title}</CardTitle>
+                        <CardDescription className="text-primary">
+                        {achievement.year}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground text-sm">{achievement.description}</p>
+                    </CardContent>
+                    </Card>
+                </motion.div>
+                ))}
+            </motion.div>
+            </div>
+        </motion.section>
+      </div>
+      
+      <div className="container mx-auto">
+        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+      </div>
 
       {/* Testimonials Section */}
-      <div className="py-12 bg-card rounded-lg">
+      <div className="py-12 bg-card">
         <section className="px-6">
             <div className="container mx-auto">
                 <motion.h2
@@ -287,25 +297,29 @@ Fahmie's portfolio covers both international collaborations and competitive musi
         </section>
       </div>
       
-       <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+      <div className="container mx-auto">
+        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+      </div>
 
        {/* CTA */}
-       <section className="py-20 px-6">
-          <div className="container mx-auto text-center">
-              <h2 className="text-3xl font-bold mb-4">Let's Create Something Amazing</h2>
-              <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                  Have a project in mind? I'd love to hear about it. Contact me for custom compositions or licensing inquiries.
-              </p>
-              <Button size="lg" asChild className="btn-gold">
-                  <Link href="/contact">
-                      Get In Touch <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-              </Button>
-          </div>
-      </section>
+       <div className="container mx-auto">
+         <section className="py-20 px-6">
+            <div className="container mx-auto text-center">
+                <h2 className="text-3xl font-bold mb-4">Let's Create Something Amazing</h2>
+                <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+                    Have a project in mind? I'd love to hear about it. Contact me for custom compositions or licensing inquiries.
+                </p>
+                <Button size="lg" asChild className="btn-gold">
+                    <Link href="/contact">
+                        Get In Touch <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                </Button>
+            </div>
+        </section>
 
-      <div className="text-center mt-20 text-primary text-2xl">
-        ♪ ♫ ♪
+        <div className="text-center mt-20 text-primary text-2xl">
+          ♪ ♫ ♪
+        </div>
       </div>
     </div>
   );
