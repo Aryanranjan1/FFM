@@ -21,7 +21,7 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { useAuth } from '@/context/auth-context';
+import { useAuth, AuthProvider } from '@/context/auth-context';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { FloatingNotes } from '@/components/floating-notes';
