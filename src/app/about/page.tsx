@@ -103,7 +103,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
 
         <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
           <div className="md:col-span-1 flex flex-col items-center">
-            <div className="relative w-full max-w-xs md:max-w-full">
+            <div className="relative w-full max-w-xs md:max-w-full transform -rotate-3 transition-transform duration-300 hover:rotate-0">
               {artistImage && (
                 <Image
                   src={artistImage.imageUrl}
@@ -152,9 +152,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
         </div>
       </div>
       
-      <div className="container mx-auto">
-        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
-      </div>
+      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
       {/* Collaborations Section */}
       <div className="py-12 bg-card">
@@ -206,9 +204,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
         </motion.section>
       </div>
 
-      <div className="container mx-auto">
-        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
-      </div>
+      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
       {/* Achievements Section */}
       <div className="container mx-auto">
@@ -248,9 +244,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
         </motion.section>
       </div>
       
-      <div className="container mx-auto">
-        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
-      </div>
+      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
       {/* Testimonials Section */}
       <div className="py-12 bg-card">
@@ -297,9 +291,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
         </section>
       </div>
       
-      <div className="container mx-auto">
-        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
-      </div>
+      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
        {/* CTA */}
        <div className="container mx-auto">
@@ -324,3 +316,4 @@ Fahmie's portfolio covers both international collaborations and competitive musi
     </div>
   );
 }
+
