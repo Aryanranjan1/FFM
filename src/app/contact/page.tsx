@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useActionState, useEffect } from "react";
@@ -7,15 +8,17 @@ import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { submitContactForm } from "@/app/actions";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Send } from "lucide-react";
+import { Send, Mail, Phone, MapPin } from "lucide-react";
+import { motion } from "framer-motion";
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
+  subject: z.string().optional(),
   message: z.string().min(10, "Message must be at least 10 characters."),
 });
 
@@ -35,6 +38,7 @@ export default function ContactPage() {
     defaultValues: {
       name: "",
       email: "",
+      subject: "",
       message: "",
     },
   });
@@ -58,66 +62,121 @@ export default function ContactPage() {
   }, [state, toast, form]);
 
   return (
-    <div className="container py-12 flex items-center justify-center">
-      <Card className="w-full max-w-2xl bg-transparent">
-        <CardHeader className="text-center">
-          <CardTitle className="font-headline text-5xl">Get In Touch</CardTitle>
-          <CardDescription className="text-lg">
-            For bookings, collaborations, or just to say hello.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form action={formAction} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Your Name" {...field} />
-                    </FormControl>
-                    <FormMessage>{state.errors?.name}</FormMessage>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="your.email@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage>{state.errors?.email}</FormMessage>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="message"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Message</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Your message..." {...field} rows={6} />
-                    </FormControl>
-                    <FormMessage>{state.errors?.message}</FormMessage>
-                  </FormItem>
-                )}
-              />
-              <div className="text-right">
-                <Button type="submit" size="lg">
-                  Send Message
-                  <Send className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+    <div className="container py-20">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+        <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+        >
+            <h2 className="font-headline text-4xl md:text-5xl font-bold mb-4 text-primary">LET'S CONNECT</h2>
+            <p className="text-lg text-muted-foreground mb-8 max-w-lg">
+                Whether you're looking for custom compositions, music licensing, or just want to discuss musical ideas, I'm here to help bring your vision to life.
+            </p>
+            <div className="space-y-6">
+                <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Mail className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                        <h4 className="text-lg font-semibold mb-1">EMAIL</h4>
+                        <p className="text-muted-foreground">contact@fahmiefarhan.com</p>
+                    </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Phone className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                        <h4 className="text-lg font-semibold mb-1">PHONE</h4>
+                        <p className="text-muted-foreground">+60 11-31377753</p>
+                    </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <MapPin className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                        <h4 className="text-lg font-semibold mb-1">LOCATION</h4>
+                        <p className="text-muted-foreground">Malaysia</p>
+                    </div>
+                </div>
+            </div>
+        </motion.div>
+        <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+        >
+            <Card className="bg-card/80 p-8 rounded-lg">
+                <CardContent className="p-0">
+                    <Form {...form}>
+                      <form action={formAction} className="space-y-6">
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Name</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Your name" {...field} />
+                              </FormControl>
+                              <FormMessage>{state.errors?.name}</FormMessage>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Email</FormLabel>
+                              <FormControl>
+                                <Input placeholder="your@email.com" {...field} />
+                              </FormControl>
+                              <FormMessage>{state.errors?.email}</FormMessage>
+                            </FormItem>
+                          )}
+                        />
+                         <FormField
+                          control={form.control}
+                          name="subject"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Subject</FormLabel>
+                              <FormControl>
+                                <Input placeholder="What's this about?" {...field} />
+                              </FormControl>
+                              <FormMessage>{state.errors?.subject}</FormMessage>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="message"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Message</FormLabel>
+                              <FormControl>
+                                <Textarea placeholder="Your message..." {...field} rows={5} />
+                              </FormControl>
+                              <FormMessage>{state.errors?.message}</FormMessage>
+                            </FormItem>
+                          )}
+                        />
+                        <div className="text-right">
+                           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                              <Button type="submit" size="lg" className="w-full btn-gold px-6 py-3 rounded-md flex items-center justify-center">
+                                  <Send className="w-5 h-5 mr-2" />Send Message
+                              </Button>
+                          </motion.div>
+                        </div>
+                      </form>
+                    </Form>
+                </CardContent>
+            </Card>
+        </motion.div>
+    </div>
     </div>
   );
 }
