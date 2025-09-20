@@ -91,18 +91,11 @@ export default function NewMusicTrackPage() {
 
   useEffect(() => {
     if (state.message) {
-      if (state.errors && Object.keys(state.errors).length > 0 && !state.errors._form) {
-        // Validation errors
-        toast({
-          title: "Validation Error",
-          description: state.message,
-          variant: "destructive",
-        });
-      } else if (state.errors?._form) {
-        // Server-side errors
+      if (state.errors && (state.errors._form || Object.keys(state.errors).length > 0)) {
+        // Validation or server-side errors
         toast({
           title: "Error",
-          description: state.errors._form[0],
+          description: state.message || state.errors?._form?.[0] || "An error occurred.",
           variant: "destructive",
         });
       } else {
