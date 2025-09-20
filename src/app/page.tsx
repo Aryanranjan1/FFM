@@ -79,13 +79,8 @@ export default function Home() {
     // Player State
     const [featuredVideo, setFeaturedVideo] = useState<VideoType | null>(null);
     const playerRef = useRef<YouTubePlayer>(null);
-    const [playerState, setPlayerState] = useState<number | null>(null);
-    const [audioProgress, setAudioProgress] = useState(0);
-    const [audioDuration, setAudioDuration] = useState(0);
-    const [isMuted, setIsMuted] = useState(false);
     const [likedTracks, setLikedTracks] = useState<string[]>([]);
-    const [volume, setVolume] = useState(0.3);
-
+    
     const [state, formAction] = useActionState(submitContactForm, initialState);
     const { toast } = useToast();
 
@@ -167,18 +162,6 @@ export default function Home() {
     
     const videoId = featuredVideo ? getYouTubeId(featuredVideo.videoUrl) : null;
     
-    useEffect(() => {
-        const interval = setInterval(async () => {
-            if (playerRef.current && playerState === 1) { // 1 = playing
-                const progress = await playerRef.current.getCurrentTime();
-                const duration = await playerRef.current.getDuration();
-                setAudioProgress(progress);
-                setAudioDuration(duration);
-            }
-        }, 1000);
-        return () => clearInterval(interval);
-    }, [playerState]);
-
     const playTrackFromPortfolio = (track: VideoType) => {
         setFeaturedVideo(track);
         setTimeout(() => {
@@ -198,49 +181,6 @@ export default function Home() {
     };
 
     const filteredTracks = allVideos.filter(video => video.isFeatured);
-
-    const toggleAudioPlay = () => {
-        if (!playerRef.current) return;
-        if (playerState === 1) { // playing
-            playerRef.current.pauseVideo();
-        } else {
-            playerRef.current.playVideo();
-        }
-    };
-    
-    const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!playerRef.current) return;
-        const newTime = Number(e.target.value);
-        setAudioProgress(newTime);
-        playerRef.current.seekTo(newTime, true);
-    }
-    
-    const formatTime = (seconds: number) => {
-        if (isNaN(seconds) || seconds === 0) return "0:00";
-        const minutes = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
-    };
-    
-    const onPlayerReady = (event: { target: YouTubePlayer }) => {
-        playerRef.current = event.target;
-        event.target.setVolume(volume * 100);
-        event.target.playVideo();
-    };
-
-    const onPlayerStateChange = (event: { data: number }) => {
-        setPlayerState(event.data);
-        if (event.data === 0) { // ended
-            playerRef.current.playVideo(); // loop
-        }
-    };
-    
-    const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!playerRef.current) return;
-        const newVolume = Number(e.target.value);
-        setVolume(newVolume);
-        playerRef.current.setVolume(newVolume * 100);
-    }
     
     return (
         <div className="min-h-screen bg-background text-foreground">
@@ -361,93 +301,35 @@ export default function Home() {
                      {featuredVideo && videoId ? (
                          <motion.div className="max-w-4xl mx-auto" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
                              <Card className="bg-background/50 backdrop-blur-sm border-primary/30 overflow-hidden">
-                                 <CardContent className="p-4 md:p-8">
-                                     <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
-                                         <div className="relative group w-full md:w-48 h-auto md:h-48 flex-shrink-0 aspect-video md:aspect-square">
-                                            <Image
-                                                src={featuredVideo.thumbnailUrl || "https://placehold.co/400x400"}
-                                                alt={featuredVideo.title}
-                                                layout="fill"
-                                                objectFit="cover"
-                                                className="rounded-lg"
-                                            />
-                                            <div className="absolute inset-0 bg-black/30 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <Button
-                                                    size="lg"
-                                                    onClick={toggleAudioPlay}
-                                                    className="bg-primary/80 text-primary-foreground hover:bg-primary rounded-full w-16 h-16 flex items-center justify-center"
-                                                >
-                                                    {playerState === 1 ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8" />}
-                                                </Button>
-                                            </div>
-                                            <div className="absolute -z-10 w-0 h-0">
-                                                 <YouTube
-                                                     videoId={videoId}
-                                                     onReady={onPlayerReady}
-                                                     onStateChange={onPlayerStateChange}
-                                                     opts={{
-                                                         height: '0',
-                                                         width: '0',
-                                                         playerVars: {
-                                                             autoplay: 1,
-                                                             controls: 0,
-                                                             rel: 0,
-                                                             showinfo: 0,
-                                                             modestbranding: 1,
-                                                             loop: 1,
-                                                             playlist: videoId,
-                                                         },
-                                                     }}
-                                                 />
-                                             </div>
+                                <div className="aspect-video">
+                                     <YouTube
+                                         videoId={videoId}
+                                         onReady={(e) => playerRef.current = e.target}
+                                         opts={{
+                                             height: '100%',
+                                             width: '100%',
+                                             playerVars: {
+                                                 autoplay: 0,
+                                                 controls: 1,
+                                                 rel: 0,
+                                                 showinfo: 0,
+                                                 modestbranding: 1,
+                                             },
+                                         }}
+                                         className="w-full h-full"
+                                     />
+                                 </div>
+                                 <CardContent className="p-4 md:p-6">
+                                     <h3 className="text-2xl font-bold text-white mb-1 font-headline">{featuredVideo.title}</h3>
+                                     <p className="text-lg text-muted-foreground mb-4">{featuredVideo.category}</p>
+                                     <div className="flex items-center justify-start space-x-6 text-sm text-muted-foreground">
+                                         <div className="flex items-center space-x-1 cursor-pointer hover:text-primary" onClick={() => toggleLike(featuredVideo.id)}>
+                                             <Heart className={`w-4 h-4 ${likedTracks.includes(featuredVideo.id) ? 'text-red-500 fill-current' : ''}`} />
+                                             <span>Like</span>
                                          </div>
-                                         <div className="flex-1 text-center md:text-left w-full">
-                                             <h3 className="text-2xl font-bold text-white mb-2 font-headline">{featuredVideo.title}</h3>
-                                             <p className="text-lg text-muted-foreground mb-2">{featuredVideo.category}</p>
-                                             
-                                             <div className="mb-4">
-                                                 <input
-                                                     type="range"
-                                                     min="0"
-                                                     max={audioDuration}
-                                                     value={audioProgress}
-                                                     onChange={handleProgressChange}
-                                                     className="w-full h-2 bg-background rounded-lg appearance-none cursor-pointer range-lg"
-                                                 />
-                                                 <div className="flex justify-between text-sm text-muted-foreground mt-1">
-                                                     <span>{formatTime(audioProgress)}</span>
-                                                     <span>{formatTime(audioDuration)}</span>
-                                                 </div>
-                                             </div>
-                                             <div className="flex items-center justify-center md:justify-start space-x-4 mb-4">
-                                                 <Button size="sm" onClick={toggleAudioPlay} className="btn-gold">
-                                                     {playerState === 1 ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-                                                 </Button>
-                                                 <div className="flex items-center gap-2 w-24">
-                                                     <button onClick={() => { if (playerRef.current) { isMuted ? playerRef.current.unMute() : playerRef.current.mute(); setIsMuted(!isMuted); } }}>
-                                                        {isMuted || volume === 0 ? <VolumeX className="w-5 h-5 text-primary" /> : <Volume2 className="w-5 h-5 text-primary" />}
-                                                     </button>
-                                                     <input
-                                                         type="range"
-                                                         min="0"
-                                                         max="1"
-                                                         step="0.01"
-                                                         value={isMuted ? 0 : volume}
-                                                         onChange={handleVolumeChange}
-                                                         className="w-full h-1 bg-background rounded-lg appearance-none cursor-pointer"
-                                                     />
-                                                 </div>
-                                             </div>
-                                             <div className="flex items-center justify-center md:justify-start space-x-6 text-sm text-muted-foreground">
-                                                 <div className="flex items-center space-x-1 cursor-pointer hover:text-primary" onClick={() => toggleLike(featuredVideo.id)}>
-                                                     <Heart className={`w-4 h-4 ${likedTracks.includes(featuredVideo.id) ? 'text-red-500 fill-current' : ''}`} />
-                                                     <span>Like</span>
-                                                 </div>
-                                                 <div className="flex items-center space-x-1 cursor-pointer hover:text-primary">
-                                                     <Share2 className="w-4 h-4" />
-                                                     <span>Share</span>
-                                                 </div>
-                                             </div>
+                                         <div className="flex items-center space-x-1 cursor-pointer hover:text-primary">
+                                             <Share2 className="w-4 h-4" />
+                                             <span>Share</span>
                                          </div>
                                      </div>
                                  </CardContent>
