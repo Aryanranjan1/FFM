@@ -57,11 +57,7 @@ const initialState = {
 };
 
 const iconComponents: { [key: string]: React.FC<any> } = {
-    Music,
-    User,
-    Award,
-    Headphones,
-    Youtube: (props) => <Youtube {...props} />,
+    YouTube: (props) => <Youtube {...props} />,
     Instagram: (props) => <Instagram {...props} />,
     Soundcloud: (props) => <SoundcloudIcon {...props} />,
     Default: LinkIcon,
@@ -78,7 +74,6 @@ export default function Home() {
     const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState('All');
     const [categories, setCategories] = useState<string[]>(['All']);
-    const orbsRef = useRef<HTMLDivElement>(null);
 
     // Audio Player State
     const [featuredMusicTrack, setFeaturedMusicTrack] = useState<MusicTrackType | null>(null);
@@ -177,26 +172,6 @@ export default function Home() {
         };
     }, [featuredMusicTrack]);
 
-    useEffect(() => {
-        // Create floating orbs
-        if (orbsRef.current) {
-            orbsRef.current.innerHTML = '';
-            for (let i = 0; i < 8; i++) {
-                const orb = document.createElement("div");
-                orb.className = "orb";
-                const size = Math.random() * 100 + 50;
-                orb.style.width = `${size}px`;
-                orb.style.height = `${size}px`;
-                orb.style.left = `${Math.random() * 90}%`;
-                orb.style.top = `${Math.random() * 90}%`;
-                orb.style.animationDuration = `${Math.random() * 15 + 10}s`;
-                orb.style.animationDelay = `${Math.random() * 5}s`;
-                orbsRef.current.appendChild(orb);
-            }
-        }
-    }, []);
-
-
     const playTrackFromPortfolio = (track: MusicTrackType) => {
         setFeaturedMusicTrack(track);
         setAudioPlaying(true);
@@ -240,9 +215,8 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-background text-foreground">
             {/* --- HERO SECTION --- */}
-            <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 pb-20 px-6 overflow-hidden hero-bg-custom">
+            <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 pb-20 px-4 md:px-12 overflow-hidden bg-gradient-to-br from-gray-900 to-black">
                  <div className="hero-bg"></div>
-                 <div className="floating-orbs" ref={orbsRef}></div>
                  <FloatingNotes />
                 
                 <div className="relative z-10 max-w-7xl mx-auto text-center">
@@ -299,7 +273,7 @@ export default function Home() {
                         transition={{ duration: 0.8, delay: 0.8 }}
                     >
                         {socialLinks.map((social, index) => {
-                           const Icon = iconComponents[social.platform] || iconComponents.Default;
+                           const Icon = iconComponents[social.platform as keyof typeof iconComponents] || iconComponents.Default;
                            if (!Icon) return null;
                            return (
                                 <motion.a

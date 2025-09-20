@@ -102,58 +102,61 @@ Fahmie's portfolio covers both international collaborations and competitive musi
                 </p>
             </div>
         </section>
+        
+        <section className="py-20 relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
+          <div className="hero-bg"></div>
+          <div className="container mx-auto px-4 md:px-12 relative z-10">
+              <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12 items-start">
+              <div className="md:col-span-1 flex flex-col items-center">
+                  <div className="relative w-full max-w-xs md:max-w-full transition-transform duration-300 hover:-rotate-3">
+                  {artistImage && (
+                      <Image
+                      src={artistImage.imageUrl}
+                      alt={artistImage.description}
+                      width={500}
+                      height={600}
+                      className="rounded-lg object-cover w-full h-auto shadow-lg"
+                      data-ai-hint={artistImage.imageHint}
+                      />
+                  )}
+                  </div>
+                  <div className="mt-6 space-y-3 text-center text-muted-foreground">
+                  <div className="flex items-center justify-center gap-2">
+                      <MapPin className="w-4 h-4" />
+                      <span>Malaysia</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2">
+                      <Music className="w-4 h-4" />
+                      <span>Composer & Producer</span>
+                  </div>
+                  </div>
+              </div>
 
-        <div className="py-20 container mx-auto px-4 md:px-12">
-            <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12 items-start">
-            <div className="md:col-span-1 flex flex-col items-center">
-                <div className="relative w-full max-w-xs md:max-w-full transition-transform duration-300 hover:-rotate-3">
-                {artistImage && (
-                    <Image
-                    src={artistImage.imageUrl}
-                    alt={artistImage.description}
-                    width={500}
-                    height={600}
-                    className="rounded-lg object-cover w-full h-auto shadow-lg"
-                    data-ai-hint={artistImage.imageHint}
-                    />
-                )}
-                </div>
-                <div className="mt-6 space-y-3 text-center text-muted-foreground">
-                <div className="flex items-center justify-center gap-2">
-                    <MapPin className="w-4 h-4" />
-                    <span>Malaysia</span>
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                    <Music className="w-4 h-4" />
-                    <span>Composer & Producer</span>
-                </div>
-                </div>
-            </div>
+              <div className="md:col-span-2 space-y-8 text-foreground/90">
+                  <div>
+                  <h2 className="font-headline text-3xl font-bold text-white mb-4">{bioContent.name}</h2>
+                  <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
+                      {bioContent.main}
+                  </p>
+                  </div>
 
-            <div className="md:col-span-2 space-y-8 text-foreground/90">
-                <div>
-                <h2 className="font-headline text-3xl font-bold text-white mb-4">{bioContent.name}</h2>
-                <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
-                    {bioContent.main}
-                </p>
-                </div>
+                  <div>
+                  <h3 className="font-headline text-2xl font-bold text-primary mb-3">TRADITIONAL EXCELLENCE</h3>
+                  <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
+                      {bioContent.traditional}
+                  </p>
+                  </div>
 
-                <div>
-                <h3 className="font-headline text-2xl font-bold text-primary mb-3">TRADITIONAL EXCELLENCE</h3>
-                <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
-                    {bioContent.traditional}
-                </p>
-                </div>
-
-                <div>
-                <h3 className="font-headline text-2xl font-bold text-primary mb-3">DIGITAL PRESENCE</h3>
-                <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
-                    {bioContent.digital}
-                </p>
-                </div>
-            </div>
-            </div>
-        </div>
+                  <div>
+                  <h3 className="font-headline text-2xl font-bold text-primary mb-3">DIGITAL PRESENCE</h3>
+                  <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
+                      {bioContent.digital}
+                  </p>
+                  </div>
+              </div>
+              </div>
+          </div>
+        </section>
       
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 

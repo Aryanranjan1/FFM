@@ -167,7 +167,51 @@ export default function MusicPage() {
                 </div>
             </section>
             
-            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+            {/* Latest Release Section */}
+            {!loading && latestRelease && (
+                <motion.section
+                    className="py-20 bg-gradient-to-br from-gray-900 to-black relative overflow-hidden"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                    variants={staggerContainer}
+                >
+                    <div className="hero-bg"></div>
+                    <div className="container mx-auto px-4 md:px-12 relative z-10">
+                        <motion.div variants={fadeInUp}>
+                            <Card className="overflow-hidden bg-transparent border-0 md:border md:bg-card md:border-border/50">
+                                <CardContent className="p-0 md:p-6 grid md:grid-cols-2 gap-8 items-center">
+                                    <div className="relative group aspect-square md:aspect-auto">
+                                        <Image
+                                            src={latestRelease.coverImageUrl || "https://placehold.co/600x600"}
+                                            alt={`Cover for ${latestRelease.title}`}
+                                            width={600}
+                                            height={600}
+                                            className="w-full h-full object-cover md:rounded-lg"
+                                        />
+                                        <div className="absolute inset-0 bg-black/20 md:rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Button size="icon" className="h-20 w-20 rounded-full" onClick={() => handlePlayTrack(latestRelease)}>
+                                                <PlayCircle className="h-10 w-10" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <div className="p-6 md:p-0">
+                                        <Badge variant="default" className="mb-4">Latest Release</Badge>
+                                        <h3 className="font-headline text-4xl font-bold">{latestRelease.title}</h3>
+                                        <p className="text-muted-foreground mt-2 text-lg">{new Date(latestRelease.createdAt).getFullYear()}</p>
+                                        <p className="mt-4 text-muted-foreground leading-relaxed">
+                                            {`Listen to the latest track, ${latestRelease.title}.`}
+                                        </p>
+                                        <div className="mt-6">
+                                            <Button onClick={() => handlePlayTrack(latestRelease)}>Play Now</Button>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
+                    </div>
+                </motion.section>
+            )}
 
             {/* Music Portfolio Section */}
             <motion.section
@@ -244,50 +288,7 @@ export default function MusicPage() {
                 </div>
             </motion.section>
 
-            {/* Latest Release Section */}
-            {!loading && latestRelease && (
-                <motion.section
-                    className="py-20 bg-card"
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.2 }}
-                    variants={staggerContainer}
-                >
-                    <div className="container mx-auto px-4 md:px-12">
-                        <motion.div variants={fadeInUp}>
-                            <Card className="overflow-hidden bg-transparent border-0 md:border md:bg-card md:border-border/50">
-                                <CardContent className="p-0 md:p-6 grid md:grid-cols-2 gap-8 items-center">
-                                    <div className="relative group aspect-square md:aspect-auto">
-                                        <Image
-                                            src={latestRelease.coverImageUrl || "https://placehold.co/600x600"}
-                                            alt={`Cover for ${latestRelease.title}`}
-                                            width={600}
-                                            height={600}
-                                            className="w-full h-full object-cover md:rounded-lg"
-                                        />
-                                        <div className="absolute inset-0 bg-black/20 md:rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Button size="icon" className="h-20 w-20 rounded-full" onClick={() => handlePlayTrack(latestRelease)}>
-                                                <PlayCircle className="h-10 w-10" />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                    <div className="p-6 md:p-0">
-                                        <Badge variant="default" className="mb-4">Latest Release</Badge>
-                                        <h3 className="font-headline text-4xl font-bold">{latestRelease.title}</h3>
-                                        <p className="text-muted-foreground mt-2 text-lg">{new Date(latestRelease.createdAt).getFullYear()}</p>
-                                        <p className="mt-4 text-muted-foreground leading-relaxed">
-                                            {`Listen to the latest track, ${latestRelease.title}.`}
-                                        </p>
-                                        <div className="mt-6">
-                                            <Button onClick={() => handlePlayTrack(latestRelease)}>Play Now</Button>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </motion.div>
-                    </div>
-                </motion.section>
-            )}
+            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
             {/* Collaborations Section */}
             <motion.section
@@ -337,6 +338,8 @@ export default function MusicPage() {
                 </div>
             </motion.section>
 
+             <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+
             {/* Achievements Section */}
             <motion.section
                 className="py-20"
@@ -372,6 +375,8 @@ export default function MusicPage() {
                 </motion.div>
                 </div>
             </motion.section>
+
+            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
             {/* Testimonials Section */}
             <section className="py-20 bg-card">
@@ -415,6 +420,8 @@ export default function MusicPage() {
                     </div>
                 </div>
             </section>
+
+            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
             {/* CTA */}
             <section className="py-20">

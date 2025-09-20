@@ -1,9 +1,10 @@
 
+'use client';
 
 import { db } from "@/lib/firebase";
 import { collection, doc, getDoc, getDocs, limit, query, where, orderBy, Timestamp } from "firebase/firestore";
 import type { BlogPost } from "@/lib/admin-types";
-import { notFound } from "next/navigation";
+import { notFound, usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -13,6 +14,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Clock, Calendar, User, Tag, Heart, MessageCircle, Share2, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 async function getBlogPost(id: string): Promise<BlogPost | null> {
   const postRef = doc(db, 'blog', id);
@@ -77,14 +80,37 @@ async function getRelatedPosts(currentPostId: string, category: string): Promise
 }
 
 
-export default async function BlogPostPage({ params }: { params: { id: string } }) {
-  const post = await getBlogPost(params.id);
+export default function BlogPostPage({ params }: { params: { id: string } }) {
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
+  const { toast } = useToast();
 
-  if (!post) {
-    notFound();
+  useEffect(() => {
+    async function fetchData() {
+        setLoading(true);
+        const fetchedPost = await getBlogPost(params.id);
+        if (fetchedPost) {
+            setPost(fetchedPost);
+            const fetchedRelatedPosts = await getRelatedPosts(fetchedPost.id, fetchedPost.category);
+            setRelatedPosts(fetchedRelatedPosts);
+        } else {
+            notFound();
+        }
+        setLoading(false);
+    }
+    fetchData();
+  }, [params.id]);
+  
+  if (loading || !post) {
+      return (
+          <div className="flex justify-center items-center h-screen">
+              {/* You can add a loader component here */}
+              <p>Loading...</p>
+          </div>
+      )
   }
-
-  const relatedPosts = await getRelatedPosts(post.id, post.category);
 
   // Simple markdown-to-HTML
   const formatContent = (content: string) => {
@@ -93,6 +119,37 @@ export default async function BlogPostPage({ params }: { params: { id: string } 
         .map(p => `<p class="mb-6 leading-relaxed">${p.replace(/\n/g, '<br/>')}</p>`)
         .join('');
   }
+  
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleShare = async () => {
+    const shareData = {
+      title: post.title,
+      text: `Check out this article: ${post.title}`,
+      url: window.location.href,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        toast({
+            title: "Link Copied",
+            description: "The article link has been copied to your clipboard.",
+        });
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+       toast({
+            title: "Error",
+            description: "Could not share the article.",
+            variant: "destructive",
+        });
+    }
+  };
+
 
   return (
     <div className="bg-background text-foreground">
@@ -179,10 +236,10 @@ export default async function BlogPostPage({ params }: { params: { id: string } 
                         </Button>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="icon">
+                        <Button variant="outline" size="icon" onClick={handlePrint}>
                             <Printer className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" size="icon">
+                        <Button variant="outline" size="icon" onClick={handleShare}>
                             <Share2 className="h-4 w-4" />
                         </Button>
                     </div>

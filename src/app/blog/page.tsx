@@ -109,8 +109,9 @@ export default function BlogPage() {
   return (
     <div className="bg-background text-foreground">
       {/* Hero Section */}
-      <section className="py-20 text-center bg-gradient-to-br from-gray-900 to-black">
-        <div className="container mx-auto px-4 md:px-12">
+      <section className="py-20 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
+        <div className="hero-bg"></div>
+        <div className="container mx-auto px-4 md:px-12 relative z-10">
           <motion.h1 
             className="text-5xl font-headline font-bold text-primary mb-4" 
             initial={{ opacity: 0, y: 20 }}
