@@ -4,11 +4,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { ExternalLink, MapPin, Music, ArrowRight } from 'lucide-react';
+import { ExternalLink, MapPin, Music, ArrowRight, Star } from 'lucide-react';
 import type { Collaboration, Achievement } from '@/lib/types';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { bio } from '@/lib/data';
 
 const collaborations: Collaboration[] = [
     {
@@ -231,6 +232,49 @@ Fahmie's portfolio covers both international collaborations and competitive musi
           </motion.div>
           </div>
       </motion.section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 px-6 bg-card">
+          <div className="container mx-auto">
+              <motion.h2
+                  className="text-3xl md:text-4xl font-headline font-bold text-center mb-12"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+              >
+                  What My Clients Say
+              </motion.h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {bio.pressReleases.slice(0, 3).map((testimonial, index) => (
+                      <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: 30 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true, amount: 0.3 }}
+                          transition={{ duration: 0.6, delay: index * 0.1 }}
+                      >
+                          <Card className="bg-background/50 border-border/50 h-full flex flex-col p-6">
+                              <div className="flex-grow mb-4">
+                                  <p className="text-muted-foreground italic">"{testimonial.title}"</p>
+                              </div>
+                              <div className="flex items-center">
+                                  <div className="flex-shrink-0">
+                                      <div className="flex">
+                                          {[...Array(5)].map((_, i) => (
+                                              <Star key={i} className="w-5 h-5 text-primary fill-current" />
+                                          ))}
+                                      </div>
+                                      <p className="font-bold mt-2">{testimonial.publication}</p>
+                                      <p className="text-sm text-muted-foreground">{new Date(testimonial.date).toLocaleDateString()}</p>
+                                  </div>
+                              </div>
+                          </Card>
+                      </motion.div>
+                  ))}
+              </div>
+          </div>
+      </section>
 
        {/* CTA */}
        <section className="py-20 px-6">
