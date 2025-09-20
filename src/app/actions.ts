@@ -2,6 +2,7 @@
 "use server";
 
 import { suggestBioUpdates, type SuggestBioUpdatesInput } from "@/ai/flows/suggest-bio-updates";
+import { fetchYouTubeDetails as fetchYouTubeDetailsFlow, type FetchYouTubeDetailsOutput } from "@/ai/flows/fetch-youtube-details";
 import { z } from "zod";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
@@ -113,4 +114,77 @@ export async function addMusicTrack(prevState: any, formData: FormData): Promise
             message: "Failed to add music track.",
         };
     }
+}
+
+
+export async function fetchYouTubeDetails(videoUrl: string): Promise<{ success: boolean, data?: FetchYouTubeDetailsOutput, error?: string }> {
+  try {
+    const result = await fetchYouTubeDetailsFlow({ videoUrl });
+    return { success: true, data: result };
+  } catch (error) {
+    console.error(error);
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    return { success: false, error: `Failed to fetch YouTube details: ${errorMessage}` };
+  }
+}
+
+const videoSchema = z.object({
+  title: z.string().min(2, "Title must be at least 2 characters."),
+  videoUrl: z.string().url("Please enter a valid YouTube URL."),
+  description: z.string().optional(),
+  tags: z.string().optional(),
+  thumbnailUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
+  isPublished: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
+  isFeatured: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
+});
+
+export type AddVideoState = {
+  errors?: {
+    title?: string[];
+    videoUrl?: string[];
+    description?: string[];
+    tags?: string[];
+    thumbnailUrl?: string[];
+    isPublished?: string[];
+    isFeatured?: string[];
+    _form?: string[];
+  };
+  message: string | null;
+};
+
+export async function addVideo(prevState: AddVideoState, formData: FormData): Promise<AddVideoState> {
+  const validatedFields = videoSchema.safeParse({
+    title: formData.get('title'),
+    videoUrl: formData.get('videoUrl'),
+    description: formData.get('description'),
+    tags: formData.get('tags'),
+    thumbnailUrl: formData.get('thumbnailUrl'),
+    isPublished: formData.get('isPublished'),
+    isFeatured: formData.get('isFeatured'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Validation failed. Please check your input.',
+    };
+  }
+
+  try {
+    await addDoc(collection(db, 'videos'), {
+      ...validatedFields.data,
+      createdAt: serverTimestamp(),
+    });
+
+    revalidatePath('/videos');
+    revalidatePath('/admin/videos');
+
+    return { message: "Successfully added new video." };
+  } catch (e) {
+    console.error(e);
+    return {
+      errors: { _form: ["Something went wrong. Please try again."] },
+      message: "Failed to add video.",
+    };
+  }
 }

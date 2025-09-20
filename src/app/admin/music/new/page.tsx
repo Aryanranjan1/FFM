@@ -1,16 +1,16 @@
 
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { addMusicTrack, type AddMusicTrackState } from "@/app/actions";
+import { addMusicTrack, type AddMusicTrackState, fetchYouTubeDetails } from "@/app/actions";
 
 import { motion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2, Youtube } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -37,6 +37,7 @@ export default function NewMusicTrackPage() {
   const [state, formAction] = useActionState(addMusicTrack, initialState);
   const router = useRouter();
   const { toast } = useToast();
+  const [isFetching, setIsFetching] = useState(false);
 
   const form = useForm<MusicTrackFormValues>({
     resolver: zodResolver(musicTrackSchema),
@@ -48,6 +49,45 @@ export default function NewMusicTrackPage() {
       isPublished: true,
     },
   });
+
+  const musicUrl = form.watch("musicUrl");
+
+  const handleFetchYouTubeDetails = async () => {
+    if (!musicUrl.includes("youtube.com")) {
+      toast({
+        title: "Invalid URL",
+        description: "Please provide a valid YouTube URL.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setIsFetching(true);
+    try {
+      const details = await fetchYouTubeDetails(musicUrl);
+      if (details.success && details.data) {
+        form.setValue("title", details.data.title, { shouldValidate: true });
+        form.setValue("coverImageUrl", details.data.thumbnailUrl, { shouldValidate: true });
+        toast({
+          title: "Success",
+          description: "YouTube details fetched successfully.",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: details.error || "Failed to fetch YouTube details.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred.",
+        variant: "destructive",
+      });
+    }
+    setIsFetching(false);
+  };
+
 
   useEffect(() => {
     if (state.message) {
@@ -97,6 +137,27 @@ export default function NewMusicTrackPage() {
         <CardContent>
           <Form {...form}>
             <form action={formAction} className="space-y-8">
+               <FormField
+                control={form.control}
+                name="musicUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Music URL</FormLabel>
+                    <div className="flex gap-2">
+                        <FormControl>
+                          <Input placeholder="https://www.youtube.com/watch?v=..." {...field} />
+                        </FormControl>
+                         {musicUrl.includes("youtube.com") && (
+                           <Button type="button" onClick={handleFetchYouTubeDetails} disabled={isFetching}>
+                               {isFetching ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Youtube className="mr-2 h-4 w-4" />}
+                               Fetch
+                           </Button>
+                        )}
+                    </div>
+                     <FormMessage>{state.errors?.musicUrl}</FormMessage>
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="title"
@@ -107,20 +168,6 @@ export default function NewMusicTrackPage() {
                       <Input placeholder="Enter track title" {...field} />
                     </FormControl>
                     <FormMessage>{state.errors?.title}</FormMessage>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="musicUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Music URL</FormLabel>
-                    <FormControl>
-                      <Input placeholder="https://example.com/music.mp3 or YouTube URL" {...field} />
-                    </FormControl>
-                     <FormMessage>{state.errors?.musicUrl}</FormMessage>
                   </FormItem>
                 )}
               />

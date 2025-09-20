@@ -19,7 +19,7 @@ export default function VideosManagementPage() {
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-headline font-bold text-primary">VIDEO MANAGEMENT</h2>
         <Button className="btn-gold" asChild>
-           <Link href="#">
+           <Link href="/admin/videos/new">
             <Plus className="mr-2 h-4 w-4" />
             Add New Video
           </Link>
