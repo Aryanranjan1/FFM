@@ -5,9 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Search, Calendar, User, Heart } from 'lucide-react';
+import { Clock, Search, Calendar, User, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 const featuredArticles = [
   {
@@ -119,11 +119,36 @@ const publishedArticles = [
     },
 ];
 
-const categories = ["All", "Composition", "Cultural Heritage", "Behind the Scenes", "Industry Insights", "Business", "Collaboration"];
+const categories = ["All", "Composition", "Cultural Heritage", "Behind the Scenes", "Industry Insights", "Business", "Collaboration", "Tutorials", "Film Scoring", "Technology"];
 
 
 export default function BlogPage() {
   const [activeTab, setActiveTab] = useState('All');
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScrollability = useCallback(() => {
+    const el = scrollRef.current;
+    if (el) {
+      setCanScrollLeft(el.scrollLeft > 0);
+      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkScrollability();
+    window.addEventListener('resize', checkScrollability);
+    return () => window.removeEventListener('resize', checkScrollability);
+  }, [checkScrollability]);
+
+  const handleScroll = (direction: 'left' | 'right') => {
+    const el = scrollRef.current;
+    if (el) {
+      const scrollAmount = direction === 'left' ? -200 : 200;
+      el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
 
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -252,22 +277,33 @@ export default function BlogPage() {
                         </Select>
                     </div>
                 </div>
-                <div className="w-full">
-                    <ScrollArea className="w-full">
-                        <div className="flex w-max space-x-2 pb-2.5">
-                            {categories.map((category) => (
-                                <Button
-                                    key={category}
-                                    variant={activeTab === category ? "default" : "outline"}
-                                    onClick={() => setActiveTab(category)}
-                                    className="capitalize whitespace-nowrap"
-                                >
-                                    {category}
-                                </Button>
-                            ))}
-                        </div>
-                    </ScrollArea>
-                </div>
+                <div className="relative flex items-center">
+                   {canScrollLeft && (
+                     <Button variant="ghost" size="icon" className="absolute left-0 z-10 rounded-full bg-card/80 hover:bg-card" onClick={() => handleScroll('left')}>
+                       <ChevronLeft className="h-5 w-5"/>
+                     </Button>
+                   )}
+                   <ScrollArea className="w-full whitespace-nowrap" onScroll={checkScrollability}>
+                     <div ref={scrollRef} className="flex w-max space-x-2 py-2.5 px-12">
+                       {categories.map((category) => (
+                         <Button
+                           key={category}
+                           variant={activeTab === category ? "default" : "outline"}
+                           onClick={() => setActiveTab(category)}
+                           className="capitalize whitespace-nowrap"
+                         >
+                           {category}
+                         </Button>
+                       ))}
+                     </div>
+                     <ScrollBar orientation="horizontal" className="invisible"/>
+                   </ScrollArea>
+                   {canScrollRight && (
+                     <Button variant="ghost" size="icon" className="absolute right-0 z-10 rounded-full bg-card/80 hover:bg-card" onClick={() => handleScroll('right')}>
+                       <ChevronRight className="h-5 w-5"/>
+                     </Button>
+                   )}
+                 </div>
             </div>
 
             <motion.div
@@ -336,3 +372,5 @@ export default function BlogPage() {
     </div>
   );
 }
+
+    
