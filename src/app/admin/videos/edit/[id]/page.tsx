@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, Timestamp } from "firebase/firestore";
 import type { Video } from "@/lib/admin-types";
 import { VideoForm } from "../../_components/video-form";
 import { notFound } from "next/navigation";
@@ -12,7 +12,12 @@ async function getVideo(id: string): Promise<Video | null> {
     return null;
   }
   
-  return { id: videoSnap.id, ...videoSnap.data() } as Video;
+  const data = videoSnap.data();
+  return {
+    id: videoSnap.id,
+    ...data,
+    createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
+  } as Video;
 }
 
 export default async function EditVideoPage({ params }: { params: { id: string } }) {

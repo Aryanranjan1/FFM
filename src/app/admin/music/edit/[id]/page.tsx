@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, Timestamp } from "firebase/firestore";
 import type { MusicTrack } from "@/lib/admin-types";
 import { MusicTrackForm } from "../../_components/music-track-form";
 import { notFound } from "next/navigation";
@@ -12,7 +12,12 @@ async function getMusicTrack(id: string): Promise<MusicTrack | null> {
     return null;
   }
   
-  return { id: trackSnap.id, ...trackSnap.data() } as MusicTrack;
+  const data = trackSnap.data();
+  return { 
+    id: trackSnap.id,
+    ...data,
+    createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
+  } as MusicTrack;
 }
 
 export default async function EditMusicTrackPage({ params }: { params: { id: string } }) {

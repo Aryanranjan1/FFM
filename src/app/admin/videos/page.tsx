@@ -16,6 +16,7 @@ async function getVideos(): Promise<Video[]> {
     const videoSnapshot = await getDocs(q);
     const videoList = videoSnapshot.docs.map(doc => {
         const data = doc.data();
+        const createdAt = data.createdAt as Timestamp;
         return {
             id: doc.id,
             title: data.title,
@@ -25,7 +26,7 @@ async function getVideos(): Promise<Video[]> {
             thumbnailUrl: data.thumbnailUrl,
             isPublished: data.isPublished,
             isFeatured: data.isFeatured,
-            createdAt: data.createdAt,
+            createdAt: createdAt.toDate(),
         } as Video;
     });
     return videoList;
@@ -71,7 +72,7 @@ export default async function VideosManagementPage() {
                                         </TableCell>
                                         <TableCell className="font-medium">{video.title}</TableCell>
                                         <TableCell>
-                                            {video.createdAt ? format(video.createdAt.toDate(), "PPP") : 'N/A'}
+                                            {video.createdAt ? format(new Date(video.createdAt as string), "PPP") : 'N/A'}
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <Button variant="ghost" size="icon" asChild>
