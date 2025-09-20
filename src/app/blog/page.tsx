@@ -110,7 +110,7 @@ export default function BlogPage() {
     <div className="bg-background text-foreground">
       {/* Hero Section */}
       <motion.section
-        className="py-20 text-center bg-transparent"
+        className="py-20 text-center bg-gradient-to-br from-gray-900 to-black"
         initial="hidden"
         animate="visible"
         variants={staggerContainer}

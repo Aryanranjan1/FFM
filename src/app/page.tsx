@@ -68,8 +68,6 @@ const iconComponents: { [key: string]: React.FC<any> } = {
 
 
 export default function Home() {
-    const orbsRef = useRef<HTMLDivElement>(null);
-    
     // Data state
     const [socialLinks, setSocialLinks] = useState<SocialLinkType[]>([]);
     const [testimonials, setTestimonials] = useState<TestimonialType[]>([]);
@@ -220,11 +218,10 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-background text-foreground">
             {/* --- HERO SECTION --- */}
-            <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 pb-20 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-background to-black/80"></div>
+            <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 pb-20 px-6 overflow-hidden bg-gradient-to-br from-gray-900 to-black">
                 <FloatingNotes />
                 
-                <div className="container mx-auto px-4 md:px-12 relative z-10 max-w-7xl mx-auto text-center">
+                <div className="relative z-10 max-w-7xl mx-auto text-center">
                     <motion.h1 
                         className="text-4xl md:text-6xl font-bold mb-6 text-white font-headline"
                         initial={{ opacity: 0, y: 20 }}

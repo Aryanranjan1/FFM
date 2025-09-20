@@ -92,219 +92,221 @@ Fahmie's portfolio covers both international collaborations and competitive musi
   };
 
   return (
-    <div className="py-12">
-      <div className="container mx-auto px-4 md:px-12">
-        <div className="text-center mb-12">
-          <h1 className="font-headline text-5xl md:text-7xl font-bold text-primary">ABOUT</h1>
-          <p className="text-muted-foreground text-lg mt-4 max-w-3xl mx-auto">
-            Discover the journey of a Malaysian composer who bridges cultural heritage with contemporary musical innovation
-          </p>
+    <div className="bg-background text-foreground">
+        <section className="py-20 text-center bg-gradient-to-br from-gray-900 to-black">
+            <div className="container mx-auto px-4 md:px-12">
+                <h1 className="font-headline text-5xl md:text-7xl font-bold text-primary">ABOUT</h1>
+                <p className="text-muted-foreground text-lg mt-4 max-w-3xl mx-auto">
+                    Discover the journey of a Malaysian composer who bridges cultural heritage with contemporary musical innovation
+                </p>
+            </div>
+        </section>
+
+        <div className="py-12 container mx-auto px-4 md:px-12">
+            <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
+            <div className="md:col-span-1 flex flex-col items-center">
+                <div className="relative w-full max-w-xs md:max-w-full transition-transform duration-300 hover:-rotate-3">
+                {artistImage && (
+                    <Image
+                    src={artistImage.imageUrl}
+                    alt={artistImage.description}
+                    width={500}
+                    height={600}
+                    className="rounded-lg object-cover w-full h-auto shadow-lg"
+                    data-ai-hint={artistImage.imageHint}
+                    />
+                )}
+                </div>
+                <div className="mt-6 space-y-3 text-center text-muted-foreground">
+                <div className="flex items-center justify-center gap-2">
+                    <MapPin className="w-4 h-4" />
+                    <span>Malaysia</span>
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                    <Music className="w-4 h-4" />
+                    <span>Composer & Producer</span>
+                </div>
+                </div>
+            </div>
+
+            <div className="md:col-span-2 space-y-8 text-foreground/90">
+                <div>
+                <h2 className="font-headline text-3xl font-bold text-white mb-4">{bioContent.name}</h2>
+                <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
+                    {bioContent.main}
+                </p>
+                </div>
+
+                <div>
+                <h3 className="font-headline text-2xl font-bold text-primary mb-3">TRADITIONAL EXCELLENCE</h3>
+                <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
+                    {bioContent.traditional}
+                </p>
+                </div>
+
+                <div>
+                <h3 className="font-headline text-2xl font-bold text-primary mb-3">DIGITAL PRESENCE</h3>
+                <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
+                    {bioContent.digital}
+                </p>
+                </div>
+            </div>
+            </div>
         </div>
-
-        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
-          <div className="md:col-span-1 flex flex-col items-center">
-            <div className="relative w-full max-w-xs md:max-w-full transition-transform duration-300 hover:-rotate-3">
-              {artistImage && (
-                <Image
-                  src={artistImage.imageUrl}
-                  alt={artistImage.description}
-                  width={500}
-                  height={600}
-                  className="rounded-lg object-cover w-full h-auto shadow-lg"
-                  data-ai-hint={artistImage.imageHint}
-                />
-              )}
-            </div>
-            <div className="mt-6 space-y-3 text-center text-muted-foreground">
-              <div className="flex items-center justify-center gap-2">
-                <MapPin className="w-4 h-4" />
-                <span>Malaysia</span>
-              </div>
-              <div className="flex items-center justify-center gap-2">
-                <Music className="w-4 h-4" />
-                <span>Composer & Producer</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="md:col-span-2 space-y-8 text-foreground/90">
-            <div>
-              <h2 className="font-headline text-3xl font-bold text-white mb-4">{bioContent.name}</h2>
-              <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
-                {bioContent.main}
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-headline text-2xl font-bold text-primary mb-3">TRADITIONAL EXCELLENCE</h3>
-              <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
-                {bioContent.traditional}
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-headline text-2xl font-bold text-primary mb-3">DIGITAL PRESENCE</h3>
-              <p className="whitespace-pre-wrap leading-relaxed text-muted-foreground">
-                {bioContent.digital}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
       
-      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-      <div className="py-12 bg-card">
-        <motion.section
-          className="container mx-auto px-4 md:px-12"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={staggerContainer}
-        >
-          <motion.div className="text-center mb-12" variants={fadeInUp}>
-            <h2 className="font-headline text-4xl font-bold mb-4">COLLABORATIONS</h2>
-            <p className="text-lg text-muted-foreground">
-              Working with talented artists and ensembles to create extraordinary music
-            </p>
-          </motion.div>
-          <motion.div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto" variants={staggerContainer}>
-            {collaborations.map((collab, index) => (
-              <motion.div key={index} variants={fadeInUp}>
-                <Card className="bg-background/50 border border-primary/20 hover:border-primary/40 transition-all h-full flex flex-col">
-                  <CardHeader>
-                    <div className="flex items-center space-x-4">
-                      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                        <Image src={collab.image} alt={collab.name} width={64} height={64} className="w-full h-full object-cover" />
-                      </div>
-                      <div className="flex-1">
-                        <CardTitle className="text-xl">{collab.name}</CardTitle>
-                        <CardDescription className="text-primary">{collab.role}</CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="flex-grow flex flex-col">
-                    <p className="text-muted-foreground mb-6 leading-relaxed flex-grow">{collab.description}</p>
-                    {collab.link && collab.link !== "#" && (
-                      <Button variant="outline" className="w-full border-primary/30 text-primary hover:bg-primary/10 hover:text-primary" asChild>
-                        <a href={collab.link} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          Visit {collab.name}
-                        </a>
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.section>
-      </div>
-
-      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
-
-      <div className="container mx-auto px-4 md:px-12">
-        <motion.section
-            className="py-20 bg-transparent"
+        <div className="py-12 bg-card">
+            <motion.section
+            className="container mx-auto px-4 md:px-12"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={staggerContainer}
-        >
-          <div className="container mx-auto">
+            >
             <motion.div className="text-center mb-12" variants={fadeInUp}>
-                <h2 className="text-4xl font-bold mb-4">Achievements</h2>
+                <h2 className="font-headline text-4xl font-bold mb-4">COLLABORATIONS</h2>
                 <p className="text-lg text-muted-foreground">
-                Recognition and awards received throughout my musical journey
+                Working with talented artists and ensembles to create extraordinary music
                 </p>
             </motion.div>
-            <motion.div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" variants={staggerContainer}>
-                {achievements.map((achievement, index) => (
+            <motion.div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto" variants={staggerContainer}>
+                {collaborations.map((collab, index) => (
                 <motion.div key={index} variants={fadeInUp}>
-                    <Card className="bg-card border-primary/20 text-center hover:border-primary/40 transition-colors h-full">
+                    <Card className="bg-background/50 border border-primary/20 hover:border-primary/40 transition-all h-full flex flex-col">
                     <CardHeader>
-                        <div className="text-4xl mb-4">{achievement.icon}</div>
-                        <CardTitle className="text-lg">{achievement.title}</CardTitle>
-                        <CardDescription className="text-primary">
-                        {achievement.year}
-                        </CardDescription>
+                        <div className="flex items-center space-x-4">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                            <Image src={collab.image} alt={collab.name} width={64} height={64} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex-1">
+                            <CardTitle className="text-xl">{collab.name}</CardTitle>
+                            <CardDescription className="text-primary">{collab.role}</CardDescription>
+                        </div>
+                        </div>
                     </CardHeader>
-                    <CardContent>
-                        <p className="text-muted-foreground text-sm">{achievement.description}</p>
+                    <CardContent className="flex-grow flex flex-col">
+                        <p className="text-muted-foreground mb-6 leading-relaxed flex-grow">{collab.description}</p>
+                        {collab.link && collab.link !== "#" && (
+                        <Button variant="outline" className="w-full border-primary/30 text-primary hover:bg-primary/10 hover:text-primary" asChild>
+                            <a href={collab.link} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            Visit {collab.name}
+                            </a>
+                        </Button>
+                        )}
                     </CardContent>
                     </Card>
                 </motion.div>
                 ))}
             </motion.div>
-          </div>
-        </motion.section>
-      </div>
-      
-      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+            </motion.section>
+        </div>
 
-      <div className="py-12 bg-card">
-        <section className="container mx-auto px-4 md:px-12">
-            <motion.h2
-                className="text-3xl md:text-4xl font-headline font-bold text-center mb-12"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
+        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+
+        <div className="container mx-auto px-4 md:px-12">
+            <motion.section
+                className="py-20 bg-transparent"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                variants={staggerContainer}
             >
-                What My Clients Say
-            </motion.h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {bio.pressReleases.slice(0, 3).map((testimonial, index) => (
-                    <motion.div
-                        key={index}
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.6, delay: index * 0.1 }}
-                    >
-                        <Card className="bg-background/50 border-border/50 h-full flex flex-col p-6">
-                            <div className="flex-grow mb-4">
-                                <p className="text-muted-foreground italic">"{testimonial.title}"</p>
-                            </div>
-                            <div className="flex items-center">
-                                <div className="flex-shrink-0">
-                                    <div className="flex">
-                                        {[...Array(5)].map((_, i) => (
-                                            <Star key={i} className="w-5 h-5 text-primary fill-current" />
-                                        ))}
-                                    </div>
-                                    <p className="font-bold mt-2">{testimonial.publication}</p>
-                                    <p className="text-sm text-muted-foreground">{new Date(testimonial.date).toLocaleDateString()}</p>
-                                </div>
-                            </div>
+            <div className="container mx-auto">
+                <motion.div className="text-center mb-12" variants={fadeInUp}>
+                    <h2 className="text-4xl font-bold mb-4">Achievements</h2>
+                    <p className="text-lg text-muted-foreground">
+                    Recognition and awards received throughout my musical journey
+                    </p>
+                </motion.div>
+                <motion.div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" variants={staggerContainer}>
+                    {achievements.map((achievement, index) => (
+                    <motion.div key={index} variants={fadeInUp}>
+                        <Card className="bg-card border-primary/20 text-center hover:border-primary/40 transition-colors h-full">
+                        <CardHeader>
+                            <div className="text-4xl mb-4">{achievement.icon}</div>
+                            <CardTitle className="text-lg">{achievement.title}</CardTitle>
+                            <CardDescription className="text-primary">
+                            {achievement.year}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground text-sm">{achievement.description}</p>
+                        </CardContent>
                         </Card>
                     </motion.div>
-                ))}
+                    ))}
+                </motion.div>
             </div>
-        </section>
-      </div>
-      
-      <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
-
-       <div className="container mx-auto px-4 md:px-12">
-         <section className="py-20">
-            <div className="container mx-auto text-center">
-                <h2 className="text-3xl font-bold mb-4">Let's Create Something Amazing</h2>
-                <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                    Have a project in mind? I'd love to hear about it. Contact me for custom compositions or licensing inquiries.
-                </p>
-                <Button size="lg" asChild className="btn-gold">
-                    <Link href="/contact">
-                        Get In Touch <ArrowRight className="ml-2 h-5 w-5" />
-                    </Link>
-                </Button>
-            </div>
-        </section>
-
-        <div className="text-center mt-20 text-primary text-2xl">
-          ♪ ♫ ♪
+            </motion.section>
         </div>
-      </div>
+      
+        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+
+        <div className="py-12 bg-card">
+            <section className="container mx-auto px-4 md:px-12">
+                <motion.h2
+                    className="text-3xl md:text-4xl font-headline font-bold text-center mb-12"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                >
+                    What My Clients Say
+                </motion.h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {bio.pressReleases.slice(0, 3).map((testimonial, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.3 }}
+                            transition={{ duration: 0.6, delay: index * 0.1 }}
+                        >
+                            <Card className="bg-background/50 border-border/50 h-full flex flex-col p-6">
+                                <div className="flex-grow mb-4">
+                                    <p className="text-muted-foreground italic">"{testimonial.title}"</p>
+                                </div>
+                                <div className="flex items-center">
+                                    <div className="flex-shrink-0">
+                                        <div className="flex">
+                                            {[...Array(5)].map((_, i) => (
+                                                <Star key={i} className="w-5 h-5 text-primary fill-current" />
+                                            ))}
+                                        </div>
+                                        <p className="font-bold mt-2">{testimonial.publication}</p>
+                                        <p className="text-sm text-muted-foreground">{new Date(testimonial.date).toLocaleDateString()}</p>
+                                    </div>
+                                </div>
+                            </Card>
+                        </motion.div>
+                    ))}
+                </div>
+            </section>
+        </div>
+      
+        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+
+        <div className="container mx-auto px-4 md:px-12">
+            <section className="py-20">
+                <div className="container mx-auto text-center">
+                    <h2 className="text-3xl font-bold mb-4">Let's Create Something Amazing</h2>
+                    <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+                        Have a project in mind? I'd love to hear about it. Contact me for custom compositions or licensing inquiries.
+                    </p>
+                    <Button size="lg" asChild className="btn-gold">
+                        <Link href="/contact">
+                            Get In Touch <ArrowRight className="ml-2 h-5 w-5" />
+                        </Link>
+                    </Button>
+                </div>
+            </section>
+
+            <div className="text-center mt-20 text-primary text-2xl">
+            ♪ ♫ ♪
+            </div>
+        </div>
     </div>
   );
 }

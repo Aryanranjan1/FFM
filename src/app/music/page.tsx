@@ -142,24 +142,16 @@ export default function MusicPage() {
     const latestRelease = useMemo(() => tracks.find(t => t.isFeatured) || tracks[0], [tracks]);
 
     return (
-        <div className="bg-transparent text-foreground">
+        <div className="bg-background text-foreground">
             {/* Hero Section */}
             <motion.section
-                className="py-24 text-center relative overflow-hidden bg-card"
+                className="py-24 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black"
                 initial="hidden"
                 animate="visible"
                 variants={staggerContainer}
             >
-                <Image
-                    src="https://picsum.photos/seed/music-hero/1920/1080"
-                    alt="Music hero background"
-                    fill
-                    className="object-cover opacity-20"
-                    data-ai-hint="sound waves"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/50 to-background z-0"></div>
                 <div className="relative z-10 container mx-auto px-4 md:px-12">
-                    <motion.h1 className="text-5xl md:text-7xl font-headline font-bold" variants={fadeInUp}>Music</motion.h1>
+                    <motion.h1 className="text-5xl md:text-7xl font-headline font-bold text-primary" variants={fadeInUp}>Music</motion.h1>
                     <motion.p className="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto" variants={fadeInUp}>
                         A curated collection of cinematic and cultural compositions for licensing and listening.
                     </motion.p>
