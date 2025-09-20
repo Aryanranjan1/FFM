@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
@@ -235,6 +234,7 @@ export default function ContactPage() {
                 </motion.div>
             </div>
         </motion.div>
+    </div>
     </div>
   );
 }
