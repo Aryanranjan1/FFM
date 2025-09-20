@@ -19,7 +19,7 @@ export default function MusicManagementPage() {
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-headline font-bold text-primary">MUSIC MANAGEMENT</h2>
         <Button className="btn-gold" asChild>
-          <Link href="#">
+          <Link href="/admin/music/new">
             <Plus className="mr-2 h-4 w-4" />
             Add New Track
           </Link>
