@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const featuredArticles = [
   {
@@ -236,17 +237,21 @@ export default function BlogPage() {
                     <Input placeholder="Search articles..." className="pl-10" />
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 </div>
-                <div className="flex-1 flex flex-wrap justify-center gap-2">
-                    {categories.map((category) => (
-                        <Button
-                            key={category}
-                            variant={activeTab === category ? "default" : "outline"}
-                            onClick={() => setActiveTab(category)}
-                            className="capitalize"
-                        >
-                            {category}
-                        </Button>
-                    ))}
+                <div className="flex-1 w-full overflow-hidden">
+                    <ScrollArea className="w-full">
+                        <div className="flex w-max space-x-2 pb-2.5">
+                            {categories.map((category) => (
+                                <Button
+                                    key={category}
+                                    variant={activeTab === category ? "default" : "outline"}
+                                    onClick={() => setActiveTab(category)}
+                                    className="capitalize whitespace-nowrap"
+                                >
+                                    {category}
+                                </Button>
+                            ))}
+                        </div>
+                    </ScrollArea>
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="text-sm text-muted-foreground">Sort by:</span>
