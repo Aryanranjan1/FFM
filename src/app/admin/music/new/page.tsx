@@ -1,11 +1,10 @@
 
 "use client";
 
-import { useFormState } from "react-dom";
+import { useActionState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { addMusicTrack, type AddMusicTrackState } from "@/app/actions";
@@ -35,7 +34,7 @@ const initialState: AddMusicTrackState = {
 };
 
 export default function NewMusicTrackPage() {
-  const [state, formAction] = useFormState(addMusicTrack, initialState);
+  const [state, formAction] = useActionState(addMusicTrack, initialState);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -52,10 +51,16 @@ export default function NewMusicTrackPage() {
 
   useEffect(() => {
     if (state.message) {
-      if (Object.keys(state.errors).length > 0) {
+      if (Object.keys(state.errors).length > 0 && state.errors._form?.length === 0) {
         toast({
           title: "Error",
           description: state.message,
+          variant: "destructive",
+        });
+      } else if (state.errors?._form?.[0]) {
+        toast({
+          title: "Error",
+          description: state.errors._form[0],
           variant: "destructive",
         });
       } else {
@@ -143,6 +148,7 @@ export default function NewMusicTrackPage() {
                       <Checkbox
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                        name={field.name}
                       />
                     </FormControl>
                     <div className="space-y-1 leading-none">
@@ -164,6 +170,7 @@ export default function NewMusicTrackPage() {
                       <Checkbox
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                        name={field.name}
                       />
                     </FormControl>
                     <div className="space-y-1 leading-none">

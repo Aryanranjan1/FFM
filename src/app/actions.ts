@@ -61,8 +61,8 @@ const musicTrackSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters."),
   musicUrl: z.string().url("Please enter a valid URL."),
   coverImageUrl: z.string().url("Please enter a valid URL for the cover image.").optional().or(z.literal('')),
-  isFeatured: z.preprocess((val) => val === 'on', z.boolean()),
-  isPublished: z.preprocess((val) => val === 'on', z.boolean()),
+  isFeatured: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
+  isPublished: z.preprocess((val) => val === 'on' || val === true, z.boolean()),
 });
 
 export type AddMusicTrackState = {
@@ -77,7 +77,7 @@ export type AddMusicTrackState = {
   message: string | null;
 };
 
-export async function addMusicTrack(prevState: any, formData: FormData) {
+export async function addMusicTrack(prevState: any, formData: FormData): Promise<AddMusicTrackState> {
     const validatedFields = musicTrackSchema.safeParse({
         title: formData.get('title'),
         musicUrl: formData.get('musicUrl'),
