@@ -99,6 +99,7 @@ export async function addMusicTrack(prevState: AddMusicTrackState, formData: For
             ...validatedFields.data,
             createdAt: serverTimestamp(),
         });
+
     } catch (e) {
         console.error(e);
         return {
@@ -106,9 +107,14 @@ export async function addMusicTrack(prevState: AddMusicTrackState, formData: For
             message: "Failed to add music track.",
         };
     }
+
+    try {
+        revalidatePath('/music');
+        revalidatePath('/admin/music');
+    } catch (error) {
+        console.error("Failed to revalidate paths:", error);
+    }
     
-    revalidatePath('/music');
-    revalidatePath('/admin/music');
 
     return {
         message: "Successfully added new music track.",
@@ -183,8 +189,12 @@ export async function addVideo(prevState: AddVideoState, formData: FormData): Pr
     };
   }
 
-  revalidatePath('/videos');
-  revalidatePath('/admin/videos');
+  try {
+    revalidatePath('/videos');
+    revalidatePath('/admin/videos');
+  } catch (error) {
+    console.error("Failed to revalidate paths:", error);
+  }
 
   return { message: "Successfully added new video.", errors: {} };
 }
