@@ -23,6 +23,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/context/auth-context';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 function UserNav() {
   const { logout } = useAuth();
@@ -50,9 +51,11 @@ function UserNav() {
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+          <DropdownMenuItem asChild>
+            <Link href="/admin/settings">
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -83,6 +86,9 @@ export default function DashboardLayout({
   
   const getPageTitle = () => {
     const activeLink = navLinks.find(link => pathname.startsWith(link.href));
+    if (pathname.startsWith('/admin/settings')) {
+        return "Settings";
+    }
     if (activeLink) {
         return activeLink.label;
     }
@@ -103,7 +109,7 @@ export default function DashboardLayout({
             <SidebarMenu>
               {navLinks.map(link => (
                  <SidebarMenuItem key={link.href}>
-                    <SidebarMenuButton href={link.href} isActive={pathname === link.href}>
+                    <SidebarMenuButton href={link.href} isActive={pathname.startsWith(link.href)}>
                       <link.icon />
                       {link.label}
                     </SidebarMenuButton>
@@ -113,7 +119,7 @@ export default function DashboardLayout({
              <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton href="#">
+                        <SidebarMenuButton href="/admin/settings" isActive={pathname.startsWith('/admin/settings')}>
                         <Settings />
                         Settings
                         </SidebarMenuButton>
