@@ -35,6 +35,8 @@ import {
     Star,
     Headphones,
     Link as LinkIcon,
+    VolumeX,
+    Volume2,
 } from "lucide-react";
 import { SoundcloudIcon, Instagram, Youtube, SpotifyIcon } from "@/components/icons";
 
@@ -73,7 +75,8 @@ export default function Home() {
 
     // Player State
     const [featuredVideo, setFeaturedVideo] = useState<VideoType | null>(null);
-    const [shouldAutoplay, setShouldAutoplay] = useState(true);
+    const [isMuted, setIsMuted] = useState(true);
+    const playerRef = useRef<YouTubePlayer | null>(null);
     
     const [state, formAction] = useActionState(submitContactForm, initialState);
     const { toast } = useToast();
@@ -157,13 +160,24 @@ export default function Home() {
     const videoId = featuredVideo ? getYouTubeId(featuredVideo.videoUrl) : null;
     
     const playTrackFromPortfolio = (track: VideoType) => {
-        setShouldAutoplay(true);
+        setIsMuted(false);
         setFeaturedVideo(track);
         setTimeout(() => {
              document.getElementById('music-player')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 100);
     };
 
+    const handlePlayerReady = (event: { target: YouTubePlayer }) => {
+        playerRef.current = event.target;
+    };
+
+    const handleUnmute = () => {
+        if (playerRef.current) {
+            playerRef.current.unMute();
+            setIsMuted(false);
+        }
+    };
+    
     const filteredTracks = allVideos.filter(video => video.isFeatured);
     
     return (
@@ -283,33 +297,50 @@ export default function Home() {
                          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Discover a featured track from my collection. Select any song from the portfolio below to play it here.</p>
                      </div>
                      {featuredVideo && videoId ? (
-                         <motion.div className="max-w-4xl mx-auto" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-                             <Card className="bg-background/50 backdrop-blur-sm border-primary/30 overflow-hidden">
-                                 <div className="aspect-video">
-                                     <YouTube
-                                         key={videoId}
-                                         videoId={videoId}
-                                         opts={{
-                                             height: '100%',
-                                             width: '100%',
-                                             playerVars: {
-                                                 autoplay: shouldAutoplay ? 1 : 0,
-                                                 mute: 0,
-                                                 controls: 1,
-                                                 rel: 0,
-                                                 showinfo: 0,
-                                                 modestbranding: 1,
-                                             },
-                                         }}
-                                         className="w-full h-full"
-                                     />
-                                 </div>
-                                 <CardContent className="p-4 md:p-6">
-                                     <h3 className="text-2xl font-bold text-white mb-1 font-headline">{featuredVideo.title}</h3>
-                                     <p className="text-lg text-muted-foreground mb-4">{featuredVideo.category}</p>
-                                 </CardContent>
-                             </Card>
-                         </motion.div>
+                        <motion.div 
+                            className="max-w-4xl mx-auto" 
+                            initial={{ opacity: 0, y: 30 }} 
+                            animate={{ opacity: 1, y: 0 }} 
+                            transition={{ duration: 0.8 }}
+                        >
+                            <Card className="bg-background/50 backdrop-blur-sm border-primary/30 overflow-hidden">
+                                <div className="relative aspect-video">
+                                    <YouTube
+                                        key={videoId}
+                                        videoId={videoId}
+                                        onReady={handlePlayerReady}
+                                        opts={{
+                                            height: '100%',
+                                            width: '100%',
+                                            playerVars: {
+                                                autoplay: 1,
+                                                mute: isMuted ? 1 : 0,
+                                                controls: 1,
+                                                rel: 0,
+                                                showinfo: 0,
+                                                modestbranding: 1,
+                                            },
+                                        }}
+                                        className="w-full h-full"
+                                    />
+                                    {isMuted && (
+                                        <div 
+                                            className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 cursor-pointer group"
+                                            onClick={handleUnmute}
+                                        >
+                                            <div className="flex items-center gap-2 text-white bg-black/50 p-3 rounded-lg">
+                                                <VolumeX className="w-8 h-8" />
+                                                <span className="text-lg font-semibold">Click to Unmute</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                <CardContent className="p-4 md:p-6">
+                                    <h3 className="text-2xl font-bold text-white mb-1 font-headline">{featuredVideo.title}</h3>
+                                    <p className="text-lg text-muted-foreground mb-4">{featuredVideo.category}</p>
+                                </CardContent>
+                            </Card>
+                        </motion.div>
                      ) : ( <div className="text-center text-muted-foreground">Loading featured music...</div> )}
                  </div>
             </section>
