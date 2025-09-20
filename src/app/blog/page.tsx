@@ -109,21 +109,26 @@ export default function BlogPage() {
   return (
     <div className="bg-background text-foreground">
       {/* Hero Section */}
-      <motion.section
-        className="py-20 text-center bg-gradient-to-br from-gray-900 to-black"
-        initial="hidden"
-        animate="visible"
-        variants={staggerContainer}
-      >
+      <section className="py-20 text-center bg-gradient-to-br from-gray-900 to-black">
         <div className="container mx-auto px-4 md:px-12">
-          <motion.h1 className="text-5xl font-headline font-bold text-primary mb-4" variants={fadeInUp}>
+          <motion.h1 
+            className="text-5xl font-headline font-bold text-primary mb-4" 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
             BLOG
           </motion.h1>
-          <motion.p className="text-lg text-muted-foreground max-w-2xl mx-auto" variants={fadeInUp}>
+          <motion.p 
+            className="text-lg text-muted-foreground max-w-2xl mx-auto" 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
             Insights, tutorials, and stories from the world of orchestral composition and cultural music innovation. Join me on a journey through the art and craft of creating meaningful music.
           </motion.p>
         </div>
-      </motion.section>
+      </section>
 
       {/* Featured Articles Section */}
       <motion.section
@@ -322,3 +327,5 @@ export default function BlogPage() {
     </div>
   );
 }
+
+    

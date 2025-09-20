@@ -77,6 +77,7 @@ export default function Home() {
     const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState('All');
     const [categories, setCategories] = useState<string[]>(['All']);
+    const orbsRef = useRef<HTMLDivElement>(null);
 
     // Audio Player State
     const [featuredMusicTrack, setFeaturedMusicTrack] = useState<MusicTrackType | null>(null);
@@ -175,6 +176,26 @@ export default function Home() {
         };
     }, [featuredMusicTrack]);
 
+    useEffect(() => {
+        // Create floating orbs
+        if (orbsRef.current) {
+            orbsRef.current.innerHTML = '';
+            for (let i = 0; i < 8; i++) {
+                const orb = document.createElement("div");
+                orb.className = "orb";
+                const size = Math.random() * 100 + 50;
+                orb.style.width = `${size}px`;
+                orb.style.height = `${size}px`;
+                orb.style.left = `${Math.random() * 90}%`;
+                orb.style.top = `${Math.random() * 90}%`;
+                orb.style.animationDuration = `${Math.random() * 15 + 10}s`;
+                orb.style.animationDelay = `${Math.random() * 5}s`;
+                orbsRef.current.appendChild(orb);
+            }
+        }
+    }, []);
+
+
     const playTrackFromPortfolio = (track: MusicTrackType) => {
         setFeaturedMusicTrack(track);
         setAudioPlaying(true);
@@ -219,7 +240,9 @@ export default function Home() {
         <div className="min-h-screen bg-background text-foreground">
             {/* --- HERO SECTION --- */}
             <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 pb-20 px-6 overflow-hidden hero-bg-custom">
-                <FloatingNotes />
+                 <div className="hero-bg"></div>
+                 <div className="floating-orbs" ref={orbsRef}></div>
+                 <FloatingNotes />
                 
                 <div className="relative z-10 max-w-7xl mx-auto text-center">
                     <motion.h1 
@@ -326,7 +349,7 @@ export default function Home() {
 
             {/* --- FEATURED MUSIC TRACK SECTION --- */}
             <section id="music-player" className="py-20 bg-card scroll-mt-20">
-                 <div className="container mx-auto px-12">
+                 <div className="container mx-auto px-4 md:px-12">
                      <div className="text-center mb-12">
                          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Featured Music Track</h2>
                          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Discover a featured track from my collection. Select any song from the portfolio below to play it here.</p>
@@ -415,7 +438,7 @@ export default function Home() {
 
             {/* --- MUSIC PORTFOLIO SECTION --- */}
             <section id="music-portfolio" className="py-20 bg-background">
-                <div className="container mx-auto px-12">
+                <div className="container mx-auto px-4 md:px-12">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Music Portfolio</h2>
                         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -504,7 +527,7 @@ export default function Home() {
             
             {/* --- ABOUT SECTION --- */}
             <section className="py-20 bg-card">
-                <div className="container mx-auto px-12">
+                <div className="container mx-auto px-4 md:px-12">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <motion.div
                             initial={{ opacity: 0, x: -50 }}
@@ -563,7 +586,7 @@ export default function Home() {
 
             {/* --- TESTIMONIALS SECTION --- */}
             <section className="py-20 bg-background">
-                <div className="container mx-auto px-12">
+                <div className="container mx-auto px-4 md:px-12">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">What People Say</h2>
                         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -606,7 +629,7 @@ export default function Home() {
             {/* --- CONTACT SECTION --- */}
             <section id="contact" className="py-20">
                 <motion.div 
-                    className="container mx-auto px-12"
+                    className="container mx-auto px-4 md:px-12"
                     initial="hidden" 
                     whileInView="visible" 
                     viewport={{ once: true, amount: 0.1 }}
@@ -726,3 +749,5 @@ export default function Home() {
         </div>
     );
 }
+
+    

@@ -102,7 +102,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
             </div>
         </section>
 
-        <div className="py-12 container mx-auto px-4 md:px-12">
+        <div className="py-20 container mx-auto px-4 md:px-12">
             <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12">
             <div className="md:col-span-1 flex flex-col items-center">
                 <div className="relative w-full max-w-xs md:max-w-full transition-transform duration-300 hover:-rotate-3">
@@ -310,3 +310,5 @@ Fahmie's portfolio covers both international collaborations and competitive musi
     </div>
   );
 }
+
+    

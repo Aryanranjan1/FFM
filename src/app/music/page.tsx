@@ -144,19 +144,26 @@ export default function MusicPage() {
     return (
         <div className="bg-background text-foreground">
             {/* Hero Section */}
-            <motion.section
-                className="py-24 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black"
-                initial="hidden"
-                animate="visible"
-                variants={staggerContainer}
-            >
+            <section className="py-24 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
                 <div className="relative z-10 container mx-auto px-4 md:px-12">
-                    <motion.h1 className="text-5xl md:text-7xl font-headline font-bold text-primary" variants={fadeInUp}>Music</motion.h1>
-                    <motion.p className="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto" variants={fadeInUp}>
+                    <motion.h1 
+                        className="text-5xl md:text-7xl font-headline font-bold text-primary" 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                    >
+                        Music
+                    </motion.h1>
+                    <motion.p 
+                        className="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto" 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                    >
                         A curated collection of cinematic and cultural compositions for licensing and listening.
                     </motion.p>
                 </div>
-            </motion.section>
+            </section>
             
             {/* Music Portfolio Section */}
             <motion.section
@@ -422,3 +429,5 @@ export default function MusicPage() {
         </div>
     );
 }
+
+    
