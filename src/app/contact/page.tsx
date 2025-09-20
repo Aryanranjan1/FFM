@@ -12,7 +12,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, Mail, Phone, MapPin } from "lucide-react";
+import { Send, Mail, Phone, MapPin, Youtube, Instagram } from "lucide-react";
+import { SoundcloudIcon } from "@/components/icons";
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 const contactFormSchema = z.object({
@@ -102,6 +104,20 @@ export default function ContactPage() {
                     </div>
                 </div>
             </div>
+             <div className="mt-10">
+                <h4 className="text-lg font-semibold mb-4">Follow Me</h4>
+                <div className="flex items-center space-x-4">
+                    <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                        <Youtube className="w-8 h-8" />
+                    </Link>
+                    <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                        <SoundcloudIcon className="w-8 h-8" />
+                    </Link>
+                    <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                        <Instagram className="w-8 h-8" />
+                    </Link>
+                </div>
+            </div>
         </motion.div>
         <motion.div
             initial={{ opacity: 0, x: 50 }}
@@ -180,3 +196,5 @@ export default function ContactPage() {
     </div>
   );
 }
+
+    

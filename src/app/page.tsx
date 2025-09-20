@@ -379,7 +379,7 @@ export default function Home() {
                       className="relative group"
                   >
                       <div 
-                        className="relative mx-auto max-w-md transition-transform duration-500 group-hover:[transform:rotateY(5deg)_rotateX(2deg)_scale(1.05)]"
+                        className="relative mx-auto max-w-md transition-transform duration-500 group-hover:-rotate-3"
                         style={{ transformStyle: 'preserve-3d' }}
                       >
                           {aboutImage && <Image src={aboutImage.imageUrl}
@@ -490,6 +490,20 @@ export default function Home() {
                             </div>
                         </div>
                     </div>
+                    <div className="mt-8">
+                        <h4 className="text-lg font-semibold mb-4">Follow Me</h4>
+                        <div className="flex space-x-4">
+                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                                <Youtube className="w-8 h-8" />
+                            </Link>
+                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                                <SoundcloudIcon className="w-8 h-8" />
+                            </Link>
+                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                                <Instagram className="w-8 h-8" />
+                            </Link>
+                        </div>
+                    </div>
                 </motion.div>
                 <motion.div
                     initial={{ opacity: 0, x: 50 }}
@@ -571,5 +585,7 @@ export default function Home() {
     </>
   );
 }
+
+    
 
     

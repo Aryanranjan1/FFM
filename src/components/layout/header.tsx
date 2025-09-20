@@ -13,7 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const navLinks = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/music', label: 'Music', icon: Music },
-  { href: '/portfolio', label: 'Blog', icon: Newspaper },
+  { href: '/blog', label: 'Blog', icon: Newspaper },
   { href: '/about', label: 'About', icon: User },
   { href: '/contact', label: 'Contact', icon: Mail },
 ];
@@ -110,3 +110,5 @@ export function Header() {
     </AnimatePresence>
   );
 }
+
+    
