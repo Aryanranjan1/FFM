@@ -283,6 +283,18 @@
       top: -0.8em;
       font-size: 1.5rem;
   }
+
+  .section-divider-light {
+      position: relative;
+      text-align: center;
+      margin: 2rem 0;
+      background: linear-gradient(to right, transparent, hsl(var(--border)), transparent);
+      height: 1px;
+  }
+
+  .section-divider-light .divider-content {
+    background-color: hsl(var(--card));
+  }
 }
 
 .btn-gold {
