@@ -73,7 +73,7 @@ export default function Home() {
 
     // Player State
     const [featuredVideo, setFeaturedVideo] = useState<VideoType | null>(null);
-    const [autoplay, setAutoplay] = useState(true); // Control autoplay for player
+    const [shouldAutoplay, setShouldAutoplay] = useState(true);
     
     const [state, formAction] = useActionState(submitContactForm, initialState);
     const { toast } = useToast();
@@ -157,7 +157,7 @@ export default function Home() {
     const videoId = featuredVideo ? getYouTubeId(featuredVideo.videoUrl) : null;
     
     const playTrackFromPortfolio = (track: VideoType) => {
-        setAutoplay(true);
+        setShouldAutoplay(true);
         setFeaturedVideo(track);
         setTimeout(() => {
              document.getElementById('music-player')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -293,8 +293,8 @@ export default function Home() {
                                              height: '100%',
                                              width: '100%',
                                              playerVars: {
-                                                 autoplay: autoplay ? 1 : 0,
-                                                 mute: autoplay ? 1 : 0, // Mute to allow autoplay on page load
+                                                 autoplay: shouldAutoplay ? 1 : 0,
+                                                 mute: 0,
                                                  controls: 1,
                                                  rel: 0,
                                                  showinfo: 0,
