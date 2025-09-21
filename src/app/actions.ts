@@ -2,22 +2,10 @@
 
 "use server";
 
-import { suggestBioUpdates, type SuggestBioUpdatesInput } from "@/ai/flows/suggest-bio-updates";
-import { fetchYouTubeDetails as fetchYouTubeDetailsFlow, type FetchYouTubeDetailsOutput } from "@/ai/flows/fetch-youtube-details";
 import { z } from "zod";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp, doc, updateDoc, deleteDoc, getDoc, getDocs } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
-
-export async function getBioSuggestions(input: SuggestBioUpdatesInput) {
-  try {
-    const result = await suggestBioUpdates(input);
-    return { success: true, data: result };
-  } catch (error) {
-    console.error(error);
-    return { success: false, error: "Failed to get suggestions. Please try again." };
-  }
-}
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -67,17 +55,6 @@ export async function deleteContactSubmission(id: string) {
     return { success: true, message: "Contact submission deleted successfully." };
   } catch (e) {
     return { success: false, message: "Failed to delete contact submission." };
-  }
-}
-
-export async function fetchYouTubeDetails(videoUrl: string): Promise<{ success: boolean, data?: FetchYouTubeDetailsOutput, error?: string }> {
-  try {
-    const result = await fetchYouTubeDetailsFlow({ videoUrl });
-    return { success: true, data: result };
-  } catch (error) {
-    console.error(error);
-    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
-    return { success: false, error: `Failed to fetch YouTube details: ${errorMessage}` };
   }
 }
 

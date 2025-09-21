@@ -8,11 +8,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { addVideo, type VideoFormValues, fetchYouTubeDetails, updateVideo } from "@/app/actions";
+import { addVideo, type VideoFormValues, updateVideo } from "@/app/actions";
 import type { Video } from "@/lib/admin-types";
 
 import { motion } from 'framer-motion';
-import { ArrowLeft, Loader2, Youtube } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -45,7 +45,6 @@ export function VideoForm({ video }: VideoFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isFetching, setIsFetching] = useState(false);
 
   const form = useForm<VideoFormValues>({
     resolver: zodResolver(videoSchema),
@@ -59,48 +58,8 @@ export function VideoForm({ video }: VideoFormProps) {
     },
   });
 
-  const videoIdValue = form.watch("videoId");
   const pageTitle = video ? "EDIT VIDEO" : "ADD NEW VIDEO";
   const actionText = video ? "Save Changes" : "Create Video";
-
-  const handleFetchYouTubeDetails = async () => {
-    const videoId = getYouTubeId(videoIdValue);
-    if (!videoId) {
-      toast({
-        title: "Invalid ID",
-        description: "Please provide a valid YouTube URL or Video ID.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
-    setIsFetching(true);
-    try {
-      const details = await fetchYouTubeDetails(videoUrl);
-      if (details.success && details.data) {
-        form.setValue("title", details.data.title, { shouldValidate: true });
-        form.setValue("thumbnailUrl", `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`, { shouldValidate: true });
-        toast({
-          title: "Success",
-          description: "YouTube details fetched successfully.",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: details.error || "Failed to fetch YouTube details.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-       toast({
-        title: "Error",
-        description: "An unexpected error occurred while fetching details.",
-        variant: "destructive",
-      });
-    }
-    setIsFetching(false);
-  };
 
   const onSubmit = async (values: VideoFormValues) => {
     setIsSubmitting(true);
@@ -156,12 +115,6 @@ export function VideoForm({ video }: VideoFormProps) {
                         <FormControl>
                             <Input placeholder="e.g., dQw4w9WgXcQ or full YouTube URL" {...field} />
                         </FormControl>
-                        {videoIdValue && (
-                           <Button type="button" onClick={handleFetchYouTubeDetails} disabled={isFetching}>
-                               {isFetching ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Youtube className="mr-2 h-4 w-4" />}
-                               Fetch
-                           </Button>
-                        )}
                     </div>
                     <FormMessage />
                   </FormItem>
