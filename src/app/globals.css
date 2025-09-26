@@ -80,6 +80,8 @@
   body {
     @apply bg-background text-foreground;
     overflow-x: hidden;
+    position: relative;
+    z-index: 0;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -102,6 +104,16 @@
     background-color: hsl(var(--primary) / 0.8);
   }
 
+   /* Background Animation Layer */
+  .bg-animation-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+
   /* Global Particles */
   .particles-container {
     position: absolute;
@@ -109,7 +121,6 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1;
     pointer-events: none;
     overflow: hidden;
   }
@@ -148,7 +159,6 @@
     width: 100%;
     height: 100%;
     background: radial-gradient(ellipse at center, rgba(74, 14, 78, 0.3) 0%, transparent 70%);
-    z-index: 2;
   }
   
   .floating-orbs {
@@ -157,7 +167,6 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 3;
     pointer-events: none;
     overflow: hidden;
   }

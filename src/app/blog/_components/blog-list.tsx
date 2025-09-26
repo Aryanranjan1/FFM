@@ -29,6 +29,7 @@ import {
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import type { BlogPost } from "@/lib/admin-types";
 import { format } from "date-fns";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
   const [activeTab, setActiveTab] = useState("All");
@@ -140,87 +141,134 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
     },
   };
 
+  const FeaturedPostSkeleton = () => (
+     <motion.div variants={fadeInUp}>
+        <Card className="bg-background border-border/50 overflow-hidden md:grid md:grid-cols-2 items-center max-w-4xl mx-auto">
+            <Skeleton className="w-full aspect-video md:aspect-[4/3]" />
+            <CardContent className="p-6 space-y-3">
+                <Skeleton className="h-5 w-24" />
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-4/5" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <div className="flex justify-between items-center text-sm text-muted-foreground pt-3 border-t border-border/50">
+                    <Skeleton className="h-4 w-28" />
+                    <Skeleton className="h-4 w-20" />
+                </div>
+                <Skeleton className="h-11 w-full" />
+            </CardContent>
+        </Card>
+      </motion.div>
+  );
+
+  const ArticleCardSkeleton = () => (
+      <Card className="bg-card border-border/50 overflow-hidden flex flex-col h-full">
+          <Skeleton className="w-full aspect-video" />
+          <CardHeader className="p-4 space-y-2">
+              <div className="flex justify-between items-center text-sm">
+                  <Skeleton className="h-5 w-20" />
+                  <Skeleton className="h-4 w-24" />
+              </div>
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-3/4" />
+          </CardHeader>
+          <CardContent className="p-4 pt-0 flex flex-col flex-grow">
+              <div className="space-y-2 flex-grow">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+              </div>
+              <div className="mt-4 space-y-3 border-t border-border/50 pt-4 text-xs">
+                  <div className="flex justify-between">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-4 w-28" />
+                  </div>
+                  <Skeleton className="h-10 w-full" />
+              </div>
+          </CardContent>
+      </Card>
+  );
+
+
   return (
     <>
       {/* Featured Post Section */}
-      {loading ? (
-        <div className="py-20 bg-card flex justify-center items-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      ) : (
-        featuredPost && (
-          <motion.section
-            className="py-20 bg-card"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
-            variants={staggerContainer}
-          >
-            <div className="container mx-auto px-4 md:px-6">
-              <motion.div className="text-center mb-12" variants={fadeInUp}>
-                <h2 className="text-3xl font-headline font-bold text-primary mb-4">
-                  FEATURED POST
-                </h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto">
-                  A hand-picked article to spark your curiosity.
-                </p>
-              </motion.div>
-              <motion.div variants={fadeInUp}>
-                <Card className="bg-background border-border/50 hover:border-primary/50 transition-all duration-300 group overflow-hidden md:grid md:grid-cols-2 items-center max-w-4xl mx-auto">
-                  <div className="relative">
-                    <Link href={`/blog/${featuredPost.id}`}>
-                      <Image
-                        src={
-                          featuredPost.coverImageUrl ||
-                          "https://picsum.photos/seed/featured/600/400"
-                        }
-                        alt={featuredPost.title}
-                        width={600}
-                        height={400}
-                        className="object-cover w-full h-auto aspect-video md:aspect-[4/3] group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                    </Link>
-                    <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
-                      <Star className="h-3 w-3 mr-1.5" /> Featured
-                    </Badge>
-                  </div>
-                  <CardContent className="p-6 space-y-3">
-                    <Badge
-                      variant="outline"
-                      className="text-primary border-primary/50"
-                    >
-                      {featuredPost.category}
-                    </Badge>
-                    <Link href={`/blog/${featuredPost.id}`}>
-                      <h3 className="font-headline text-3xl font-semibold text-foreground group-hover:text-primary transition-colors">
-                        {featuredPost.title}
-                      </h3>
-                    </Link>
-                    <p className="text-muted-foreground leading-relaxed line-clamp-3">
-                      {featuredPost.content}
-                    </p>
-                    <div className="flex justify-between items-center text-sm text-muted-foreground pt-3 border-t border-border/50">
-                      <span className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-1.5" />
-                        {format(new Date(featuredPost.createdAt), "PPP")}
-                      </span>
-                      <span className="flex items-center">
-                        <Clock className="h-4 w-4 mr-1.5" />5 min read
-                      </span>
-                    </div>
-                    <Button asChild className="w-full btn-gold mt-2">
+      <section className="py-20 bg-card">
+          <div className="container mx-auto px-4 md:px-6">
+            <motion.div className="text-center mb-12" 
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeInUp}
+            >
+              <h2 className="text-3xl font-headline font-bold text-primary mb-4">
+                FEATURED POST
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                A hand-picked article to spark your curiosity.
+              </p>
+            </motion.div>
+            {loading ? <FeaturedPostSkeleton/> : featuredPost && (
+                <motion.div 
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={fadeInUp}
+                >
+                  <Card className="bg-background border-border/50 hover:border-primary/50 transition-all duration-300 group overflow-hidden md:grid md:grid-cols-2 items-center max-w-4xl mx-auto">
+                    <div className="relative">
                       <Link href={`/blog/${featuredPost.id}`}>
-                        Read Full Article
+                        <Image
+                          src={
+                            featuredPost.coverImageUrl ||
+                            "https://picsum.photos/seed/featured/600/400"
+                          }
+                          alt={featuredPost.title}
+                          width={600}
+                          height={400}
+                          className="object-cover w-full h-auto aspect-video md:aspect-[4/3] group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                       </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </div>
-          </motion.section>
-        )
-      )}
+                      <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
+                        <Star className="h-3 w-3 mr-1.5" /> Featured
+                      </Badge>
+                    </div>
+                    <CardContent className="p-6 space-y-3">
+                      <Badge
+                        variant="outline"
+                        className="text-primary border-primary/50"
+                      >
+                        {featuredPost.category}
+                      </Badge>
+                      <Link href={`/blog/${featuredPost.id}`}>
+                        <h3 className="font-headline text-3xl font-semibold text-foreground group-hover:text-primary transition-colors">
+                          {featuredPost.title}
+                        </h3>
+                      </Link>
+                      <p className="text-muted-foreground leading-relaxed line-clamp-3">
+                        {featuredPost.content}
+                      </p>
+                      <div className="flex justify-between items-center text-sm text-muted-foreground pt-3 border-t border-border/50">
+                        <span className="flex items-center">
+                          <Calendar className="h-4 w-4 mr-1.5" />
+                          {format(new Date(featuredPost.createdAt), "PPP")}
+                        </span>
+                        <span className="flex items-center">
+                          <Clock className="h-4 w-4 mr-1.5" />5 min read
+                        </span>
+                      </div>
+                      <Button asChild className="w-full btn-gold mt-2">
+                        <Link href={`/blog/${featuredPost.id}`}>
+                          Read Full Article
+                        </Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+            )}
+          </div>
+        </section>
+
 
       {/* All Articles Section */}
       <motion.section
@@ -299,8 +347,8 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
           </div>
 
           {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {Array.from({ length: 6 }).map((_, i) => <ArticleCardSkeleton key={i} />)}
             </div>
           ) : filteredAndSortedPosts.length > 0 ? (
               <motion.div
@@ -381,7 +429,7 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
             )
           }
         </div>
-      </motion.section>
+      </section>
     </>
   );
 }

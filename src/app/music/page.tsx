@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink, Heart, Share2, Loader2, X, Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import { bio } from '@/lib/data';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const collaborations: Collaboration[] = [
     {
@@ -186,6 +187,17 @@ export default function MusicPage() {
 
     const latestRelease = useMemo(() => videos.find(t => t.isFeatured) || videos[0], [videos]);
 
+    const VideoSkeleton = () => (
+        <div className="flex flex-col space-y-3">
+            <Skeleton className="h-48 w-full rounded-lg" />
+            <div className="space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+            </div>
+        </div>
+    );
+
+
     return (
         <div className="bg-background text-foreground">
              <AnimatePresence>
@@ -274,9 +286,9 @@ export default function MusicPage() {
                     </motion.div>
 
                     {loading ? (
-                         <div className="flex justify-center items-center h-64">
-                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                        </div>
+                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
+                             {Array.from({ length: videosPerPage }).map((_, i) => <VideoSkeleton key={i} />)}
+                         </div>
                     ) : (
                         <>
                         <motion.div 

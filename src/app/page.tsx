@@ -21,7 +21,6 @@ import { z } from "zod";
 import { submitContactForm } from "@/app/actions";
 import { FloatingNotes } from "@/components/floating-notes";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Particles } from "@/components/particles";
 
 
 import {
@@ -59,17 +58,6 @@ const iconComponents: { [key: string]: React.FC<any> } = {
     Spotify: (props) => <SpotifyIcon {...props} />,
     Default: LinkIcon,
 };
-
-
-function Orbs() {
-  return (
-    <div className="floating-orbs">
-      <div className="orb" style={{ width: '300px', height: '300px', top: '10%', left: '20%', animationDuration: '18s' }}></div>
-      <div className="orb" style={{ width: '200px', height: '200px', top: '50%', left: '80%', animationDuration: '22s' }}></div>
-      <div className="orb" style={{ width: '150px', height: '150px', top: '80%', left: '10%', animationDuration: '16s' }}></div>
-    </div>
-  );
-}
 
 
 export default function Home() {
@@ -199,10 +187,8 @@ export default function Home() {
     const filteredTracks = allVideos.filter(video => video.isFeatured);
     
     return (
-        <div className="min-h-screen bg-background text-foreground">
+        <div className="min-h-screen bg-transparent text-foreground">
             <section id="home" className="relative flex flex-col items-center justify-center min-h-screen pt-20 pb-20 px-4 md:px-6 overflow-hidden">
-                <Particles />
-                <Orbs />
                 <div className="hero-bg"></div>
                 <FloatingNotes />
                 <div className="relative z-10 max-w-7xl mx-auto text-center">
