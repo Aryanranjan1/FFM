@@ -84,7 +84,7 @@ export default function RootLayout({
           {isAdminPage ? (
             <div className="flex-1">{children}</div>
           ) : (
-            <div className="flex flex-col flex-1 z-10">
+            <div className="flex flex-col flex-1">
               <Header />
               <main className="flex-1">
                 <PageTransition>
