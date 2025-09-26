@@ -86,9 +86,9 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
   useEffect(() => {
     if (contentRef.current && post?.content && contentRef.current.innerHTML !== post.content) {
       contentRef.current.innerHTML = post.content;
-      form.setValue('content', post.content);
     }
-  }, [post, form]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [post]);
   
   const saveSelection = () => {
     const selection = window.getSelection();
@@ -293,7 +293,6 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                           onBlur={saveSelection}
                           onClick={handleContentClick}
                           className="min-h-[400px] p-4 focus:outline-none"
-                          dangerouslySetInnerHTML={{ __html: form.getValues('content') }}
                         />
                    </div>
                   <FormField
@@ -517,5 +516,3 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
     </motion.div>
   );
 }
-
-    
