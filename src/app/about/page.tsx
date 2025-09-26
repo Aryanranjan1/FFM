@@ -148,7 +148,10 @@ Fahmie's portfolio covers both international collaborations and competitive musi
           </div>
         </section>
       
-        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+        <div className="section-divider">
+          <div className="divider-line"></div>
+          <div className="divider-content">♪ ♫ ♪</div>
+        </div>
 
         <section
         className="py-12 relative overflow-hidden"
@@ -196,7 +199,10 @@ Fahmie's portfolio covers both international collaborations and competitive musi
             </div>
         </section>
 
-        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+        <div className="section-divider">
+          <div className="divider-line"></div>
+          <div className="divider-content">♪ ♫ ♪</div>
+        </div>
 
         <section
             className="py-20 container mx-auto px-4 md:px-6"
@@ -233,7 +239,10 @@ Fahmie's portfolio covers both international collaborations and competitive musi
             </div>
         </section>
       
-        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+        <div className="section-divider">
+          <div className="divider-line"></div>
+          <div className="divider-content">♪ ♫ ♪</div>
+        </div>
 
         <section
           className="py-12"
@@ -256,7 +265,10 @@ Fahmie's portfolio covers both international collaborations and competitive musi
             </div>
         </section>
       
-        <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+        <div className="section-divider">
+          <div className="divider-line"></div>
+          <div className="divider-content">♪ ♫ ♪</div>
+        </div>
 
         <div className="container mx-auto px-4 md:px-6">
             <section className="py-20">
@@ -273,14 +285,11 @@ Fahmie's portfolio covers both international collaborations and competitive musi
                 </div>
             </section>
 
-            <div className="text-center mt-20 text-primary text-2xl">
-            ♪ ♫ ♪
+             <div className="section-divider">
+              <div className="divider-line"></div>
+              <div className="divider-content">♪ ♫ ♪</div>
             </div>
         </div>
     </div>
   );
 }
-
-    
-
-    
