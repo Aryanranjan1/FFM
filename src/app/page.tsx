@@ -15,7 +15,7 @@ import { db } from "@/lib/firebase";
 import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
 import type { Video as VideoType, SocialLink as SocialLinkType, Testimonial as TestimonialType } from "@/lib/admin-types";
 import { useToast } from "@/hooks/use-toast";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { submitContactForm } from "@/app/actions";
@@ -191,6 +191,7 @@ export default function Home() {
             <FloatingNotes />
             <section id="home" className="relative flex flex-col items-center justify-center min-h-screen pt-20 pb-20 px-4 md:px-6 overflow-hidden">
                 <div className="hero-bg"></div>
+                <div className="floating-orbs"></div>
                 <div className="relative z-10 max-w-7xl mx-auto text-center">
                     <motion.h1 
                         className="text-4xl md:text-6xl font-bold mb-6 text-primary font-headline"
@@ -198,7 +199,7 @@ export default function Home() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        Fahmie Farhan
+                        FAHMIE FARHAN
                     </motion.h1>
                     <motion.h2 
                         className="text-2xl md:text-4xl font-bold mb-6 text-white uppercase font-headline"
