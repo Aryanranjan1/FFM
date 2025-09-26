@@ -36,6 +36,7 @@ import {
     Link as LinkIcon,
     VolumeX,
     Volume2,
+    Diamond,
 } from "lucide-react";
 import { SoundcloudIcon, Instagram, Youtube, SpotifyIcon } from "@/components/icons";
 
@@ -194,15 +195,15 @@ export default function Home() {
                 
                 <div className="relative z-10 max-w-7xl mx-auto text-center mt-20">
                     <motion.h1 
-                        className="text-4xl md:text-6xl font-bold mb-6 text-white font-headline"
+                        className="text-4xl md:text-6xl font-bold mb-6 text-primary font-headline"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <span className="text-primary">Fahmie Farhan</span>
+                        Fahmie Farhan
                     </motion.h1>
                     <motion.h2 
-                        className="text-2xl md:text-4xl font-bold mb-6 text-white font-headline"
+                        className="text-2xl md:text-4xl font-bold mb-6 text-white uppercase font-headline"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
@@ -215,8 +216,7 @@ export default function Home() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.4 }}
                     >
-                        Crafting cinematic soundscapes that blend epic orchestral arrangements with the rich cultural heritage of Malay gamelan music. 
-                        <span className="text-primary"> Experience the fusion of tradition and innovation.</span>
+                        Crafting cinematic soundscapes that blend epic orchestral arrangements with the rich cultural heritage of Malay gamelan music. <span className="text-primary">Experience the fusion of tradition and innovation.</span>
                     </motion.p>
                     
                     <motion.div className="flex justify-center space-x-4 mb-12"
@@ -225,52 +225,21 @@ export default function Home() {
                         transition={{ duration: 0.8, delay: 0.6 }}
                     >
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                           <Link href="#music-portfolio">
+                           <Link href="/music">
                              <Button size="lg" className="btn-gold px-6 py-3 rounded-md flex items-center">
-                                <span className="mr-2">⟡</span> Explore Works
+                                <Diamond className="w-4 h-4 mr-2" /> Explore Works
                              </Button>
                            </Link>
                         </motion.div>
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Link href="#contact">
+                            <Link href="/contact">
                               <Button variant="outline" size="lg" className="btn-outline-gold px-6 py-3 rounded-md flex items-center border-2">
-                                <Send className="w-5 h-5 mr-2" /> Contact Me
+                                <Mail className="w-5 h-5 mr-2" /> Contact Me
                               </Button>
                             </Link>
                         </motion.div>
                     </motion.div>
 
-                     <motion.div className="flex justify-center space-x-6 mb-12"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.8 }}
-                    >
-                        {socialLinks.map((social, index) => {
-                           const Icon = iconComponents[social.platform as keyof typeof iconComponents] || iconComponents.Default;
-                           if (!Icon) return null;
-                           return (
-                                <motion.a
-                                    key={social.id}
-                                    href={social.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="group transform transition-all duration-300 hover:scale-110"
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 1 + index * 0.1 }}
-                                >
-                                    <div className="w-16 h-16 bg-card rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/20">
-                                        <Icon className="w-8 h-8" />
-                                    </div>
-                                    <p className="text-xs text-muted-foreground mt-2 group-hover:text-primary transition-colors">
-                                        {social.platform}
-                                    </p>
-                                </motion.a>
-                            );
-                        })}
-                    </motion.div>
                     <motion.div 
                         className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 text-muted-foreground text-sm mt-12"
                         initial={{ opacity: 0, y: 20 }}
