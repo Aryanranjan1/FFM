@@ -160,7 +160,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
       
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-        <div className="py-12 bg-card">
+        <div className="py-12">
             <motion.section
             className="container mx-auto px-4 md:px-6"
             initial="hidden"
@@ -248,7 +248,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
       
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-        <div className="py-12 bg-card">
+        <div className="py-12">
             <section className="container mx-auto px-4 md:px-6">
                 <motion.h2
                     className="text-3xl md:text-4xl font-headline font-bold text-center mb-12"
