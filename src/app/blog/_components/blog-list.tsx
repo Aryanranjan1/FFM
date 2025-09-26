@@ -413,7 +413,9 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
             )
           }
         </div>
-      </section>
+      </motion.section>
     </>
   );
 }
+
+    
