@@ -363,6 +363,11 @@ export default function MusicPage() {
                 </div>
             </section>
 
+            <div className="section-divider">
+              <div className="divider-line"></div>
+              <div className="divider-content">♪ ♫ ♪</div>
+            </div>
+
              {/* Latest Release Section */}
             {!loading && latestRelease && (
                 <section
