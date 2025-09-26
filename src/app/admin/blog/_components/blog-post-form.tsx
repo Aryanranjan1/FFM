@@ -75,6 +75,14 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
     form.setValue('content', content, { shouldValidate: true });
   };
   
+  const handleContentClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = (event.target as HTMLElement).closest('a');
+    if (target && (event.metaKey || event.ctrlKey)) {
+      event.preventDefault();
+      window.open(target.href, '_blank');
+    }
+  };
+  
   useEffect(() => {
     if (contentRef.current && post?.content && contentRef.current.innerHTML !== post.content) {
       contentRef.current.innerHTML = post.content;
@@ -283,6 +291,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                           style={{ direction: 'ltr', textAlign: 'left' }}
                           onInput={handleContentChange}
                           onBlur={saveSelection}
+                          onClick={handleContentClick}
                           className="min-h-[400px] p-4 focus:outline-none"
                           dangerouslySetInnerHTML={{ __html: form.getValues('content') }}
                         />
@@ -508,5 +517,3 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
     </motion.div>
   );
 }
-
-    
