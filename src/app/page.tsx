@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useRef, useActionState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from 'next/link';
@@ -14,10 +14,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { db } from "@/lib/firebase";
 import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
 import type { Video as VideoType, SocialLink as SocialLinkType, Testimonial as TestimonialType } from "@/lib/admin-types";
-import { useForm } from "react-hook-form";
+import { useToast } from "@/hooks/use-toast";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useToast } from "@/hooks/use-toast";
 import { submitContactForm } from "@/app/actions";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { FloatingNotes } from "@/components/floating-notes";
@@ -50,11 +50,6 @@ const contactFormSchema = z.object({
 
 type ContactFormValues = z.infer<typeof contactFormSchema>;
 
-const initialState = {
-  message: null,
-  errors: {},
-};
-
 const iconComponents: { [key: string]: React.FC<any> } = {
     YouTube: (props) => <Youtube {...props} />,
     Instagram: (props) => <Instagram {...props} />,
@@ -78,7 +73,6 @@ export default function Home() {
     const [isMuted, setIsMuted] = useState(true);
     const playerRef = useRef<YouTubePlayer | null>(null);
     
-    const [state, formAction] = useActionState(submitContactForm, initialState);
     const { toast } = useToast();
 
     const form = useForm<ContactFormValues>({
@@ -91,24 +85,34 @@ export default function Home() {
         },
     });
 
-    useEffect(() => {
-        if (state.message) {
-            if (Object.keys(state.errors).length > 0) {
+    const { formState, ...rest } = form;
+
+    const handleSubmit = async (data: ContactFormValues) => {
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) => {
+            if (value) {
+                formData.append(key, value);
+            }
+        });
+
+        const result = await submitContactForm(null, formData);
+
+        if (result.message) {
+            if (Object.keys(result.errors).length > 0) {
                 toast({
-                title: "Error",
-                description: state.message,
-                variant: "destructive",
+                    title: "Error",
+                    description: result.message,
+                    variant: "destructive",
                 });
             } else {
                 toast({
-                title: "Success",
-                description: state.message,
+                    title: "Success",
+                    description: result.message,
                 });
                 form.reset();
             }
         }
-    }, [state, toast, form]);
-
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -136,9 +140,8 @@ export default function Home() {
 
                 if (videosData.length > 0) {
                     const featured = videosData.find(video => video.isFeatured);
-                    const randomFeatured = videosData.filter(v => v.isFeatured);
-                    if (randomFeatured.length > 0) {
-                        setFeaturedVideo(randomFeatured[Math.floor(Math.random() * randomFeatured.length)]);
+                    if (featured) {
+                        setFeaturedVideo(featured);
                     } else if (videosData.length > 0) {
                         setFeaturedVideo(videosData[0]);
                     }
@@ -184,16 +187,15 @@ export default function Home() {
     
     return (
         <div className="min-h-screen bg-background text-foreground">
-            <section id="home" className="relative flex flex-col items-center justify-center pt-20 pb-20 px-4 md:px-6 overflow-hidden">
-                 <div className="hero-bg"></div>
-                 <div className="floating-orbs">
-                    <div className="orb" style={{ width: '300px', height: '300px', top: '10%', left: '20%', animationDuration: '18s' }}></div>
-                    <div className="orb" style={{ width: '200px', height: '200px', top: '50%', left: '80%', animationDuration: '22s' }}></div>
-                    <div className="orb" style={{ width: '150px', height: '150px', top: '80%', left: '10%', animationDuration: '16s' }}></div>
-                 </div>
-                 <FloatingNotes />
-                
-                <div className="relative z-10 max-w-7xl mx-auto text-center mt-20">
+             <div className="floating-orbs">
+                <div className="orb" style={{ width: '300px', height: '300px', top: '10%', left: '20%', animationDuration: '18s' }}></div>
+                <div className="orb" style={{ width: '200px', height: '200px', top: '50%', left: '80%', animationDuration: '22s' }}></div>
+                <div className="orb" style={{ width: '150px', height: '150px', top: '80%', left: '10%', animationDuration: '16s' }}></div>
+             </div>
+            <FloatingNotes />
+            <section id="home" className="relative flex flex-col items-center justify-center min-h-screen pt-20 pb-20 px-4 md:px-6 overflow-hidden">
+                <div className="hero-bg"></div>
+                <div className="relative z-10 max-w-7xl mx-auto text-center">
                     <motion.h1 
                         className="text-4xl md:text-6xl font-bold mb-6 text-primary font-headline"
                         initial={{ opacity: 0, y: 20 }}
@@ -299,7 +301,7 @@ export default function Home() {
                                                 modestbranding: 1,
                                             },
                                         }}
-                                        className="w-full h-full"
+                                        className="w-full h-full absolute top-0 left-0"
                                     />
                                     {isMuted && (
                                         <div 
@@ -351,10 +353,10 @@ export default function Home() {
                                         <Image src={track.thumbnailUrl || `https://placehold.co/400x400`} 
                                             alt={track.title} 
                                             width={400}
-                                            height={400}
+                                            height={225}
                                             className="w-full h-48 object-cover"
-                                            loading="eager" />
-                                        <div className="music-card-overlay">
+                                            />
+                                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
                                             <Button 
                                                 size="lg"
                                                 className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full w-16 h-16"
@@ -542,8 +544,8 @@ export default function Home() {
                         <motion.div>
                             <Card className="bg-card backdrop-blur-sm border-border">
                                 <CardContent className="p-8">
-                                     <Form {...form}>
-                                        <form action={formAction} className="space-y-6">
+                                     <FormProvider {...form}>
+                                        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                                             <FormField
                                             control={form.control}
                                             name="name"
@@ -553,7 +555,7 @@ export default function Home() {
                                                 <FormControl>
                                                     <Input placeholder="Your name" {...field} className="contact-input" />
                                                 </FormControl>
-                                                <FormMessage>{state.errors?.name}</FormMessage>
+                                                <FormMessage />
                                                 </FormItem>
                                             )}
                                             />
@@ -566,7 +568,7 @@ export default function Home() {
                                                 <FormControl>
                                                     <Input placeholder="your@email.com" {...field} className="contact-input" />
                                                 </FormControl>
-                                                <FormMessage>{state.errors?.email}</FormMessage>
+                                                <FormMessage />
                                                 </FormItem>
                                             )}
                                             />
@@ -579,7 +581,7 @@ export default function Home() {
                                                 <FormControl>
                                                     <Input placeholder="What's this about?" {...field} className="contact-input" />
                                                 </FormControl>
-                                                <FormMessage>{state.errors?.subject}</FormMessage>
+                                                <FormMessage />
                                                 </FormItem>
                                             )}
                                             />
@@ -592,17 +594,17 @@ export default function Home() {
                                                 <FormControl>
                                                     <Textarea placeholder="Your message..." {...field} rows={5} className="contact-input" />
                                                 </FormControl>
-                                                <FormMessage>{state.errors?.message}</FormMessage>
+                                                <FormMessage />
                                                 </FormItem>
                                             )}
                                             />
                                             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                                                <Button type="submit" size="lg" className="w-full btn-gold px-6 py-3 rounded-md flex items-center justify-center">
-                                                    <Send className="w-5 h-5 mr-2" />Send Message
+                                                <Button type="submit" size="lg" className="w-full btn-gold px-6 py-3 rounded-md flex items-center justify-center" disabled={formState.isSubmitting}>
+                                                  {formState.isSubmitting ? 'Sending...' : (<><Send className="w-5 h-5 mr-2" />Send Message</>)}
                                                 </Button>
                                             </motion.div>
                                         </form>
-                                    </Form>
+                                    </FormProvider>
                                 </CardContent>
                             </Card>
                         </motion.div>
@@ -612,5 +614,3 @@ export default function Home() {
         </div>
     );
 }
-
-    
