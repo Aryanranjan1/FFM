@@ -208,7 +208,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                               ref={contentRef}
                               contentEditable
                               onInput={handleContentChange}
-                              className="min-h-[400px] p-4 focus:outline-none w-full"
+                              className="min-h-[400px] p-4 focus:outline-none"
                               dangerouslySetInnerHTML={{ __html: field.value }}
                           />
                           <FormControl>
