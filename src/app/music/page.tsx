@@ -263,8 +263,7 @@ export default function MusicPage() {
             <motion.section
                 className="py-20"
                 initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.1 }}
+                animate="visible"
                 variants={staggerContainer}
             >
                 <div className="container mx-auto px-4 md:px-6">
@@ -300,9 +299,7 @@ export default function MusicPage() {
                                 return (
                                      <motion.div
                                         key={video.id}
-                                        initial={{ opacity: 0, y: 30 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.6, delay: index * 0.1 }}
+                                        variants={fadeInUp}
                                         onMouseEnter={() => setHoveredMusicCard(video.id)}
                                         onMouseLeave={() => setHoveredMusicCard(null)}
                                     >
@@ -384,8 +381,7 @@ export default function MusicPage() {
                 <motion.section
                     className="py-20 bg-gradient-to-br from-gray-900 to-black relative overflow-hidden"
                     initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.2 }}
+                    animate="visible"
                     variants={staggerContainer}
                 >
                     <div className="hero-bg"></div>
@@ -431,8 +427,7 @@ export default function MusicPage() {
             <motion.section
                 className="py-20"
                 initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-100px" }}
+                animate="visible"
                 variants={staggerContainer}
             >
                 <div className="container mx-auto px-4 md:px-6">
@@ -481,8 +476,7 @@ export default function MusicPage() {
             <motion.section
                 className="py-20"
                 initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-100px" }}
+                animate="visible"
                 variants={staggerContainer}
             >
                 <div className="container mx-auto px-4 md:px-6">
@@ -521,25 +515,26 @@ export default function MusicPage() {
                     <motion.h2
                         className="text-3xl md:text-4xl font-headline font-bold text-center mb-12"
                         initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
+                        animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
                     >
                         What My Clients Say
                     </motion.h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <motion.div
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                        initial="hidden"
+                        animate="visible"
+                        variants={staggerContainer}
+                    >
                          {bio.pressReleases.slice(0, 3).map((testimonial, index) => (
                             <motion.div
                                 key={index}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, amount: 0.3 }}
-                                transition={{ duration: 0.6, delay: index * 0.1 }}
+                                variants={fadeInUp}
                             >
                                <TestimonialCard testimonial={testimonial} />
                             </motion.div>
                         ))}
-                    </div>
+                    </motion.div>
                 </div>
             </section>
 

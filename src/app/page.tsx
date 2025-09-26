@@ -430,14 +430,18 @@ export default function Home() {
             </div>
             
             {/* --- ABOUT SECTION --- */}
-            <section className="py-20">
+            <motion.section
+              className="py-20"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                  visible: { transition: { staggerChildren: 0.2 } },
+              }}
+            >
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <motion.div
-                            initial={{ opacity: 0, x: -50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true, amount: 0.3 }}
-                            transition={{ duration: 0.8 }}
+                            variants={{ hidden: { opacity: 0, x: -50 }, visible: { opacity: 1, x: 0, transition: { duration: 0.8 } } }}
                         >
                             <h2 className="text-3xl md:text-4xl font-bold mb-6 font-headline">About the Composer</h2>
                             <p className="text-lg text-muted-foreground mb-4">
@@ -467,10 +471,7 @@ export default function Home() {
                             </div>
                         </motion.div>
                         <motion.div
-                            initial={{ opacity: 0, x: 50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true, amount: 0.3 }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
+                             variants={{ hidden: { opacity: 0, x: 50 }, visible: { opacity: 1, x: 0, transition: { duration: 0.8, delay: 0.2 } } }}
                             className="relative"
                         >
                             <div className="relative mx-auto max-w-md">
@@ -484,7 +485,7 @@ export default function Home() {
                         </motion.div>
                     </div>
                 </div>
-            </section>
+            </motion.section>
 
             <div className="section-divider">
               <div className="divider-line"></div>
@@ -492,7 +493,14 @@ export default function Home() {
             </div>
 
             {/* --- TESTIMONIALS SECTION --- */}
-            <section className="py-20">
+            <motion.section
+              className="py-20"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                  visible: { transition: { staggerChildren: 0.2 } },
+              }}
+            >
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">What People Say</h2>
@@ -504,10 +512,7 @@ export default function Home() {
                         {testimonials.map((testimonial, index) => (
                             <motion.div
                                 key={testimonial.id}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, amount: 0.3 }}
-                                transition={{ duration: 0.6, delay: index * 0.1 }}
+                                variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: index * 0.1 } } }}
                             >
                                 <Card className="bg-card backdrop-blur-sm border-border h-full">
                                     <CardContent className="p-6 flex flex-col h-full">
@@ -529,7 +534,7 @@ export default function Home() {
                         ))}
                     </div>
                 </div>
-            </section>
+            </motion.section>
 
             <div className="section-divider">
               <div className="divider-line"></div>
@@ -541,8 +546,8 @@ export default function Home() {
                 <motion.div 
                     className="container mx-auto px-4 md:px-6"
                     initial="hidden" 
-                    whileInView="visible" 
-                    viewport={{ once: true, amount: 0.1 }}
+                    animate="visible" 
+                    variants={{ visible: { transition: { staggerChildren: 0.2 } } }}
                 >
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Get in Touch</h2>
@@ -551,7 +556,7 @@ export default function Home() {
                         </p>
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                        <motion.div>
+                        <motion.div variants={{ hidden: { opacity: 0, x: -50 }, visible: { opacity: 1, x: 0 } }}>
                             <h3 className="text-3xl font-bold mb-6 text-primary font-headline">Let's Connect</h3>
                             <p className="text-lg text-muted-foreground mb-8">
                                 Whether you're looking for custom compositions, music licensing, or just want to discuss musical ideas, I'm here to help bring your vision to life.
@@ -586,7 +591,7 @@ export default function Home() {
                                 </div>
                             </div>
                         </motion.div>
-                        <motion.div>
+                        <motion.div variants={{ hidden: { opacity: 0, x: 50 }, visible: { opacity: 1, x: 0 } }}>
                             <Card className="bg-card backdrop-blur-sm border-border">
                                 <CardContent className="p-8">
                                      <Form {...form}>

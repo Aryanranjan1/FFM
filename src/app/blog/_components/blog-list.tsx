@@ -149,8 +149,7 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
           <div className="container mx-auto px-4 md:px-6">
             <motion.div className="text-center mb-12" 
                 initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
+                animate="visible"
                 variants={fadeInUp}
             >
               <h2 className="text-3xl font-headline font-bold text-primary mb-4">
@@ -179,11 +178,10 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
             ) : featuredPost && (
                 <motion.div 
                     initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
+                    animate="visible"
                     variants={fadeInUp}
                 >
-                  <Card className="bg-background border-border/50 hover:border-primary/50 transition-all duration-300 group overflow-hidden md:grid md:grid-cols-2 items-center max-w-4xl mx-auto">
+                  <Card className="bg-transparent border-border/50 hover:border-primary/50 transition-all duration-300 group overflow-hidden md:grid md:grid-cols-2 items-center max-w-4xl mx-auto">
                     <div className="relative">
                       <Link href={`/blog/${featuredPost.id}`}>
                         <Image
@@ -243,8 +241,7 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
       <motion.section
         className="py-20 bg-background"
         initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.1 }}
+        animate="visible"
         variants={staggerContainer}
       >
         <div className="container mx-auto px-4 md:px-6">
