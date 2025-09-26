@@ -72,7 +72,9 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
   const execCommand = (command: string, value?: string) => {
     document.execCommand(command, false, value);
     contentRef.current?.focus();
-    form.setValue('content', contentRef.current?.innerHTML || '');
+    if(contentRef.current) {
+        form.setValue('content', contentRef.current?.innerHTML || '');
+    }
   };
 
   const handleLink = () => {
@@ -95,7 +97,9 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
         span.textContent = selectedText;
         range.deleteContents();
         range.insertNode(span);
-        form.setValue('content', contentRef.current?.innerHTML || '');
+        if(contentRef.current) {
+            form.setValue('content', contentRef.current?.innerHTML || '');
+        }
     }
   };
 
@@ -164,61 +168,61 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="content"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Content</FormLabel>
-                      <div className="rounded-md border border-input mt-2">
-                          <div className="p-2 border-b border-input flex items-center flex-wrap gap-1">
-                              <Select onValueChange={(value) => execCommand('formatBlock', value)} defaultValue="p">
-                                  <SelectTrigger className="w-[120px] h-8">
-                                      <SelectValue placeholder="Format" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                      <SelectItem value="p">Normal</SelectItem>
-                                      <SelectItem value="h1">Heading 1</SelectItem>
-                                      <SelectItem value="h2">Heading 2</SelectItem>
-                                      <SelectItem value="blockquote">Quote</SelectItem>
-                                      <SelectItem value="pre">Code</SelectItem>
-                                  </SelectContent>
-                              </Select>
-                              <Select onValueChange={applyFontSize} defaultValue="text-base">
-                                  <SelectTrigger className="w-[100px] h-8">
-                                      <SelectValue placeholder="Font Size" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                      <SelectItem value="text-sm">Small</SelectItem>
-                                      <SelectItem value="text-base">Medium</SelectItem>
-                                      <SelectItem value="text-2xl">Large</SelectItem>
-                                  </SelectContent>
-                              </Select>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('bold')}><Bold className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('italic')}><Italic className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('underline')}><Underline className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('strikeThrough')}><Strikethrough className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={handleLink}><LinkIcon className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('insertUnorderedList')}><List className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('insertOrderedList')}><ListOrdered className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('formatBlock', 'pre')}><Code className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('formatBlock', 'blockquote')}><Quote className="h-4 w-4"/></Button>
-                          </div>
-                          <div
-                              ref={contentRef}
-                              contentEditable
-                              onInput={handleContentChange}
-                              className="min-h-[400px] p-4 focus:outline-none"
-                              dangerouslySetInnerHTML={{ __html: field.value }}
-                          />
-                          <FormControl>
-                            <input type="hidden" {...field} />
-                          </FormControl>
-                      </div>
-                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <FormItem>
+                  <FormLabel>Content</FormLabel>
+                   <div className="rounded-md border border-input mt-2">
+                       <div className="p-2 border-b border-input flex items-center flex-wrap gap-1">
+                           <Select onValueChange={(value) => execCommand('formatBlock', value)} defaultValue="p">
+                               <SelectTrigger className="w-[120px] h-8">
+                                   <SelectValue placeholder="Format" />
+                               </SelectTrigger>
+                               <SelectContent>
+                                   <SelectItem value="p">Normal</SelectItem>
+                                   <SelectItem value="h1">Heading 1</SelectItem>
+                                   <SelectItem value="h2">Heading 2</SelectItem>
+                                   <SelectItem value="blockquote">Quote</SelectItem>
+                                   <SelectItem value="pre">Code</SelectItem>
+                               </SelectContent>
+                           </Select>
+                           <Select onValueChange={applyFontSize} defaultValue="text-base">
+                               <SelectTrigger className="w-[100px] h-8">
+                                   <SelectValue placeholder="Font Size" />
+                               </SelectTrigger>
+                               <SelectContent>
+                                   <SelectItem value="text-sm">Small</SelectItem>
+                                   <SelectItem value="text-base">Medium</SelectItem>
+                                   <SelectItem value="text-2xl">Large</SelectItem>
+                               </SelectContent>
+                           </Select>
+                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('bold')}><Bold className="h-4 w-4"/></Button>
+                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('italic')}><Italic className="h-4 w-4"/></Button>
+                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('underline')}><Underline className="h-4 w-4"/></Button>
+                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('strikeThrough')}><Strikethrough className="h-4 w-4"/></Button>
+                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={handleLink}><LinkIcon className="h-4 w-4"/></Button>
+                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('insertUnorderedList')}><List className="h-4 w-4"/></Button>
+                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('insertOrderedList')}><ListOrdered className="h-4 w-4"/></Button>
+                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('formatBlock', 'pre')}><Code className="h-4 w-4"/></Button>
+                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('formatBlock', 'blockquote')}><Quote className="h-4 w-4"/></Button>
+                       </div>
+                       <div
+                           ref={contentRef}
+                           contentEditable
+                           onInput={handleContentChange}
+                           className="min-h-[400px] p-4 focus:outline-none"
+                           dangerouslySetInnerHTML={{ __html: form.getValues('content') }}
+                       />
+                   </div>
+                  <FormField
+                    control={form.control}
+                    name="content"
+                    render={({ field }) => (
+                      <FormControl>
+                        <input type="hidden" {...field} />
+                      </FormControl>
+                    )}
+                  />
+                  <FormMessage />
+                </FormItem>
               </CardContent>
             </Card>
           </div>
@@ -363,5 +367,3 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
     </motion.div>
   );
 }
-
-    
