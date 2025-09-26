@@ -141,54 +141,6 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
     },
   };
 
-  const FeaturedPostSkeleton = () => (
-     <motion.div variants={fadeInUp}>
-        <Card className="bg-background border-border/50 overflow-hidden md:grid md:grid-cols-2 items-center max-w-4xl mx-auto">
-            <Skeleton className="w-full aspect-video md:aspect-[4/3]" />
-            <CardContent className="p-6 space-y-3">
-                <Skeleton className="h-5 w-24" />
-                <Skeleton className="h-8 w-full" />
-                <Skeleton className="h-8 w-4/5" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-full" />
-                <div className="flex justify-between items-center text-sm text-muted-foreground pt-3 border-t border-border/50">
-                    <Skeleton className="h-4 w-28" />
-                    <Skeleton className="h-4 w-20" />
-                </div>
-                <Skeleton className="h-11 w-full" />
-            </CardContent>
-        </Card>
-      </motion.div>
-  );
-
-  const ArticleCardSkeleton = () => (
-    <Card className="bg-card border-border/50 overflow-hidden flex flex-col h-full">
-        <Skeleton className="w-full aspect-video" />
-        <CardHeader className="p-4 space-y-2">
-            <div className="flex justify-between items-center text-sm">
-                <Skeleton className="h-5 w-20" />
-                <Skeleton className="h-4 w-24" />
-            </div>
-            <Skeleton className="h-6 w-full" />
-            <Skeleton className="h-6 w-3/4" />
-        </CardHeader>
-        <CardContent className="p-4 pt-0 flex flex-col flex-grow">
-            <div className="space-y-2 flex-grow">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-5/6" />
-            </div>
-            <div className="mt-4 space-y-3 border-t border-border/50 pt-4 text-xs">
-                <div className="flex justify-between">
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-4 w-28" />
-                </div>
-                <Skeleton className="h-10 w-full" />
-            </div>
-        </CardContent>
-    </Card>
-  );
-
-
   return (
     <>
       {/* Featured Post Section */}
@@ -207,7 +159,7 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
                 A hand-picked article to spark your curiosity.
               </p>
             </motion.div>
-            {loading ? <FeaturedPostSkeleton/> : featuredPost && (
+            {loading ? <div className="text-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div> : featuredPost && (
                 <motion.div 
                     initial="hidden"
                     whileInView="visible"
@@ -347,8 +299,8 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
           </div>
 
           {loading ? (
-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {Array.from({ length: 6 }).map((_, i) => <ArticleCardSkeleton key={i} />)}
+             <div className="text-center py-16">
+                <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
             </div>
           ) : filteredAndSortedPosts.length > 0 ? (
               <motion.div
