@@ -72,6 +72,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
   const execCommand = (command: string, value?: string) => {
     document.execCommand(command, false, value);
     contentRef.current?.focus();
+    form.setValue('content', contentRef.current?.innerHTML || '');
   };
 
   const handleLink = () => {
@@ -94,6 +95,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
         span.textContent = selectedText;
         range.deleteContents();
         range.insertNode(span);
+        form.setValue('content', contentRef.current?.innerHTML || '');
     }
   };
 
@@ -202,15 +204,16 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                               <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('formatBlock', 'pre')}><Code className="h-4 w-4"/></Button>
                               <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('formatBlock', 'blockquote')}><Quote className="h-4 w-4"/></Button>
                           </div>
-                           <FormControl>
-                              <div
-                                  ref={contentRef}
-                                  contentEditable
-                                  onInput={handleContentChange}
-                                  className="min-h-[400px] p-4 focus:outline-none w-full"
-                                  dangerouslySetInnerHTML={{ __html: field.value }}
-                              />
-                            </FormControl>
+                          <div
+                              ref={contentRef}
+                              contentEditable
+                              onInput={handleContentChange}
+                              className="min-h-[400px] p-4 focus:outline-none w-full"
+                              dangerouslySetInnerHTML={{ __html: field.value }}
+                          />
+                          <FormControl>
+                            <input type="hidden" {...field} />
+                          </FormControl>
                       </div>
                        <FormMessage />
                     </FormItem>
