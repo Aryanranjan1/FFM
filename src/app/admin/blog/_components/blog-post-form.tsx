@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
@@ -46,9 +47,11 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
   
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [isEmbedModalOpen, setIsEmbedModalOpen] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
   const [linkText, setLinkText] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [embedCode, setEmbedCode] = useState('');
   const selectionRef = useRef<Range | null>(null);
 
 
@@ -117,11 +120,9 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
     contentRef.current?.focus();
     
     if (selectionRef.current && selectionRef.current.toString().length === 0) {
-        // If no text was selected, insert a new link element
         const linkHtml = `<a href="${linkUrl}" target="_blank">${linkText || linkUrl}</a>`;
         execCommand('insertHTML', linkHtml);
     } else {
-        // If text was selected, apply the link to it
         execCommand('createLink', linkUrl);
     }
 
@@ -143,6 +144,21 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
     }
     setIsImageModalOpen(false);
     setImageUrl('');
+  };
+  
+  const openEmbedModal = () => {
+    saveSelection();
+    setIsEmbedModalOpen(true);
+  };
+
+  const handleEmbedInsert = () => {
+    restoreSelection();
+    contentRef.current?.focus();
+    if (embedCode) {
+      execCommand('insertHTML', embedCode);
+    }
+    setIsEmbedModalOpen(false);
+    setEmbedCode('');
   };
 
   const applyFontSize = (sizeClass: string) => {
@@ -256,13 +272,15 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                            <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={openLinkModal}><LinkIcon className="h-4 w-4"/></Button>
                            <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('insertUnorderedList')}><List className="h-4 w-4"/></Button>
                            <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('insertOrderedList')}><ListOrdered className="h-4 w-4"/></Button>
-                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('formatBlock', 'pre')}><Code className="h-4 w-4"/></Button>
+                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={openEmbedModal}><Code className="h-4 w-4"/></Button>
                            <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('formatBlock', 'blockquote')}><Quote className="h-4 w-4"/></Button>
                            <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={openImageModal}><ImageIcon className="h-4 w-4"/></Button>
                        </div>
                         <div
                           ref={contentRef}
                           contentEditable
+                          dir="ltr"
+                          style={{ direction: 'ltr', textAlign: 'left' }}
                           onInput={handleContentChange}
                           onBlur={saveSelection}
                           className="min-h-[400px] p-4 focus:outline-none"
@@ -460,6 +478,29 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
             <DialogFooter>
                 <Button variant="outline" onClick={() => setIsImageModalOpen(false)}>Cancel</Button>
                 <Button onClick={handleImageInsert}>Insert Image</Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Embed Modal */}
+      <Dialog open={isEmbedModalOpen} onOpenChange={setIsEmbedModalOpen}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Embed Content</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-2">
+                <Label htmlFor="embed-code">Embed Code</Label>
+                <Textarea 
+                    id="embed-code" 
+                    value={embedCode} 
+                    onChange={(e) => setEmbedCode(e.target.value)} 
+                    placeholder="Paste your HTML embed code here"
+                    rows={5}
+                />
+            </div>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setIsEmbedModalOpen(false)}>Cancel</Button>
+                <Button onClick={handleEmbedInsert}>Embed Content</Button>
             </DialogFooter>
         </DialogContent>
       </Dialog>
