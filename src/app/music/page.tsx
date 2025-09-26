@@ -235,7 +235,7 @@ export default function MusicPage() {
                 )}
             </AnimatePresence>
             {/* Hero Section */}
-            <section className="py-20 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
+            <section className="py-20 text-center relative overflow-hidden">
                 <div className="hero-bg"></div>
                 <div className="container mx-auto px-4 md:px-6 relative z-10">
                     <h1 
