@@ -184,7 +184,11 @@ export default function MusicPage() {
         );
     };
 
-    const latestRelease = useMemo(() => videos.find(t => t.isFeatured) || videos[0], [videos]);
+    const latestRelease = useMemo(() => {
+        if (videos.length === 0) return null;
+        // The videos are already sorted by createdAt descending from Firestore
+        return videos[0];
+    }, [videos]);
 
     const VideoSkeleton = () => (
         <div className="flex flex-col space-y-3">
