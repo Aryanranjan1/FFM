@@ -366,7 +366,7 @@ export default function MusicPage() {
              {/* Latest Release Section */}
             {!loading && latestRelease && (
                 <section
-                    className="py-20 bg-gradient-to-br from-gray-900 to-black relative overflow-hidden"
+                    className="py-20 relative overflow-hidden"
                 >
                     <div className="hero-bg"></div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
@@ -405,7 +405,10 @@ export default function MusicPage() {
                 </section>
             )}
 
-            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+            <div className="section-divider">
+              <div className="divider-line"></div>
+              <div className="divider-content">♪ ♫ ♪</div>
+            </div>
 
             {/* Collaborations Section */}
             <section
@@ -451,7 +454,10 @@ export default function MusicPage() {
                 </div>
             </section>
 
-             <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+            <div className="section-divider">
+              <div className="divider-line"></div>
+              <div className="divider-content">♪ ♫ ♪</div>
+            </div>
 
             {/* Achievements Section */}
             <section
@@ -485,7 +491,10 @@ export default function MusicPage() {
                 </div>
             </section>
 
-            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+            <div className="section-divider">
+              <div className="divider-line"></div>
+              <div className="divider-content">♪ ♫ ♪</div>
+            </div>
 
             {/* Testimonials Section */}
             <section className="py-20">
@@ -509,7 +518,10 @@ export default function MusicPage() {
                 </div>
             </section>
 
-            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+            <div className="section-divider">
+              <div className="divider-line"></div>
+              <div className="divider-content">♪ ♫ ♪</div>
+            </div>
 
             {/* CTA */}
             <section className="py-20">

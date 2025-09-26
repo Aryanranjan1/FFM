@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ExternalLink, MapPin, Music, ArrowRight, Star } from 'lucide-react';
 import type { Collaboration, Achievement } from '@/lib/types';
-import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { bio } from '@/lib/data';
