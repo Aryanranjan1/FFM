@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,6 +19,19 @@ import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2,
 import { bio } from '@/lib/data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TestimonialCard } from '@/components/testimonial-card';
+import { FloatingNotes } from '@/components/floating-notes';
+
+
+function Orbs() {
+  return (
+    <div className="floating-orbs">
+      <div className="orb" style={{ width: '300px', height: '300px', top: '10%', left: '20%', animationDuration: '18s' }}></div>
+      <div className="orb" style={{ width: '200px', height: '200px', top: '50%', left: '80%', animationDuration: '22s' }}></div>
+      <div className="orb" style={{ width: '150px', height: '150px', top: '80%', left: '10%', animationDuration: '16s' }}></div>
+    </div>
+  );
+}
+
 
 const collaborations: Collaboration[] = [
     {
@@ -84,6 +97,7 @@ export default function MusicPage() {
     const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
     const [likedTracks, setLikedTracks] = useState<string[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [showNotes, setShowNotes] = useState(false);
     const videosPerPage = 9;
     const { toast } = useToast();
 
@@ -106,6 +120,12 @@ export default function MusicPage() {
         };
 
         fetchVideos();
+        
+        const timer = setTimeout(() => {
+          setShowNotes(true);
+        }, 5000);
+
+        return () => clearTimeout(timer);
     }, []);
     
     const videoCategories = useMemo(() => {
@@ -226,9 +246,11 @@ export default function MusicPage() {
                 )}
             </AnimatePresence>
             {/* Hero Section */}
-            <section className="py-24 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
+            <section className="relative flex flex-col items-center justify-center min-h-screen pt-20 pb-20 px-4 md:px-6 overflow-hidden">
                 <div className="hero-bg"></div>
-                <div className="relative z-10 container mx-auto px-4 md:px-6">
+                <Orbs />
+                {showNotes && <FloatingNotes />}
+                <div className="relative z-10 max-w-7xl mx-auto text-center">
                     <h1 
                         className="text-5xl md:text-7xl font-headline font-bold text-primary" 
                     >
@@ -519,5 +541,3 @@ export default function MusicPage() {
         </div>
     );
 }
-
-    
