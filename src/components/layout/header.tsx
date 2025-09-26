@@ -23,13 +23,11 @@ export function Header() {
   const pathname = usePathname();
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
   const [hidden, setHidden] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     const controlNavbar = () => {
       if (typeof window !== 'undefined') {
-        setIsScrolled(window.scrollY > 0);
         if (window.scrollY > lastScrollY && window.scrollY > 80) { // if scroll down
           setHidden(true);
         } else { // if scroll up
@@ -60,10 +58,7 @@ export function Header() {
         className="sticky top-0 z-50 w-full"
       >
         <div className="relative">
-          <div className={cn(
-              "transition-colors duration-300",
-              isScrolled ? "bg-[#181818]/90 backdrop-blur-md" : "bg-background"
-            )}>
+          <div className="bg-[#181818]">
             <div className="container flex h-20 items-center px-4 md:px-6 max-w-7xl mx-auto justify-between">
               <Link href="/" className="flex items-center space-x-2 text-2xl font-bold font-headline text-primary">
                 FAHMIE FARHAN
