@@ -29,5 +29,3 @@ export function Particles() {
     <div className="particles-container" ref={particlesRef}></div>
   );
 }
-
-    

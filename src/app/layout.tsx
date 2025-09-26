@@ -78,10 +78,8 @@ export default function RootLayout({
         <meta name="description" content="Official artist website for Fahmie Farhan, Epic Orchestral & Malay Gamelan Composer" />
       </head>
       <body className={cn('font-body antialiased min-h-screen flex flex-col', { 'bg-background': isAdminPage })}>
-        <ClientOnly>
-          <Particles />
-          <Orbs />
-        </ClientOnly>
+        <Particles />
+        <Orbs />
         <MusicPlayerProvider>
           {isAdminPage ? (
             <div className="flex-1">{children}</div>
@@ -103,5 +101,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-    
