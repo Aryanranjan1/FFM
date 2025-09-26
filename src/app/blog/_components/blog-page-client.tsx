@@ -7,7 +7,7 @@ import { BlogList } from "./blog-list";
 
 export function BlogPageClient({ initialPosts }: { initialPosts: BlogPost[] }) {
   return (
-    <div className="bg-background text-foreground">
+    <div className="bg-transparent text-foreground">
       {/* Hero Section */}
       <section className="py-20 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
         <div className="hero-bg"></div>

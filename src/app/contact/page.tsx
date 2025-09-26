@@ -91,7 +91,7 @@ export default function ContactPage() {
   }, [state, toast, form]);
 
   return (
-    <div className="bg-background text-foreground relative">
+    <div className="bg-transparent text-foreground relative">
       <div className="hero-bg" style={{ zIndex: 0 }}></div>
       <div className="relative z-10 py-20">
         <div 

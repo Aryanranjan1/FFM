@@ -82,7 +82,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
   };
   
   return (
-    <div className="bg-background text-foreground">
+    <div className="bg-transparent text-foreground">
         <section className="py-20 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
             <div className="hero-bg"></div>
             <div className="container mx-auto px-4 md:px-6 relative z-10">
@@ -150,10 +150,10 @@ Fahmie's portfolio covers both international collaborations and competitive musi
       
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-        <div
-          className="py-12"
+        <section
+        className="py-12"
         >
-            <section
+            <div
             className="container mx-auto px-4 md:px-6"
             >
             <div className="text-center mb-12">
@@ -192,15 +192,15 @@ Fahmie's portfolio covers both international collaborations and competitive musi
                 </div>
                 ))}
             </div>
-            </section>
-        </div>
+            </div>
+        </section>
 
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-        <div
+        <section
             className="py-20 container mx-auto px-4 md:px-6"
         >
-            <section
+            <div
                 className="bg-transparent"
             >
             <div className="container mx-auto">
@@ -229,15 +229,15 @@ Fahmie's portfolio covers both international collaborations and competitive musi
                     ))}
                 </div>
             </div>
-            </section>
-        </div>
+            </div>
+        </section>
       
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-        <div
+        <section
           className="py-12"
         >
-            <section className="container mx-auto px-4 md:px-6">
+            <div className="container mx-auto px-4 md:px-6">
                 <h2
                     className="text-3xl md:text-4xl font-headline font-bold text-center mb-12"
                 >
@@ -252,8 +252,8 @@ Fahmie's portfolio covers both international collaborations and competitive musi
                         </div>
                     ))}
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
       
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 

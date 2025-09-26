@@ -189,7 +189,7 @@ export default function MusicPage() {
 
 
     return (
-        <div className="bg-background text-foreground">
+        <div className="bg-transparent text-foreground">
              <AnimatePresence>
                 {selectedVideo && (
                     <motion.div
@@ -271,8 +271,7 @@ export default function MusicPage() {
                          </div>
                     ) : (
                         <>
-                        <motion.div 
-                            layout 
+                        <div 
                             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8"
                         >
                             {currentVideos.map((video, index) => {
@@ -325,7 +324,7 @@ export default function MusicPage() {
                                     </div>
                                 );
                             })}
-                        </motion.div>
+                        </div>
 
                         {totalPages > 1 && (
                             <div className="flex justify-center items-center mt-12 space-x-4">
