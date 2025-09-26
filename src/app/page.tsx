@@ -21,7 +21,6 @@ import { z } from "zod";
 import { submitContactForm } from "@/app/actions";
 import { FloatingNotes } from "@/components/floating-notes";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Particles } from "@/components/particles";
 
 
 import {
@@ -200,7 +199,6 @@ export default function Home() {
         <div className="min-h-screen bg-transparent text-foreground">
             <section id="home" className="relative flex flex-col items-center justify-center min-h-screen pt-20 pb-20 px-4 md:px-6 overflow-hidden">
                 <div className="hero-bg"></div>
-                <Particles />
                 <Orbs />
                 <FloatingNotes />
                 <div className="relative z-10 max-w-7xl mx-auto text-center">

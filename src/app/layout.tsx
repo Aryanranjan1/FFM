@@ -17,6 +17,7 @@ import type { SocialLink as SocialLinkType } from '@/lib/admin-types';
 import { db } from '@/lib/firebase';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { Cinzel, Inter } from 'next/font/google';
+import { Particles } from '@/components/particles';
 
 const cinzel = Cinzel({ subsets: ['latin'], variable: '--font-cinzel' });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -59,15 +60,20 @@ export default function RootLayout({
           {isAdminPage ? (
             <div className="flex-1">{children}</div>
           ) : (
-            <div className="flex flex-col flex-1" style={{ position: 'relative', zIndex: 1 }}>
-              <Header />
-              <main className="flex-1">
-                <PageTransition>
-                  {children}
-                </PageTransition>
-              </main>
-              <Footer settings={settings} socialLinks={socialLinks} />
-            </div>
+            <>
+              <div className="bg-animation-container">
+                <Particles />
+              </div>
+              <div className="flex flex-col flex-1" style={{ position: 'relative', zIndex: 1 }}>
+                <Header />
+                <main className="flex-1">
+                  <PageTransition>
+                    {children}
+                  </PageTransition>
+                </main>
+                <Footer settings={settings} socialLinks={socialLinks} />
+              </div>
+            </>
           )}
           <MusicPlayer />
           <Toaster />
