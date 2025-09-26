@@ -21,7 +21,6 @@ import { z } from "zod";
 import { submitContactForm } from "@/app/actions";
 import { FloatingNotes } from "@/components/floating-notes";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Particles } from "@/components/particles";
 
 
 import {
@@ -78,6 +77,7 @@ export default function Home() {
     
     // UI State
     const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
+    const [showNotes, setShowNotes] = useState(false);
 
     // Player State
     const [featuredVideo, setFeaturedVideo] = useState<VideoType | null>(null);
@@ -163,6 +163,12 @@ export default function Home() {
             }
         };
         fetchData();
+        
+        const timer = setTimeout(() => {
+          setShowNotes(true);
+        }, 5000);
+
+        return () => clearTimeout(timer);
     }, []);
 
     const getYouTubeId = (url: string) => {
@@ -201,7 +207,7 @@ export default function Home() {
             <section id="home" className="relative flex flex-col items-center justify-center min-h-screen pt-20 pb-20 px-4 md:px-6 overflow-hidden">
                 <div className="hero-bg"></div>
                 <Orbs />
-                <FloatingNotes />
+                {showNotes && <FloatingNotes />}
                 <div className="relative z-10 max-w-7xl mx-auto text-center">
                     <motion.h1 
                         className="text-4xl md:text-6xl font-bold mb-6 text-primary font-headline"
