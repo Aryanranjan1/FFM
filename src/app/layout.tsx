@@ -17,20 +17,9 @@ import type { SocialLink as SocialLinkType } from '@/lib/admin-types';
 import { db } from '@/lib/firebase';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { Cinzel, Inter } from 'next/font/google';
-import { Particles } from '@/components/particles';
 
 const cinzel = Cinzel({ subsets: ['latin'], variable: '--font-cinzel' });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-
-function Orbs() {
-  return (
-    <div className="floating-orbs">
-      <div className="orb" style={{ width: '300px', height: '300px', top: '10%', left: '20%', animationDuration: '18s' }}></div>
-      <div className="orb" style={{ width: '200px', height: '200px', top: '50%', left: '80%', animationDuration: '22s' }}></div>
-      <div className="orb" style={{ width: '150px', height: '150px', top: '80%', left: '10%', animationDuration: '16s' }}></div>
-    </div>
-  );
-}
 
 // This is the root layout component. It's a client component to allow for hooks.
 export default function RootLayout({
@@ -67,12 +56,6 @@ export default function RootLayout({
       </head>
       <body className={cn('font-body antialiased min-h-screen flex flex-col', { 'bg-background': isAdminPage })}>
         <MusicPlayerProvider>
-          {!isAdminPage && (
-            <div className="bg-animation-container">
-              <Particles />
-              <Orbs />
-            </div>
-          )}
           {isAdminPage ? (
             <div className="flex-1">{children}</div>
           ) : (
