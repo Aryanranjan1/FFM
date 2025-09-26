@@ -83,7 +83,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
   
   return (
     <div className="bg-transparent text-foreground">
-        <section className="py-20 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
+        <section className="py-20 text-center relative overflow-hidden">
             <div className="hero-bg"></div>
             <div className="container mx-auto px-4 md:px-6 relative z-10">
                 <h1 className="font-headline text-5xl md:text-7xl font-bold text-primary">ABOUT</h1>
@@ -93,7 +93,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
             </div>
         </section>
         
-        <section className="py-20 relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
+        <section className="py-20 relative overflow-hidden bg-transparent">
           <div className="hero-bg"></div>
           <div className="container mx-auto px-4 md:px-6 relative z-10">
               <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12 items-start">
