@@ -110,11 +110,7 @@ export default function MusicPage() {
 
         fetchVideos();
         
-        const timer = setTimeout(() => {
-          setShowNotes(true);
-        }, 5000);
-
-        return () => clearTimeout(timer);
+        setShowNotes(true);
     }, []);
     
     const videoCategories = useMemo(() => {

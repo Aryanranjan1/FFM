@@ -163,11 +163,7 @@ export default function Home() {
         };
         fetchData();
         
-        const timer = setTimeout(() => {
-          setShowNotes(true);
-        }, 5000);
-
-        return () => clearTimeout(timer);
+        setShowNotes(true);
     }, []);
 
     const getYouTubeId = (url: string) => {

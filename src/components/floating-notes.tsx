@@ -19,7 +19,7 @@ export function FloatingNotes() {
         note.textContent = noteChars[Math.floor(Math.random() * noteChars.length)];
         note.style.left = `${Math.random() * 100}%`;
         note.style.animationDuration = `${Math.random() * 15 + 15}s`;
-        note.style.animationDelay = `${Math.random() * 15}s`;
+        note.style.animationDelay = `${Math.random() * 3}s`; // Faster spawning
         note.style.fontSize = `${Math.random() * 1.5 + 0.75}rem`;
         note.style.opacity = `${Math.random() * 0.5 + 0.2}`;
         container.appendChild(note);
