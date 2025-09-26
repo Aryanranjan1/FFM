@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import Image from 'next/image';
@@ -82,16 +81,6 @@ Fahmie's portfolio covers both international collaborations and competitive musi
     digital: `Fahmie is also active on YouTube, where he shares his original works with a growing international audience, and on stock music platforms where his compositions are licensed for use in films, games, and online content. Whether it's a high-energy anime-inspired battle theme or a reflective, emotionally driven score, Fahmie's focus is always on creating music that elevates the stories it accompanies.`
   };
   
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-  };
-
-  const staggerContainer = {
-      hidden: { opacity: 0 },
-      visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
-  };
-
   return (
     <div className="bg-background text-foreground">
         <section className="py-20 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
@@ -161,15 +150,11 @@ Fahmie's portfolio covers both international collaborations and competitive musi
       
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-        <motion.div
+        <div
           className="py-12"
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
         >
-            <motion.section
+            <section
             className="container mx-auto px-4 md:px-6"
-            variants={fadeInUp}
             >
             <div className="text-center mb-12">
                 <h2 className="font-headline text-4xl font-bold mb-4">COLLABORATIONS</h2>
@@ -179,7 +164,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
             </div>
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 {collaborations.map((collab, index) => (
-                <motion.div key={index} variants={fadeInUp}>
+                <div key={index}>
                     <Card className="bg-transparent border border-primary/20 hover:border-primary/40 transition-all h-full flex flex-col">
                     <CardHeader>
                         <div className="flex items-center space-x-4">
@@ -204,23 +189,19 @@ Fahmie's portfolio covers both international collaborations and competitive musi
                         )}
                     </CardContent>
                     </Card>
-                </motion.div>
+                </div>
                 ))}
             </div>
-            </motion.section>
-        </motion.div>
+            </section>
+        </div>
 
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-        <motion.div
+        <div
             className="py-20 container mx-auto px-4 md:px-6"
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
         >
-            <motion.section
+            <section
                 className="bg-transparent"
-                variants={fadeInUp}
             >
             <div className="container mx-auto">
                 <div className="text-center mb-12">
@@ -229,9 +210,9 @@ Fahmie's portfolio covers both international collaborations and competitive musi
                     Recognition and awards received throughout my musical journey
                     </p>
                 </div>
-                <motion.div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" variants={staggerContainer}>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {achievements.map((achievement, index) => (
-                    <motion.div key={index} variants={fadeInUp}>
+                    <div key={index}>
                         <Card className="bg-card border-primary/20 text-center hover:border-primary/40 transition-colors h-full">
                         <CardHeader>
                             <div className="text-4xl mb-4">{achievement.icon}</div>
@@ -244,20 +225,17 @@ Fahmie's portfolio covers both international collaborations and competitive musi
                             <p className="text-muted-foreground text-sm">{achievement.description}</p>
                         </CardContent>
                         </Card>
-                    </motion.div>
+                    </div>
                     ))}
-                </motion.div>
+                </div>
             </div>
-            </motion.section>
-        </motion.div>
+            </section>
+        </div>
       
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
-        <motion.div
+        <div
           className="py-12"
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
         >
             <section className="container mx-auto px-4 md:px-6">
                 <h2
@@ -265,18 +243,17 @@ Fahmie's portfolio covers both international collaborations and competitive musi
                 >
                     What My Clients Say
                 </h2>
-                <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" variants={staggerContainer}>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {bio.pressReleases.slice(0, 3).map((testimonial, index) => (
-                        <motion.div
+                        <div
                             key={index}
-                            variants={fadeInUp}
                         >
                             <TestimonialCard testimonial={testimonial} />
-                        </motion.div>
+                        </div>
                     ))}
-                </motion.div>
+                </div>
             </section>
-        </motion.div>
+        </div>
       
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
@@ -302,3 +279,5 @@ Fahmie's portfolio covers both international collaborations and competitive musi
     </div>
   );
 }
+
+    

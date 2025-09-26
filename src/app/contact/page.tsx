@@ -94,11 +94,8 @@ export default function ContactPage() {
     <div className="bg-background text-foreground relative">
       <div className="hero-bg" style={{ zIndex: 0 }}></div>
       <div className="relative z-10 py-20">
-        <motion.div 
+        <div 
             className="container mx-auto px-4 md:px-6"
-            initial="hidden" 
-            whileInView="visible" 
-            viewport={{ once: true, amount: 0.1 }}
         >
             <div className="text-center mb-12">
                 <h1 className="text-5xl md:text-7xl font-headline font-bold text-primary">Contact</h1>
@@ -107,11 +104,7 @@ export default function ContactPage() {
                 </p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <motion.div
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8 }}
-                >
+                <div>
                     <h3 className="text-3xl font-bold mb-6 text-primary font-headline">Let's Connect</h3>
                     <p className="text-lg text-muted-foreground mb-8">
                         Whether you're looking for custom compositions, music licensing, or just want to discuss musical ideas, I'm here to help bring your vision to life.
@@ -158,12 +151,8 @@ export default function ContactPage() {
                            })}
                         </div>
                     </div>
-                </motion.div>
-                <motion.div
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                >
+                </div>
+                <div>
                     <Card className="bg-card/80 backdrop-blur-sm border-primary/30">
                       <CardContent className="p-8">
                           <Form {...form}>
@@ -231,10 +220,12 @@ export default function ContactPage() {
                           </Form>
                       </CardContent>
                     </Card>
-                </motion.div>
+                </div>
             </div>
-        </motion.div>
+        </div>
     </div>
     </div>
   );
 }
+
+    

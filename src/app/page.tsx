@@ -76,7 +76,6 @@ export default function Home() {
     const [allVideos, setAllVideos] = useState<VideoType[]>([]);
     
     // UI State
-    const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
     const [showNotes, setShowNotes] = useState(false);
 
     // Player State
@@ -209,36 +208,23 @@ export default function Home() {
                 <Orbs />
                 {showNotes && <FloatingNotes />}
                 <div className="relative z-10 max-w-7xl mx-auto text-center">
-                    <motion.h1 
+                    <h1 
                         className="text-4xl md:text-6xl font-bold mb-6 text-primary font-headline"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
                     >
                         FAHMIE FARHAN
-                    </motion.h1>
-                    <motion.h2 
+                    </h1>
+                    <h2 
                         className="text-2xl md:text-4xl font-bold mb-6 text-white uppercase font-headline"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
                     >
                         Epic Orchestral & Malay Gamelan Composer
-                    </motion.h2>
-                    <motion.p 
+                    </h2>
+                    <p 
                         className="text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
                     >
                         Crafting cinematic soundscapes that blend epic orchestral arrangements with the rich cultural heritage of Malay gamelan music. <span className="text-primary">Experience the fusion of tradition and innovation.</span>
-                    </motion.p>
+                    </p>
                     
-                    <motion.div className="flex justify-center space-x-4 mb-12"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.6 }}
-                    >
+                    <div className="flex justify-center space-x-4 mb-12">
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                            <Link href="/music">
                              <Button size="lg" className="btn-gold px-6 py-3 rounded-md flex items-center">
@@ -253,13 +239,9 @@ export default function Home() {
                               </Button>
                             </Link>
                         </motion.div>
-                    </motion.div>
+                    </div>
 
-                     <motion.div className="flex justify-center space-x-6 mb-12"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.8 }}
-                    >
+                     <div className="flex justify-center space-x-6 mb-12">
                         {socialLinks.map((social, index) => {
                            const Icon = iconComponents[social.platform] || iconComponents.Default;
                            if (!Icon) return null;
@@ -272,9 +254,6 @@ export default function Home() {
                                     className="group transform transition-all duration-300 hover:scale-110"
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.95 }}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 1 + index * 0.1 }}
                                 >
                                     <div className="w-16 h-16 bg-card rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/20">
                                         <Icon className="w-8 h-8" />
@@ -285,13 +264,10 @@ export default function Home() {
                                 </motion.a>
                             );
                         })}
-                    </motion.div>
+                    </div>
 
-                    <motion.div 
+                    <div 
                         className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 text-muted-foreground text-sm mt-12"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 1 }}
                     >
                         <a href="mailto:contact@fahmiefarhan.com" className="flex items-center gap-2 hover:text-primary transition-colors">
                             <Mail className="w-4 h-4" />
@@ -305,7 +281,7 @@ export default function Home() {
                             <MapPin className="w-4 h-4" />
                             <span>Malaysia</span>
                         </div>
-                    </motion.div>
+                    </div>
                 </div>
             </section>
             
@@ -322,11 +298,8 @@ export default function Home() {
                          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Discover a featured track from my collection. Select any song from the portfolio below to play it here.</p>
                      </div>
                      {featuredVideo && videoId ? (
-                        <motion.div 
+                        <div 
                             className="max-w-4xl mx-auto" 
-                            initial={{ opacity: 0, y: 30 }} 
-                            animate={{ opacity: 1, y: 0 }} 
-                            transition={{ duration: 0.8 }}
                         >
                             <Card className="bg-card backdrop-blur-sm border-border overflow-hidden">
                                 <div className="relative aspect-video">
@@ -365,7 +338,7 @@ export default function Home() {
                                     <p className="text-lg text-muted-foreground mb-4">{featuredVideo.category}</p>
                                 </CardContent>
                             </Card>
-                        </motion.div>
+                        </div>
                      ) : ( <div className="text-center text-muted-foreground">Loading featured music...</div> )}
                  </div>
             </section>
@@ -387,11 +360,8 @@ export default function Home() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filteredTracks.map((track, index) => (
-                            <motion.div
+                            <div
                                 key={track.id}
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.6, delay: index * 0.1 }}
                             >
                                 <Card className="music-card bg-card rounded-lg h-full flex flex-col">
                                     <div className="relative cursor-pointer" onClick={() => playTrackFromPortfolio(track)}>
@@ -415,7 +385,7 @@ export default function Home() {
                                         <p className="text-primary text-sm mb-2">{track.category}</p>
                                     </CardContent>
                                 </Card>
-                            </motion.div>
+                            </div>
                         ))}
                     </div>
                     {allVideos.length === 0 && (
@@ -430,19 +400,12 @@ export default function Home() {
             </div>
             
             {/* --- ABOUT SECTION --- */}
-            <motion.section
+            <section
               className="py-20"
-              initial="hidden"
-              animate="visible"
-              variants={{
-                  visible: { transition: { staggerChildren: 0.2 } },
-              }}
             >
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <motion.div
-                            variants={{ hidden: { opacity: 0, x: -50 }, visible: { opacity: 1, x: 0, transition: { duration: 0.8 } } }}
-                        >
+                        <div>
                             <h2 className="text-3xl md:text-4xl font-bold mb-6 font-headline">About the Composer</h2>
                             <p className="text-lg text-muted-foreground mb-4">
                                 Fahmie Farhan is a Malaysian composer who specializes in creating epic orchestral music and modern interpretations of traditional Malay gamelan.
@@ -469,9 +432,8 @@ export default function Home() {
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
-                        <motion.div
-                             variants={{ hidden: { opacity: 0, x: 50 }, visible: { opacity: 1, x: 0, transition: { duration: 0.8, delay: 0.2 } } }}
+                        </div>
+                        <div
                             className="relative"
                         >
                             <div className="relative mx-auto max-w-md">
@@ -482,10 +444,10 @@ export default function Home() {
                                     className="w-full rounded-xl shadow-xl" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent rounded-xl"></div>
                             </div>
-                        </motion.div>
+                        </div>
                     </div>
                 </div>
-            </motion.section>
+            </section>
 
             <div className="section-divider">
               <div className="divider-line"></div>
@@ -493,13 +455,8 @@ export default function Home() {
             </div>
 
             {/* --- TESTIMONIALS SECTION --- */}
-            <motion.section
+            <section
               className="py-20"
-              initial="hidden"
-              animate="visible"
-              variants={{
-                  visible: { transition: { staggerChildren: 0.2 } },
-              }}
             >
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="text-center mb-12">
@@ -510,9 +467,8 @@ export default function Home() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {testimonials.map((testimonial, index) => (
-                            <motion.div
+                            <div
                                 key={testimonial.id}
-                                variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: index * 0.1 } } }}
                             >
                                 <Card className="bg-card backdrop-blur-sm border-border h-full">
                                     <CardContent className="p-6 flex flex-col h-full">
@@ -530,11 +486,11 @@ export default function Home() {
                                         </div>
                                     </CardContent>
                                 </Card>
-                            </motion.div>
+                            </div>
                         ))}
                     </div>
                 </div>
-            </motion.section>
+            </section>
 
             <div className="section-divider">
               <div className="divider-line"></div>
@@ -543,11 +499,8 @@ export default function Home() {
 
             {/* --- CONTACT SECTION --- */}
             <section id="contact" className="py-20">
-                <motion.div 
+                <div 
                     className="container mx-auto px-4 md:px-6"
-                    initial="hidden" 
-                    animate="visible" 
-                    variants={{ visible: { transition: { staggerChildren: 0.2 } } }}
                 >
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Get in Touch</h2>
@@ -556,7 +509,7 @@ export default function Home() {
                         </p>
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                        <motion.div variants={{ hidden: { opacity: 0, x: -50 }, visible: { opacity: 1, x: 0 } }}>
+                        <div>
                             <h3 className="text-3xl font-bold mb-6 text-primary font-headline">Let's Connect</h3>
                             <p className="text-lg text-muted-foreground mb-8">
                                 Whether you're looking for custom compositions, music licensing, or just want to discuss musical ideas, I'm here to help bring your vision to life.
@@ -590,8 +543,8 @@ export default function Home() {
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
-                        <motion.div variants={{ hidden: { opacity: 0, x: 50 }, visible: { opacity: 1, x: 0 } }}>
+                        </div>
+                        <div>
                             <Card className="bg-card backdrop-blur-sm border-border">
                                 <CardContent className="p-8">
                                      <Form {...form}>
@@ -657,10 +610,12 @@ export default function Home() {
                                     </Form>
                                 </CardContent>
                             </Card>
-                        </motion.div>
+                        </div>
                     </div>
-                </motion.div>
+                </div>
             </section>
         </div>
     );
 }
+
+    

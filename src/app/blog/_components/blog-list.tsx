@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { motion } from "framer-motion";
@@ -125,40 +124,19 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
     }
   };
 
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
-    },
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.2, delayChildren: 0.2 },
-    },
-  };
-
   return (
     <>
       {/* Featured Post Section */}
       <section className="py-20">
           <div className="container mx-auto px-4 md:px-6">
-            <motion.div className="text-center mb-12" 
-                initial="hidden"
-                animate="visible"
-                variants={fadeInUp}
-            >
+            <div className="text-center mb-12">
               <h2 className="text-3xl font-headline font-bold text-primary mb-4">
                 FEATURED POST
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 A hand-picked article to spark your curiosity.
               </p>
-            </motion.div>
+            </div>
             {loading && !featuredPost ? (
               <div className="bg-background border-border/50 overflow-hidden md:grid md:grid-cols-2 items-center max-w-4xl mx-auto">
                   <Skeleton className="w-full h-auto aspect-video md:aspect-[4/3]" />
@@ -176,11 +154,7 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
                   </CardContent>
               </div>
             ) : featuredPost && (
-                <motion.div 
-                    initial="hidden"
-                    animate="visible"
-                    variants={fadeInUp}
-                >
+                <div>
                   <Card className="bg-transparent border-border/50 hover:border-primary/50 transition-all duration-300 group overflow-hidden md:grid md:grid-cols-2 items-center max-w-4xl mx-auto">
                     <div className="relative">
                       <Link href={`/blog/${featuredPost.id}`}>
@@ -231,26 +205,23 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
                       </Button>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </div>
             )}
           </div>
         </section>
 
 
       {/* All Articles Section */}
-      <motion.section
+      <section
         className="py-20 bg-background"
-        initial="hidden"
-        animate="visible"
-        variants={staggerContainer}
       >
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col gap-4 mb-12">
-            <motion.div className="text-center" variants={fadeInUp}>
+            <div className="text-center">
               <h2 className="text-3xl font-headline font-bold text-primary mb-4">
                 ALL ARTICLES
               </h2>
-            </motion.div>
+            </div>
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="relative w-full md:max-w-xs">
                 <Input placeholder="Search articles..." className="pl-10" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
@@ -333,12 +304,11 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
                 ))}
              </div>
           ) : filteredAndSortedPosts.length > 0 ? (
-              <motion.div
+              <div
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                variants={staggerContainer}
               >
                 {filteredAndSortedPosts.map((article) => (
-                  <motion.div key={article.id} variants={fadeInUp}>
+                  <div key={article.id}>
                     <Card className="bg-card border-border/50 hover:border-primary/50 transition-all duration-300 group overflow-hidden flex flex-col h-full">
                       <Link href={`/blog/${article.id}`} className="block">
                         <div className="relative">
@@ -401,9 +371,9 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
                         </div>
                       </CardContent>
                     </Card>
-                  </motion.div>
+                  </div>
                 ))}
-              </motion.div>
+              </div>
             ) : (
                 <div className="text-center py-16 text-muted-foreground">
                     <p>No articles found. Check back later!</p>
@@ -411,7 +381,9 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
             )
           }
         </div>
-      </motion.section>
+      </section>
     </>
   );
 }
+
+    

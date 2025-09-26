@@ -1,11 +1,10 @@
 
-
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { Collaboration, Achievement } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { db } from "@/lib/firebase";
@@ -176,16 +175,6 @@ export default function MusicPage() {
         );
     };
 
-    const fadeInUp: Variants = {
-        hidden: { opacity: 0, y: 30 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-    };
-
-    const staggerContainer: Variants = {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
-    };
-
     const latestRelease = useMemo(() => videos.find(t => t.isFeatured) || videos[0], [videos]);
 
     const VideoSkeleton = () => (
@@ -240,34 +229,25 @@ export default function MusicPage() {
             <section className="py-24 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
                 <div className="hero-bg"></div>
                 <div className="relative z-10 container mx-auto px-4 md:px-6">
-                    <motion.h1 
+                    <h1 
                         className="text-5xl md:text-7xl font-headline font-bold text-primary" 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
                     >
                         Music
-                    </motion.h1>
-                    <motion.p 
+                    </h1>
+                    <p 
                         className="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto" 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
                     >
                         A curated collection of cinematic and cultural compositions for licensing and listening.
-                    </motion.p>
+                    </p>
                 </div>
             </section>
             
             {/* Video Portfolio Section */}
-            <motion.section
+            <section
                 className="py-20"
-                initial="hidden"
-                animate="visible"
-                variants={staggerContainer}
             >
                 <div className="container mx-auto px-4 md:px-6">
-                    <motion.div className="flex justify-center flex-wrap gap-2 mb-12" variants={fadeInUp}>
+                    <div className="flex justify-center flex-wrap gap-2 mb-12">
                         {videoCategories.map(category => (
                             <Button
                                 key={category}
@@ -283,7 +263,7 @@ export default function MusicPage() {
                                 {category}
                             </Button>
                         ))}
-                    </motion.div>
+                    </div>
 
                     {loading ? (
                          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
@@ -297,9 +277,8 @@ export default function MusicPage() {
                         >
                             {currentVideos.map((video, index) => {
                                 return (
-                                     <motion.div
+                                     <div
                                         key={video.id}
-                                        variants={fadeInUp}
                                         onMouseEnter={() => setHoveredMusicCard(video.id)}
                                         onMouseLeave={() => setHoveredMusicCard(null)}
                                     >
@@ -343,7 +322,7 @@ export default function MusicPage() {
                                                 </div>
                                             </CardContent>
                                         </Card>
-                                    </motion.div>
+                                    </div>
                                 );
                             })}
                         </motion.div>
@@ -374,19 +353,16 @@ export default function MusicPage() {
                         </>
                     )}
                 </div>
-            </motion.section>
+            </section>
 
              {/* Latest Release Section */}
             {!loading && latestRelease && (
-                <motion.section
+                <section
                     className="py-20 bg-gradient-to-br from-gray-900 to-black relative overflow-hidden"
-                    initial="hidden"
-                    animate="visible"
-                    variants={staggerContainer}
                 >
                     <div className="hero-bg"></div>
                     <div className="container mx-auto px-4 md:px-6 relative z-10">
-                        <motion.div variants={fadeInUp}>
+                        <div>
                             <Card className="overflow-hidden bg-transparent border-0 md:border md:bg-card md:border-border/50">
                                  <CardContent className="p-0 md:p-6 grid md:grid-cols-2 gap-8 items-center">
                                     <div className="relative group aspect-video md:aspect-[16/9] cursor-pointer" onClick={() => handlePlayVideo(latestRelease)}>
@@ -416,30 +392,27 @@ export default function MusicPage() {
                                     </div>
                                 </CardContent>
                             </Card>
-                        </motion.div>
+                        </div>
                     </div>
-                </motion.section>
+                </section>
             )}
 
             <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
             {/* Collaborations Section */}
-            <motion.section
+            <section
                 className="py-20"
-                initial="hidden"
-                animate="visible"
-                variants={staggerContainer}
             >
                 <div className="container mx-auto px-4 md:px-6">
-                    <motion.div className="text-center mb-12" variants={fadeInUp}>
+                    <div className="text-center mb-12">
                         <h2 className="text-4xl font-bold mb-4">Collaborations</h2>
                         <p className="text-lg text-muted-foreground">
                         Working with talented artists and ensembles to create extraordinary music
                         </p>
-                    </motion.div>
-                    <motion.div className="grid md:grid-cols-2 gap-8" variants={staggerContainer}>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-8">
                         {collaborations.map((collab, index) => (
-                        <motion.div key={index} variants={fadeInUp}>
+                        <div key={index}>
                             <Card className="bg-card border-primary/20 hover:border-primary/40 transition-all h-full">
                             <CardHeader>
                                 <div className="flex items-center space-x-4">
@@ -464,31 +437,28 @@ export default function MusicPage() {
                                 )}
                             </CardContent>
                             </Card>
-                        </motion.div>
+                        </div>
                         ))}
-                    </motion.div>
+                    </div>
                 </div>
-            </motion.section>
+            </section>
 
              <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
             {/* Achievements Section */}
-            <motion.section
+            <section
                 className="py-20"
-                initial="hidden"
-                animate="visible"
-                variants={staggerContainer}
             >
                 <div className="container mx-auto px-4 md:px-6">
-                <motion.div className="text-center mb-12" variants={fadeInUp}>
+                <div className="text-center mb-12">
                     <h2 className="text-4xl font-bold mb-4">Achievements</h2>
                     <p className="text-lg text-muted-foreground">
                     Recognition and awards received throughout my musical journey
                     </p>
-                </motion.div>
-                <motion.div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" variants={staggerContainer}>
+                </div>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {achievements.map((achievement, index) => (
-                    <motion.div key={index} variants={fadeInUp}>
+                    <div key={index}>
                         <Card className="bg-card border-primary/20 text-center hover:border-primary/40 transition-colors h-full">
                         <CardHeader>
                             <div className="text-4xl mb-4">{achievement.icon}</div>
@@ -501,40 +471,33 @@ export default function MusicPage() {
                             <p className="text-muted-foreground text-sm">{achievement.description}</p>
                         </CardContent>
                         </Card>
-                    </motion.div>
+                    </div>
                     ))}
-                </motion.div>
                 </div>
-            </motion.section>
+                </div>
+            </section>
 
             <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
             {/* Testimonials Section */}
             <section className="py-20">
                 <div className="container mx-auto px-4 md:px-6">
-                    <motion.h2
+                    <h2
                         className="text-3xl md:text-4xl font-headline font-bold text-center mb-12"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
                     >
                         What My Clients Say
-                    </motion.h2>
-                    <motion.div
+                    </h2>
+                    <div
                         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                        initial="hidden"
-                        animate="visible"
-                        variants={staggerContainer}
                     >
                          {bio.pressReleases.slice(0, 3).map((testimonial, index) => (
-                            <motion.div
+                            <div
                                 key={index}
-                                variants={fadeInUp}
                             >
                                <TestimonialCard testimonial={testimonial} />
-                            </motion.div>
+                            </div>
                         ))}
-                    </motion.div>
+                    </div>
                 </div>
             </section>
 
@@ -557,3 +520,5 @@ export default function MusicPage() {
         </div>
     );
 }
+
+    

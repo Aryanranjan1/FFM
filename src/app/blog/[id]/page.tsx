@@ -254,19 +254,12 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
             <section className="py-20">
                  <div className="container mx-auto px-4 md:px-6">
                     <h2 className="text-3xl font-headline font-bold text-center mb-12">Related Articles</h2>
-                    <motion.div
+                    <div
                       className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ staggerChildren: 0.2 }}
                     >
                         {relatedPosts.map(relatedPost => (
                             <Link href={`/blog/${relatedPost.id}`} key={relatedPost.id}>
-                                <motion.div
-                                  initial={{ opacity: 0, y: 20 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  transition={{ duration: 0.5 }}
-                                >
+                                <div>
                                 <Card className="bg-card border-border/50 hover:border-primary/50 transition-all duration-300 group overflow-hidden flex flex-col h-full">
                                     {relatedPost.coverImageUrl && (
                                         <div className="relative">
@@ -297,13 +290,15 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                                         </div>
                                     </CardContent>
                                 </Card>
-                                </motion.div>
+                                </div>
                             </Link>
                         ))}
-                    </motion.div>
+                    </div>
                 </div>
             </section>
         )}
     </div>
   );
 }
+
+    
