@@ -11,15 +11,20 @@ export function FloatingNotes() {
     if (container) {
       container.innerHTML = ''; // Clear existing notes
       const noteChars = ["♪", "♫", "♬", "♩"];
-      const numNotes = 10; // Reduced from 20 for a subtler effect
+      const numNotes = 10; 
 
       for (let i = 0; i < numNotes; i++) {
         const note = document.createElement("div");
         note.className = "music-note";
         note.textContent = noteChars[Math.floor(Math.random() * noteChars.length)];
         note.style.left = `${Math.random() * 100}%`;
-        note.style.animationDuration = `${Math.random() * 15 + 15}s`;
-        note.style.animationDelay = `${Math.random() * 3}s`; // Faster spawning
+        
+        const animationDuration = Math.random() * 15 + 15; // Duration between 15s and 30s
+        note.style.animationDuration = `${animationDuration}s`;
+        
+        // Apply a random negative delay to make notes appear mid-animation
+        note.style.animationDelay = `-${Math.random() * animationDuration}s`;
+        
         note.style.fontSize = `${Math.random() * 1.5 + 0.75}rem`;
         note.style.opacity = `${Math.random() * 0.5 + 0.2}`;
         container.appendChild(note);
