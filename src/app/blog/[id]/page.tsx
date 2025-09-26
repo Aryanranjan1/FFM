@@ -154,7 +154,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="bg-transparent text-foreground">
-        <section className="relative py-12 md:py-20 bg-gradient-to-br from-gray-900 to-black">
+        <section className="relative py-12 md:py-20">
             <div className="hero-bg"></div>
              <div className="container mx-auto px-4 md:px-6 relative z-10">
                 <article className="max-w-4xl mx-auto">
