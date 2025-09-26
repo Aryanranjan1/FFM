@@ -112,14 +112,6 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
           </div>
       )
   }
-
-  // Simple markdown-to-HTML
-  const formatContent = (content: string) => {
-    return content
-        .split('\n\n')
-        .map(p => `<p class="mb-6 leading-relaxed">${p.replace(/\n/g, '<br/>')}</p>`)
-        .join('');
-  }
   
   const handlePrint = () => {
     window.print();
@@ -209,7 +201,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                 {/* Article Content */}
                 <div 
                     className="prose prose-lg prose-invert mx-auto text-foreground/90"
-                    dangerouslySetInnerHTML={{ __html: formatContent(post.content) }}
+                    dangerouslySetInnerHTML={{ __html: post.content }}
                 />
 
                 {/* Tags */}
@@ -300,5 +292,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
+
+    
 
     

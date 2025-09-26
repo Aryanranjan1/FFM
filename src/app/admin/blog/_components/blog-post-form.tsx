@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -19,7 +19,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 const blogPostSchema = z.object({
@@ -42,6 +41,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<BlogPostFormValues>({
     resolver: zodResolver(blogPostSchema),
@@ -57,6 +57,45 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
       isFeatured: post?.isFeatured || false,
     },
   });
+
+  const handleContentChange = (event: React.FormEvent<HTMLDivElement>) => {
+    form.setValue('content', event.currentTarget.innerHTML);
+  };
+  
+  // Set initial content for the contentEditable div
+  useEffect(() => {
+    if (contentRef.current && post?.content) {
+      contentRef.current.innerHTML = post.content;
+    }
+  }, [post]);
+
+  const execCommand = (command: string, value?: string) => {
+    document.execCommand(command, false, value);
+    contentRef.current?.focus();
+  };
+
+  const handleLink = () => {
+    const url = prompt('Enter the URL:');
+    if (url) {
+      execCommand('createLink', url);
+    }
+  };
+
+  const applyFontSize = (sizeClass: string) => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    
+    const range = selection.getRangeAt(0);
+    const selectedText = range.toString();
+
+    if (selectedText) {
+        const span = document.createElement('span');
+        span.className = sizeClass;
+        span.textContent = selectedText;
+        range.deleteContents();
+        range.insertNode(span);
+    }
+  };
 
   const pageTitle = post ? "EDIT BLOG POST" : "CREATE NEW BLOG POST";
   const actionText = post ? "Save Changes" : "Create Post";
@@ -131,32 +170,45 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                       <FormLabel>Content</FormLabel>
                       <div className="rounded-md border border-input mt-2">
                           <div className="p-2 border-b border-input flex items-center flex-wrap gap-1">
-                              <Select defaultValue="font" disabled>
+                              <Select onValueChange={(value) => execCommand('formatBlock', value)} defaultValue="p">
                                   <SelectTrigger className="w-[120px] h-8">
-                                      <SelectValue placeholder="Font" />
+                                      <SelectValue placeholder="Format" />
                                   </SelectTrigger>
+                                  <SelectContent>
+                                      <SelectItem value="p">Normal</SelectItem>
+                                      <SelectItem value="h1">Heading 1</SelectItem>
+                                      <SelectItem value="h2">Heading 2</SelectItem>
+                                      <SelectItem value="blockquote">Quote</SelectItem>
+                                      <SelectItem value="pre">Code</SelectItem>
+                                  </SelectContent>
                               </Select>
-                              <Select defaultValue="size" disabled>
-                                  <SelectTrigger className="w-[80px] h-8">
-                                      <SelectValue placeholder="Size" />
+                              <Select onValueChange={applyFontSize} defaultValue="text-base">
+                                  <SelectTrigger className="w-[100px] h-8">
+                                      <SelectValue placeholder="Font Size" />
                                   </SelectTrigger>
+                                  <SelectContent>
+                                      <SelectItem value="text-sm">Small</SelectItem>
+                                      <SelectItem value="text-base">Medium</SelectItem>
+                                      <SelectItem value="text-2xl">Large</SelectItem>
+                                  </SelectContent>
                               </Select>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8"><Bold className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8"><Italic className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8"><Underline className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8"><Strikethrough className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8"><LinkIcon className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8"><ImageIcon className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8"><List className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8"><ListOrdered className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8"><Code className="h-4 w-4"/></Button>
-                              <Button type="button" variant="outline" size="icon" className="h-8 w-8"><Quote className="h-4 w-4"/></Button>
+                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('bold')}><Bold className="h-4 w-4"/></Button>
+                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('italic')}><Italic className="h-4 w-4"/></Button>
+                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('underline')}><Underline className="h-4 w-4"/></Button>
+                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('strikeThrough')}><Strikethrough className="h-4 w-4"/></Button>
+                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={handleLink}><LinkIcon className="h-4 w-4"/></Button>
+                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('insertUnorderedList')}><List className="h-4 w-4"/></Button>
+                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('insertOrderedList')}><ListOrdered className="h-4 w-4"/></Button>
+                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('formatBlock', 'pre')}><Code className="h-4 w-4"/></Button>
+                              <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('formatBlock', 'blockquote')}><Quote className="h-4 w-4"/></Button>
                           </div>
                            <FormControl>
-                              <Textarea 
-                                  placeholder="Start writing your content here..." 
-                                  className="min-h-[400px] border-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-t-none"
-                                  {...field}
+                              <div
+                                  ref={contentRef}
+                                  contentEditable
+                                  onInput={handleContentChange}
+                                  className="min-h-[400px] p-4 focus:outline-none"
+                                  dangerouslySetInnerHTML={{ __html: field.value }}
                               />
                             </FormControl>
                       </div>
@@ -293,7 +345,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                     <FormItem>
                       <FormLabel>SEO Description</FormLabel>
                        <FormControl>
-                          <Textarea rows={3} {...field} />
+                          <Input rows={3} {...field} />
                        </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -308,3 +360,5 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
     </motion.div>
   );
 }
+
+    
