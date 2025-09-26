@@ -31,24 +31,6 @@ import type { BlogPost } from "@/lib/admin-types";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const FeaturedPostSkeleton = () => (
-    <Card className="bg-background border-border/50 overflow-hidden md:grid md:grid-cols-2 items-center max-w-4xl mx-auto">
-      <Skeleton className="w-full h-auto aspect-video md:aspect-[4/3]" />
-      <CardContent className="p-6 space-y-3">
-        <Skeleton className="h-5 w-24" />
-        <Skeleton className="h-8 w-3/4" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-1/2" />
-        <div className="flex justify-between items-center text-sm text-muted-foreground pt-3 border-t border-border/50">
-          <Skeleton className="h-4 w-24" />
-          <Skeleton className="h-4 w-20" />
-        </div>
-        <Skeleton className="h-10 w-full mt-2" />
-      </CardContent>
-    </Card>
-);
-
 export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
   const [activeTab, setActiveTab] = useState("All");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -177,7 +159,23 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
                 A hand-picked article to spark your curiosity.
               </p>
             </motion.div>
-            {loading ? <FeaturedPostSkeleton /> : featuredPost && (
+            {loading && !featuredPost ? (
+              <div className="bg-background border-border/50 overflow-hidden md:grid md:grid-cols-2 items-center max-w-4xl mx-auto">
+                  <Skeleton className="w-full h-auto aspect-video md:aspect-[4/3]" />
+                  <CardContent className="p-6 space-y-3">
+                    <Skeleton className="h-5 w-24" />
+                    <Skeleton className="h-8 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <div className="flex justify-between items-center text-sm text-muted-foreground pt-3 border-t border-border/50">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-4 w-20" />
+                    </div>
+                    <Skeleton className="h-10 w-full mt-2" />
+                  </CardContent>
+              </div>
+            ) : featuredPost && (
                 <motion.div 
                     initial="hidden"
                     whileInView="visible"
@@ -419,5 +417,3 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
     </>
   );
 }
-
-    
