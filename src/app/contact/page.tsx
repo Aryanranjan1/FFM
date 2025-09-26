@@ -93,11 +93,8 @@ export default function ContactPage() {
   return (
     <div className="bg-transparent text-foreground">
       <div className="relative py-20">
-      <div className="hero-bg" style={{ zIndex: 0 }}></div>
-      <div className="relative z-10">
-        <div 
-            className="container mx-auto px-4 md:px-6"
-        >
+        <div className="hero-bg"></div>
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
             <div className="text-center mb-12">
                 <h1 className="text-5xl md:text-7xl font-headline font-bold text-primary">Contact</h1>
                 <p className="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto">
