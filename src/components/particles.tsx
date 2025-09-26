@@ -8,8 +8,8 @@ export function Particles() {
   useEffect(() => {
     // Create particles
     if (particlesRef.current) {
-      particlesRef.current.innerHTML = '';
-      for (let i = 0; i < 20; i++) {
+      particlesRef.current.innerHTML = ''; // Clear existing particles
+      for (let i = 0; i < 15; i++) {
         const particle = document.createElement("div");
         particle.className = "particle";
         particle.style.left = `${Math.random() * 100}%`;
@@ -17,6 +17,8 @@ export function Particles() {
         particle.style.height = particle.style.width;
         particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
         particle.style.animationDelay = `${Math.random() * 5}s`;
+        const xDrift = (Math.random() - 0.5) * 200;
+        particle.style.setProperty('--x-drift', xDrift.toString());
         particlesRef.current.appendChild(particle);
       }
     }
