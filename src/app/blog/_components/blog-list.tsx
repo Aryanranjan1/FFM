@@ -162,30 +162,30 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
   );
 
   const ArticleCardSkeleton = () => (
-      <Card className="bg-card border-border/50 overflow-hidden flex flex-col h-full">
-          <Skeleton className="w-full aspect-video" />
-          <CardHeader className="p-4 space-y-2">
-              <div className="flex justify-between items-center text-sm">
-                  <Skeleton className="h-5 w-20" />
-                  <Skeleton className="h-4 w-24" />
-              </div>
-              <Skeleton className="h-6 w-full" />
-              <Skeleton className="h-6 w-3/4" />
-          </CardHeader>
-          <CardContent className="p-4 pt-0 flex flex-col flex-grow">
-              <div className="space-y-2 flex-grow">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-5/6" />
-              </div>
-              <div className="mt-4 space-y-3 border-t border-border/50 pt-4 text-xs">
-                  <div className="flex justify-between">
-                      <Skeleton className="h-4 w-24" />
-                      <Skeleton className="h-4 w-28" />
-                  </div>
-                  <Skeleton className="h-10 w-full" />
-              </div>
-          </CardContent>
-      </Card>
+    <Card className="bg-card border-border/50 overflow-hidden flex flex-col h-full">
+        <Skeleton className="w-full aspect-video" />
+        <CardHeader className="p-4 space-y-2">
+            <div className="flex justify-between items-center text-sm">
+                <Skeleton className="h-5 w-20" />
+                <Skeleton className="h-4 w-24" />
+            </div>
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-3/4" />
+        </CardHeader>
+        <CardContent className="p-4 pt-0 flex flex-col flex-grow">
+            <div className="space-y-2 flex-grow">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-5/6" />
+            </div>
+            <div className="mt-4 space-y-3 border-t border-border/50 pt-4 text-xs">
+                <div className="flex justify-between">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-28" />
+                </div>
+                <Skeleton className="h-10 w-full" />
+            </div>
+        </CardContent>
+    </Card>
   );
 
 
