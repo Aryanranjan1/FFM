@@ -22,17 +22,6 @@ import { TestimonialCard } from '@/components/testimonial-card';
 import { FloatingNotes } from '@/components/floating-notes';
 
 
-function Orbs() {
-  return (
-    <div className="floating-orbs">
-      <div className="orb" style={{ width: '300px', height: '300px', top: '10%', left: '20%', animationDuration: '18s' }}></div>
-      <div className="orb" style={{ width: '200px', height: '200px', top: '50%', left: '80%', animationDuration: '22s' }}></div>
-      <div className="orb" style={{ width: '150px', height: '150px', top: '80%', left: '10%', animationDuration: '16s' }}></div>
-    </div>
-  );
-}
-
-
 const collaborations: Collaboration[] = [
     {
       name: "Diane Allen",
@@ -246,11 +235,9 @@ export default function MusicPage() {
                 )}
             </AnimatePresence>
             {/* Hero Section */}
-            <section className="relative flex flex-col items-center justify-center min-h-screen pt-20 pb-20 px-4 md:px-6 overflow-hidden">
+            <section className="py-20 text-center relative overflow-hidden bg-gradient-to-br from-gray-900 to-black">
                 <div className="hero-bg"></div>
-                <Orbs />
-                {showNotes && <FloatingNotes />}
-                <div className="relative z-10 max-w-7xl mx-auto text-center">
+                <div className="container mx-auto px-4 md:px-6 relative z-10">
                     <h1 
                         className="text-5xl md:text-7xl font-headline font-bold text-primary" 
                     >
