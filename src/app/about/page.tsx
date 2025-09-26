@@ -151,10 +151,11 @@ Fahmie's portfolio covers both international collaborations and competitive musi
         <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
 
         <section
-        className="py-12"
+        className="py-12 relative overflow-hidden"
         >
+            <div className="hero-bg"></div>
             <div
-            className="container mx-auto px-4 md:px-6"
+            className="container mx-auto px-4 md:px-6 relative z-10"
             >
             <div className="text-center mb-12">
                 <h2 className="font-headline text-4xl font-bold mb-4">COLLABORATIONS</h2>
@@ -279,5 +280,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
     </div>
   );
 }
+
+    
 
     
