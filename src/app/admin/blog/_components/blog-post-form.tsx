@@ -64,7 +64,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
   
   // Set initial content for the contentEditable div
   useEffect(() => {
-    if (contentRef.current && post?.content) {
+    if (contentRef.current && post?.content && contentRef.current.innerHTML !== post.content) {
       contentRef.current.innerHTML = post.content;
     }
   }, [post]);
@@ -81,6 +81,13 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
     const url = prompt('Enter the URL:');
     if (url) {
       execCommand('createLink', url);
+    }
+  };
+  
+  const handleImage = () => {
+    const url = prompt('Enter the Image URL:');
+    if (url) {
+      execCommand('insertImage', url);
     }
   };
 
@@ -168,7 +175,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                   )}
                 />
 
-                <FormItem>
+                <div>
                   <FormLabel>Content</FormLabel>
                    <div className="rounded-md border border-input mt-2">
                        <div className="p-2 border-b border-input flex items-center flex-wrap gap-1">
@@ -203,6 +210,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                            <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('insertOrderedList')}><ListOrdered className="h-4 w-4"/></Button>
                            <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('formatBlock', 'pre')}><Code className="h-4 w-4"/></Button>
                            <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('formatBlock', 'blockquote')}><Quote className="h-4 w-4"/></Button>
+                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={handleImage}><ImageIcon className="h-4 w-4"/></Button>
                        </div>
                        <div
                            ref={contentRef}
@@ -216,13 +224,15 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                     control={form.control}
                     name="content"
                     render={({ field }) => (
-                      <FormControl>
-                        <input type="hidden" {...field} />
-                      </FormControl>
+                      <FormItem>
+                        <FormControl>
+                          <input type="hidden" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )}
                   />
-                  <FormMessage />
-                </FormItem>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -367,3 +377,5 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
     </motion.div>
   );
 }
+
+    
