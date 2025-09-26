@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink, Heart, Share2, Loader2, X, Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import { bio } from '@/lib/data';
 import { Skeleton } from '@/components/ui/skeleton';
+import { TestimonialCard } from '@/components/testimonial-card';
 
 const collaborations: Collaboration[] = [
     {
@@ -535,22 +536,7 @@ export default function MusicPage() {
                                 viewport={{ once: true, amount: 0.3 }}
                                 transition={{ duration: 0.6, delay: index * 0.1 }}
                             >
-                                <Card className="bg-background/50 border-border/50 h-full flex flex-col p-6">
-                                    <div className="flex-grow mb-4">
-                                        <p className="text-muted-foreground italic">"{testimonial.title}"</p>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <div className="flex-shrink-0">
-                                            <div className="flex">
-                                                {[...Array(5)].map((_, i) => (
-                                                    <Star key={i} className="w-5 h-5 text-primary fill-current" />
-                                                ))}
-                                            </div>
-                                            <p className="font-bold mt-2">{testimonial.publication}</p>
-                                            <p className="text-sm text-muted-foreground">{new Date(testimonial.date).toLocaleDateString()}</p>
-                                        </div>
-                                    </div>
-                                </Card>
+                               <TestimonialCard testimonial={testimonial} />
                             </motion.div>
                         ))}
                     </div>
