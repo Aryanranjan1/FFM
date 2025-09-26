@@ -177,7 +177,7 @@ Fahmie's portfolio covers both international collaborations and competitive musi
             <motion.div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto" variants={staggerContainer}>
                 {collaborations.map((collab, index) => (
                 <motion.div key={index} variants={fadeInUp}>
-                    <Card className="bg-background/50 border border-primary/20 hover:border-primary/40 transition-all h-full flex flex-col">
+                    <Card className="bg-transparent border border-primary/20 hover:border-primary/40 transition-all h-full flex flex-col">
                     <CardHeader>
                         <div className="flex items-center space-x-4">
                         <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
