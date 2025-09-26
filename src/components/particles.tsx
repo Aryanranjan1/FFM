@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -28,3 +29,5 @@ export function Particles() {
     <div className="particles-container" ref={particlesRef}></div>
   );
 }
+
+    
