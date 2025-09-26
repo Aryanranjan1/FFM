@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -237,6 +236,38 @@ export default function Home() {
                               </Button>
                             </Link>
                         </motion.div>
+                    </motion.div>
+
+                     <motion.div className="flex justify-center space-x-6 mb-12"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.8 }}
+                    >
+                        {socialLinks.map((social, index) => {
+                           const Icon = iconComponents[social.platform] || iconComponents.Default;
+                           if (!Icon) return null;
+                           return (
+                                <motion.a
+                                    key={social.id}
+                                    href={social.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="group transform transition-all duration-300 hover:scale-110"
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 1 + index * 0.1 }}
+                                >
+                                    <div className="w-16 h-16 bg-card rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/20">
+                                        <Icon className="w-8 h-8" />
+                                    </div>
+                                    <p className="text-xs text-muted-foreground mt-2 group-hover:text-primary transition-colors">
+                                        {social.platform}
+                                    </p>
+                                </motion.a>
+                            );
+                        })}
                     </motion.div>
 
                     <motion.div 
@@ -611,5 +642,3 @@ export default function Home() {
         </div>
     );
 }
-
-    
