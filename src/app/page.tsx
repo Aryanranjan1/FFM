@@ -19,8 +19,9 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { submitContactForm } from "@/app/actions";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { FloatingNotes } from "@/components/floating-notes";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
 
 import {
     Music,
@@ -187,11 +188,6 @@ export default function Home() {
     
     return (
         <div className="min-h-screen bg-background text-foreground">
-             <div className="floating-orbs">
-                <div className="orb" style={{ width: '300px', height: '300px', top: '10%', left: '20%', animationDuration: '18s' }}></div>
-                <div className="orb" style={{ width: '200px', height: '200px', top: '50%', left: '80%', animationDuration: '22s' }}></div>
-                <div className="orb" style={{ width: '150px', height: '150px', top: '80%', left: '10%', animationDuration: '16s' }}></div>
-             </div>
             <FloatingNotes />
             <section id="home" className="relative flex flex-col items-center justify-center min-h-screen pt-20 pb-20 px-4 md:px-6 overflow-hidden">
                 <div className="hero-bg"></div>
@@ -544,7 +540,7 @@ export default function Home() {
                         <motion.div>
                             <Card className="bg-card backdrop-blur-sm border-border">
                                 <CardContent className="p-8">
-                                     <FormProvider {...form}>
+                                     <Form {...form}>
                                         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                                             <FormField
                                             control={form.control}
@@ -604,7 +600,7 @@ export default function Home() {
                                                 </Button>
                                             </motion.div>
                                         </form>
-                                    </FormProvider>
+                                    </Form>
                                 </CardContent>
                             </Card>
                         </motion.div>
@@ -614,3 +610,5 @@ export default function Home() {
         </div>
     );
 }
+
+    

@@ -33,6 +33,17 @@ function ClientOnly({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function Orbs() {
+  return (
+    <div className="floating-orbs">
+      <div className="orb" style={{ width: '300px', height: '300px', top: '10%', left: '20%', animationDuration: '18s' }}></div>
+      <div className="orb" style={{ width: '200px', height: '200px', top: '50%', left: '80%', animationDuration: '22s' }}></div>
+      <div className="orb" style={{ width: '150px', height: '150px', top: '80%', left: '10%', animationDuration: '16s' }}></div>
+    </div>
+  );
+}
+
+
 // This is the root layout component. It's a client component to allow for hooks.
 export default function RootLayout({
   children,
@@ -63,12 +74,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("dark", cinzel.variable, inter.variable)}>
       <head>
-        <title>FFM</title>
-        <meta name="description" content="Official artist website for FFM" />
+        <title>Fahmie Farhan</title>
+        <meta name="description" content="Official artist website for Fahmie Farhan, Epic Orchestral & Malay Gamelan Composer" />
       </head>
       <body className={cn('font-body antialiased min-h-screen flex flex-col', { 'bg-background': isAdminPage })}>
         <ClientOnly>
           <Particles />
+          <Orbs />
         </ClientOnly>
         <MusicPlayerProvider>
           {isAdminPage ? (

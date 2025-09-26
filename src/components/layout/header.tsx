@@ -55,56 +55,61 @@ export function Header() {
         initial="visible"
         animate={hidden ? "hidden" : "visible"}
         transition={{ duration: 0.35, ease: "easeInOut" }}
-        className="sticky top-0 z-50 w-full navbar"
+        className="sticky top-0 z-50 w-full"
       >
-        <div className="container flex h-20 items-center px-4 md:px-6">
-          <Link href="/" className="flex items-center space-x-2">
-            <Logo className="h-6 w-auto text-primary" />
-          </Link>
-          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium ml-auto">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  'transition-colors hover:text-primary nav-link',
-                  pathname === link.href ? 'text-primary' : 'text-foreground/60'
-                )}
-              >
-                {link.label}
+        <div className="relative">
+          <div className="absolute left-0 top-0 h-full w-1.5 bg-primary"></div>
+          <div className="navbar">
+            <div className="container flex h-20 items-center px-4 md:px-6">
+              <Link href="/" className="flex items-center space-x-2 text-2xl font-bold font-headline text-primary">
+                FAHMIE FARHAN
               </Link>
-            ))}
-          </nav>
-          <div className="flex items-center justify-end md:hidden ml-auto">
-            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
-                  <span className="sr-only">Open Menu</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="navbar">
-                <nav className="grid gap-6 text-lg font-medium mt-10">
-                  <Link href="/" className="flex items-center space-x-2 mb-4" onClick={() => setIsSheetOpen(false)}>
-                    <Logo className="h-6 w-auto text-primary" />
+              <nav className="hidden md:flex items-center space-x-6 text-sm font-medium ml-auto">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      'transition-colors hover:text-primary nav-link',
+                      pathname === link.href ? 'text-primary' : 'text-foreground/60'
+                    )}
+                  >
+                    {link.label}
                   </Link>
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setIsSheetOpen(false)}
-                      className={cn(
-                        'flex items-center gap-4 px-2.5 transition-colors hover:text-primary',
-                        pathname === link.href ? 'text-primary' : 'text-foreground/70'
-                      )}
-                    >
-                      <link.icon className="h-5 w-5" />
-                      {link.label}
-                    </Link>
-                  ))}
-                </nav>
-              </SheetContent>
-            </Sheet>
+                ))}
+              </nav>
+              <div className="flex items-center justify-end md:hidden ml-auto">
+                <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+                  <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <Menu className="h-6 w-6" />
+                      <span className="sr-only">Open Menu</span>
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="left" className="navbar">
+                    <nav className="grid gap-6 text-lg font-medium mt-10">
+                      <Link href="/" className="flex items-center space-x-2 mb-4 text-2xl font-bold font-headline text-primary" onClick={() => setIsSheetOpen(false)}>
+                        FAHMIE FARHAN
+                      </Link>
+                      {navLinks.map((link) => (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          onClick={() => setIsSheetOpen(false)}
+                          className={cn(
+                            'flex items-center gap-4 px-2.5 transition-colors hover:text-primary',
+                            pathname === link.href ? 'text-primary' : 'text-foreground/70'
+                          )}
+                        >
+                          <link.icon className="h-5 w-5" />
+                          {link.label}
+                        </Link>
+                      ))}
+                    </nav>
+                  </SheetContent>
+                </Sheet>
+              </div>
+            </div>
           </div>
         </div>
       </motion.header>
