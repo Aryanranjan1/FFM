@@ -168,7 +168,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Content</FormLabel>
-                      <div className="rounded-md border border-input mt-2">
+                      <div className="rounded-md border border-input mt-2 flex flex-col">
                           <div className="p-2 border-b border-input flex items-center flex-wrap gap-1">
                               <Select onValueChange={(value) => execCommand('formatBlock', value)} defaultValue="p">
                                   <SelectTrigger className="w-[120px] h-8">
@@ -207,7 +207,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                                   ref={contentRef}
                                   contentEditable
                                   onInput={handleContentChange}
-                                  className="min-h-[400px] p-4 focus:outline-none"
+                                  className="min-h-[400px] p-4 focus:outline-none w-full"
                                   dangerouslySetInnerHTML={{ __html: field.value }}
                               />
                             </FormControl>
@@ -360,5 +360,3 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
     </motion.div>
   );
 }
-
-    
