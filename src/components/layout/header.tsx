@@ -55,7 +55,7 @@ export function Header() {
         initial="visible"
         animate={hidden ? "hidden" : "visible"}
         transition={{ duration: 0.35, ease: "easeInOut" }}
-        className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+        className="sticky top-0 z-50 w-full navbar"
       >
         <div className="container flex h-20 items-center px-4 md:px-6">
           <Link href="/" className="flex items-center space-x-2">
@@ -67,7 +67,7 @@ export function Header() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  'transition-colors hover:text-primary',
+                  'transition-colors hover:text-primary nav-link',
                   pathname === link.href ? 'text-primary' : 'text-foreground/60'
                 )}
               >
@@ -83,7 +83,7 @@ export function Header() {
                   <span className="sr-only">Open Menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left">
+              <SheetContent side="left" className="navbar">
                 <nav className="grid gap-6 text-lg font-medium mt-10">
                   <Link href="/" className="flex items-center space-x-2 mb-4" onClick={() => setIsSheetOpen(false)}>
                     <Logo className="h-6 w-auto text-primary" />
@@ -111,3 +111,5 @@ export function Header() {
     </AnimatePresence>
   );
 }
+
+    

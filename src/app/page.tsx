@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState, useEffect, useRef, useActionState } from "react";
@@ -184,8 +183,13 @@ export default function Home() {
     
     return (
         <div className="min-h-screen bg-background text-foreground">
-            <section id="home" className="relative flex flex-col items-center justify-center pt-20 pb-20 px-4 md:px-6 overflow-hidden bg-gradient-to-br from-gray-900 to-black">
+            <section id="home" className="relative flex flex-col items-center justify-center pt-20 pb-20 px-4 md:px-6 overflow-hidden">
                  <div className="hero-bg"></div>
+                 <div className="floating-orbs">
+                    <div className="orb" style={{ width: '300px', height: '300px', top: '10%', left: '20%', animationDuration: '18s' }}></div>
+                    <div className="orb" style={{ width: '200px', height: '200px', top: '50%', left: '80%', animationDuration: '22s' }}></div>
+                    <div className="orb" style={{ width: '150px', height: '150px', top: '80%', left: '10%', animationDuration: '16s' }}></div>
+                 </div>
                  <FloatingNotes />
                 
                 <div className="relative z-10 max-w-7xl mx-auto text-center mt-20">
@@ -289,10 +293,13 @@ export default function Home() {
                 </div>
             </section>
             
-            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+            <div className="section-divider">
+              <div className="divider-line"></div>
+              <div className="divider-content">♪ ♫ ♪</div>
+            </div>
 
             {/* --- FEATURED MUSIC TRACK SECTION --- */}
-            <section id="music-player" className="py-20 bg-card scroll-mt-20">
+            <section id="music-player" className="py-20 scroll-mt-20">
                  <div className="container mx-auto px-4 md:px-6">
                      <div className="text-center mb-12">
                          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Featured Music Track</h2>
@@ -305,7 +312,7 @@ export default function Home() {
                             animate={{ opacity: 1, y: 0 }} 
                             transition={{ duration: 0.8 }}
                         >
-                            <Card className="bg-background/50 backdrop-blur-sm border-primary/30 overflow-hidden">
+                            <Card className="bg-card backdrop-blur-sm border-border overflow-hidden">
                                 <div className="relative aspect-video">
                                     <YouTube
                                         key={videoId}
@@ -347,10 +354,13 @@ export default function Home() {
                  </div>
             </section>
 
-            <div className="section-divider"><div className="divider-content">♫ ♪ ♫</div></div>
+            <div className="section-divider">
+              <div className="divider-line"></div>
+              <div className="divider-content">♫ ♪ ♫</div>
+            </div>
 
             {/* --- MUSIC PORTFOLIO SECTION --- */}
-            <section id="music-portfolio" className="py-20 bg-background">
+            <section id="music-portfolio" className="py-20">
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">Music Portfolio</h2>
@@ -366,12 +376,8 @@ export default function Home() {
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                                onMouseEnter={() => setHoveredMusicCard(track.id)}
-                                onMouseLeave={() => setHoveredMusicCard(null)}
                             >
-                                <Card className={`music-card bg-card rounded-lg overflow-hidden transition-all duration-300 h-full flex flex-col ${
-                                    hoveredMusicCard === track.id ? 'transform scale-105 border-primary/50' : 'border-transparent'
-                                }`}>
+                                <Card className="music-card bg-card rounded-lg h-full flex flex-col">
                                     <div className="relative cursor-pointer" onClick={() => playTrackFromPortfolio(track)}>
                                         <Image src={track.thumbnailUrl || `https://placehold.co/400x400`} 
                                             alt={track.title} 
@@ -379,9 +385,7 @@ export default function Home() {
                                             height={400}
                                             className="w-full h-48 object-cover"
                                             loading="eager" />
-                                        <div className={`absolute inset-0 bg-black/50 flex items-center justify-center transition-opacity ${
-                                            hoveredMusicCard === track.id ? 'opacity-100' : 'opacity-0'
-                                        }`}>
+                                        <div className="music-card-overlay">
                                             <Button 
                                                 size="lg"
                                                 className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full w-16 h-16"
@@ -404,10 +408,13 @@ export default function Home() {
                 </div>
             </section>
 
-            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+            <div className="section-divider">
+              <div className="divider-line"></div>
+              <div className="divider-content">♪ ♫ ♪</div>
+            </div>
             
             {/* --- ABOUT SECTION --- */}
-            <section className="py-20 bg-card">
+            <section className="py-20">
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <motion.div
@@ -463,10 +470,13 @@ export default function Home() {
                 </div>
             </section>
 
-            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+            <div className="section-divider">
+              <div className="divider-line"></div>
+              <div className="divider-content">♪ ♫ ♪</div>
+            </div>
 
             {/* --- TESTIMONIALS SECTION --- */}
-            <section className="py-20 bg-background">
+            <section className="py-20">
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 font-headline">What People Say</h2>
@@ -483,7 +493,7 @@ export default function Home() {
                                 viewport={{ once: true, amount: 0.3 }}
                                 transition={{ duration: 0.6, delay: index * 0.1 }}
                             >
-                                <Card className="bg-card/90 backdrop-blur-sm border-primary/30 h-full">
+                                <Card className="bg-card backdrop-blur-sm border-border h-full">
                                     <CardContent className="p-6 flex flex-col h-full">
                                         <div className="flex items-center mb-4">
                                             <div>
@@ -505,7 +515,10 @@ export default function Home() {
                 </div>
             </section>
 
-            <div className="section-divider"><div className="divider-content">♪ ♫ ♪</div></div>
+            <div className="section-divider">
+              <div className="divider-line"></div>
+              <div className="divider-content">♪ ♫ ♪</div>
+            </div>
 
             {/* --- CONTACT SECTION --- */}
             <section id="contact" className="py-20">
@@ -558,7 +571,7 @@ export default function Home() {
                             </div>
                         </motion.div>
                         <motion.div>
-                            <Card className="bg-card/80 backdrop-blur-sm border-primary/30">
+                            <Card className="bg-card backdrop-blur-sm border-border">
                                 <CardContent className="p-8">
                                      <Form {...form}>
                                         <form action={formAction} className="space-y-6">
@@ -569,7 +582,7 @@ export default function Home() {
                                                 <FormItem>
                                                 <FormLabel>Name</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="Your name" {...field} />
+                                                    <Input placeholder="Your name" {...field} className="contact-input" />
                                                 </FormControl>
                                                 <FormMessage>{state.errors?.name}</FormMessage>
                                                 </FormItem>
@@ -582,7 +595,7 @@ export default function Home() {
                                                 <FormItem>
                                                 <FormLabel>Email</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="your@email.com" {...field} />
+                                                    <Input placeholder="your@email.com" {...field} className="contact-input" />
                                                 </FormControl>
                                                 <FormMessage>{state.errors?.email}</FormMessage>
                                                 </FormItem>
@@ -595,7 +608,7 @@ export default function Home() {
                                                 <FormItem>
                                                 <FormLabel>Subject</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="What's this about?" {...field} />
+                                                    <Input placeholder="What's this about?" {...field} className="contact-input" />
                                                 </FormControl>
                                                 <FormMessage>{state.errors?.subject}</FormMessage>
                                                 </FormItem>
@@ -608,7 +621,7 @@ export default function Home() {
                                                 <FormItem>
                                                 <FormLabel>Message</FormLabel>
                                                 <FormControl>
-                                                    <Textarea placeholder="Your message..." {...field} rows={5} />
+                                                    <Textarea placeholder="Your message..." {...field} rows={5} className="contact-input" />
                                                 </FormControl>
                                                 <FormMessage>{state.errors?.message}</FormMessage>
                                                 </FormItem>
@@ -630,3 +643,5 @@ export default function Home() {
         </div>
     );
 }
+
+    

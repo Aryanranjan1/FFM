@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import React, { useEffect, useState } from 'react';
@@ -18,7 +17,10 @@ import { getSiteSettings } from '@/app/actions';
 import type { SocialLink as SocialLinkType } from '@/lib/admin-types';
 import { db } from '@/lib/firebase';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { Cinzel, Inter } from 'next/font/google';
 
+const cinzel = Cinzel({ subsets: ['latin'], variable: '--font-cinzel' });
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [hasMounted, setHasMounted] = useState(false);
@@ -59,13 +61,10 @@ export default function RootLayout({
   }, []);
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className={cn("dark", cinzel.variable, inter.variable)}>
       <head>
         <title>FFM</title>
         <meta name="description" content="Official artist website for FFM" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Alegreya&family=Belleza&display=swap" rel="stylesheet" />
       </head>
       <body className={cn('font-body antialiased min-h-screen flex flex-col', { 'bg-background': isAdminPage })}>
         <ClientOnly>
@@ -75,7 +74,7 @@ export default function RootLayout({
           {isAdminPage ? (
             <div className="flex-1">{children}</div>
           ) : (
-            <div className="flex flex-col flex-1 z-0">
+            <div className="flex flex-col flex-1 z-10">
               <Header />
               <main className="flex-1">
                 <PageTransition>
@@ -92,3 +91,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+    
