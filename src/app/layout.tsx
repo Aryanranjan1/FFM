@@ -9,7 +9,6 @@ import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/toaster';
 import { MusicPlayerProvider } from '@/context/music-player-context';
 import MusicPlayer from '@/components/music-player';
-import { PageTransition } from '@/components/page-transition';
 import { usePathname } from 'next/navigation';
 import type { SiteSettingsFormValues } from '@/app/actions';
 import { getSiteSettings } from '@/app/actions';
@@ -67,9 +66,7 @@ export default function RootLayout({
               <div className="flex flex-col flex-1" style={{ position: 'relative', zIndex: 1 }}>
                 <Header />
                 <main className="flex-1">
-                  <PageTransition>
-                    {children}
-                  </PageTransition>
+                  {children}
                 </main>
                 <Footer settings={settings} socialLinks={socialLinks} />
               </div>
