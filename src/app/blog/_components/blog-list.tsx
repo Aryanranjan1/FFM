@@ -31,6 +31,24 @@ import type { BlogPost } from "@/lib/admin-types";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 
+const FeaturedPostSkeleton = () => (
+    <Card className="bg-background border-border/50 overflow-hidden md:grid md:grid-cols-2 items-center max-w-4xl mx-auto">
+      <Skeleton className="w-full h-auto aspect-video md:aspect-[4/3]" />
+      <CardContent className="p-6 space-y-3">
+        <Skeleton className="h-5 w-24" />
+        <Skeleton className="h-8 w-3/4" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-1/2" />
+        <div className="flex justify-between items-center text-sm text-muted-foreground pt-3 border-t border-border/50">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-4 w-20" />
+        </div>
+        <Skeleton className="h-10 w-full mt-2" />
+      </CardContent>
+    </Card>
+);
+
 export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
   const [activeTab, setActiveTab] = useState("All");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -159,7 +177,7 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
                 A hand-picked article to spark your curiosity.
               </p>
             </motion.div>
-            {loading ? <div className="text-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div> : featuredPost && (
+            {loading ? <FeaturedPostSkeleton /> : featuredPost && (
                 <motion.div 
                     initial="hidden"
                     whileInView="visible"
@@ -299,9 +317,25 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
           </div>
 
           {loading ? (
-             <div className="text-center py-16">
-                <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
-            </div>
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="bg-card border-border/50 rounded-lg overflow-hidden flex flex-col h-full p-4 space-y-4">
+                        <Skeleton className="w-full h-40" />
+                        <div className="space-y-2">
+                             <Skeleton className="h-5 w-24" />
+                             <Skeleton className="h-6 w-3/4" />
+                        </div>
+                        <div className="flex-grow space-y-2">
+                             <Skeleton className="h-4 w-full" />
+                             <Skeleton className="h-4 w-5/6" />
+                        </div>
+                        <div className="space-y-3 border-t border-border/50 pt-4">
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-10 w-full" />
+                        </div>
+                    </div>
+                ))}
+             </div>
           ) : filteredAndSortedPosts.length > 0 ? (
               <motion.div
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
@@ -385,3 +419,5 @@ export function BlogList({ initialPosts }: { initialPosts: BlogPost[] }) {
     </>
   );
 }
+
+    
