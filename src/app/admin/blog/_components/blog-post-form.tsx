@@ -20,6 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 
 const blogPostSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters."),
@@ -42,6 +43,14 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
   const { toast } = useToast();
   const router = useRouter();
   const contentRef = useRef<HTMLDivElement>(null);
+  
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [linkUrl, setLinkUrl] = useState('');
+  const [linkText, setLinkText] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const selectionRef = useRef<Range | null>(null);
+
 
   const form = useForm<BlogPostFormValues>({
     resolver: zodResolver(blogPostSchema),
@@ -57,74 +66,97 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
       isFeatured: post?.isFeatured || false,
     },
   });
-
+  
   const handleContentChange = (event: React.FormEvent<HTMLDivElement>) => {
-    form.setValue('content', event.currentTarget.innerHTML, { shouldValidate: true });
+    const content = event.currentTarget.innerHTML;
+    form.setValue('content', content, { shouldValidate: true });
   };
   
   useEffect(() => {
     if (contentRef.current && post?.content && contentRef.current.innerHTML !== post.content) {
       contentRef.current.innerHTML = post.content;
+      form.setValue('content', post.content);
     }
-  }, [post]);
+  }, [post, form]);
+  
+  const saveSelection = () => {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      selectionRef.current = selection.getRangeAt(0).cloneRange();
+    } else {
+      selectionRef.current = null;
+    }
+  };
+
+  const restoreSelection = () => {
+    const selection = window.getSelection();
+    if (selection && selectionRef.current) {
+      selection.removeAllRanges();
+      selection.addRange(selectionRef.current);
+    }
+  };
 
   const execCommand = (command: string, value?: string) => {
-    document.execCommand(command, false, value);
     contentRef.current?.focus();
+    restoreSelection();
+    document.execCommand(command, false, value);
     if(contentRef.current) {
         form.setValue('content', contentRef.current.innerHTML, { shouldValidate: true });
     }
   };
 
-  const handleLink = () => {
+  const openLinkModal = () => {
+    saveSelection();
     const selection = window.getSelection();
-    const isTextSelected = selection && selection.toString().length > 0;
-    const url = prompt('Enter the URL:');
-    if (url) {
-      // Restore selection if prompt caused it to be lost
-      if (selection && selection.rangeCount > 0) {
-        const range = selection.getRangeAt(0);
-        selection.removeAllRanges();
-        selection.addRange(range);
-      }
-      
-      if(isTextSelected) {
-        execCommand('createLink', url);
-      } else {
-        const text = prompt('Enter the text for the link:', url);
-        if (text) {
-          execCommand('insertHTML', `<a href="${url}" target="_blank">${text}</a>`);
-        }
-      }
-    }
+    setLinkText(selection ? selection.toString() : '');
+    setIsLinkModalOpen(true);
   };
   
-  const handleImage = () => {
-    const url = prompt('Enter the Image URL:');
-    if (url) {
-      execCommand('insertImage', url);
+  const handleLinkInsert = () => {
+    restoreSelection();
+    contentRef.current?.focus();
+    
+    if (selectionRef.current && selectionRef.current.toString().length === 0) {
+        // If no text was selected, insert a new link element
+        const linkHtml = `<a href="${linkUrl}" target="_blank">${linkText || linkUrl}</a>`;
+        execCommand('insertHTML', linkHtml);
+    } else {
+        // If text was selected, apply the link to it
+        execCommand('createLink', linkUrl);
     }
+
+    setIsLinkModalOpen(false);
+    setLinkUrl('');
+    setLinkText('');
+  };
+
+  const openImageModal = () => {
+    saveSelection();
+    setIsImageModalOpen(true);
+  };
+  
+  const handleImageInsert = () => {
+    restoreSelection();
+    contentRef.current?.focus();
+    if (imageUrl) {
+        execCommand('insertImage', imageUrl);
+    }
+    setIsImageModalOpen(false);
+    setImageUrl('');
   };
 
   const applyFontSize = (sizeClass: string) => {
+    saveSelection();
     const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return;
-    
-    const range = selection.getRangeAt(0);
-    const selectedText = range.toString();
-
-    if (selectedText) {
-        const span = document.createElement('span');
-        span.className = sizeClass;
-        span.textContent = selectedText;
-        range.deleteContents();
-        range.insertNode(span);
-        if(contentRef.current) {
-            form.setValue('content', contentRef.current.innerHTML, { shouldValidate: true });
-        }
-    } else {
+    if (!selection || selection.rangeCount === 0 || !selection.toString()) {
         toast({ title: "Selection needed", description: "Please select text to change its size.", variant: "destructive"})
+        return;
     }
+    
+    restoreSelection();
+    contentRef.current?.focus();
+    const span = `<span class="${sizeClass}">${selection.toString()}</span>`;
+    execCommand('insertHTML', span);
   };
 
   const pageTitle = post ? "EDIT BLOG POST" : "CREATE NEW BLOG POST";
@@ -191,9 +223,9 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                   )}
                 />
 
-                <div>
+                <div className="space-y-2">
                   <FormLabel>Content</FormLabel>
-                   <div className="rounded-md border border-input mt-2">
+                   <div className="rounded-md border border-input">
                        <div className="p-2 border-b border-input flex items-center flex-wrap gap-1">
                            <Select onValueChange={(value) => execCommand('formatBlock', value)} defaultValue="p">
                                <SelectTrigger className="w-[120px] h-8">
@@ -221,28 +253,29 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                            <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('italic')}><Italic className="h-4 w-4"/></Button>
                            <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('underline')}><Underline className="h-4 w-4"/></Button>
                            <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('strikeThrough')}><Strikethrough className="h-4 w-4"/></Button>
-                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={handleLink}><LinkIcon className="h-4 w-4"/></Button>
+                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={openLinkModal}><LinkIcon className="h-4 w-4"/></Button>
                            <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('insertUnorderedList')}><List className="h-4 w-4"/></Button>
                            <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('insertOrderedList')}><ListOrdered className="h-4 w-4"/></Button>
                            <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('formatBlock', 'pre')}><Code className="h-4 w-4"/></Button>
                            <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={() => execCommand('formatBlock', 'blockquote')}><Quote className="h-4 w-4"/></Button>
-                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={handleImage}><ImageIcon className="h-4 w-4"/></Button>
+                           <Button type="button" variant="outline" size="icon" className="h-8 w-8" onClick={openImageModal}><ImageIcon className="h-4 w-4"/></Button>
                        </div>
-                       <div
-                           ref={contentRef}
-                           contentEditable
-                           onInput={handleContentChange}
-                           className="min-h-[400px] p-4 focus:outline-none"
-                           dangerouslySetInnerHTML={{ __html: form.getValues('content') }}
-                       />
+                        <div
+                          ref={contentRef}
+                          contentEditable
+                          onInput={handleContentChange}
+                          onBlur={saveSelection}
+                          className="min-h-[400px] p-4 focus:outline-none"
+                          dangerouslySetInnerHTML={{ __html: form.getValues('content') }}
+                        />
                    </div>
                   <FormField
                     control={form.control}
                     name="content"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="hidden">
                         <FormControl>
-                          <input type="hidden" {...field} />
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -390,6 +423,49 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
           </div>
         </form>
       </Form>
+      
+      {/* Link Modal */}
+      <Dialog open={isLinkModalOpen} onOpenChange={setIsLinkModalOpen}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Insert Link</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+                <div className="space-y-2">
+                    <Label htmlFor="link-url">URL</Label>
+                    <Input id="link-url" value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} placeholder="https://example.com" />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="link-text">Text</Label>
+                    <Input id="link-text" value={linkText} onChange={(e) => setLinkText(e.target.value)} placeholder="Text to display" />
+                </div>
+            </div>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setIsLinkModalOpen(false)}>Cancel</Button>
+                <Button onClick={handleLinkInsert}>Insert Link</Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Image Modal */}
+      <Dialog open={isImageModalOpen} onOpenChange={setIsImageModalOpen}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Insert Image</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-2">
+                <Label htmlFor="image-url">Image URL</Label>
+                <Input id="image-url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://example.com/image.jpg" />
+            </div>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setIsImageModalOpen(false)}>Cancel</Button>
+                <Button onClick={handleImageInsert}>Insert Image</Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </motion.div>
   );
 }
+
+    
