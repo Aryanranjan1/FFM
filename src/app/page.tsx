@@ -21,6 +21,7 @@ import { z } from "zod";
 import { submitContactForm } from "@/app/actions";
 import { FloatingNotes } from "@/components/floating-notes";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Particles } from "@/components/particles";
 
 
 import {

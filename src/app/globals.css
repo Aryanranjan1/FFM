@@ -80,6 +80,7 @@
   body {
     @apply bg-background text-foreground;
     position: relative;
+    z-index: 0;
   }
 
   .bg-animation-container {
