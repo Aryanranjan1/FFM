@@ -59,10 +59,9 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
   });
 
   const handleContentChange = (event: React.FormEvent<HTMLDivElement>) => {
-    form.setValue('content', event.currentTarget.innerHTML);
+    form.setValue('content', event.currentTarget.innerHTML, { shouldValidate: true });
   };
   
-  // Set initial content for the contentEditable div
   useEffect(() => {
     if (contentRef.current && post?.content && contentRef.current.innerHTML !== post.content) {
       contentRef.current.innerHTML = post.content;
@@ -73,14 +72,30 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
     document.execCommand(command, false, value);
     contentRef.current?.focus();
     if(contentRef.current) {
-        form.setValue('content', contentRef.current?.innerHTML || '');
+        form.setValue('content', contentRef.current.innerHTML, { shouldValidate: true });
     }
   };
 
   const handleLink = () => {
+    const selection = window.getSelection();
+    const isTextSelected = selection && selection.toString().length > 0;
     const url = prompt('Enter the URL:');
     if (url) {
-      execCommand('createLink', url);
+      // Restore selection if prompt caused it to be lost
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+      
+      if(isTextSelected) {
+        execCommand('createLink', url);
+      } else {
+        const text = prompt('Enter the text for the link:', url);
+        if (text) {
+          execCommand('insertHTML', `<a href="${url}" target="_blank">${text}</a>`);
+        }
+      }
     }
   };
   
@@ -105,8 +120,10 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
         range.deleteContents();
         range.insertNode(span);
         if(contentRef.current) {
-            form.setValue('content', contentRef.current?.innerHTML || '');
+            form.setValue('content', contentRef.current.innerHTML, { shouldValidate: true });
         }
+    } else {
+        toast({ title: "Selection needed", description: "Please select text to change its size.", variant: "destructive"})
     }
   };
 
@@ -154,7 +171,6 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
             <Card>
               <CardHeader>
@@ -175,7 +191,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                   )}
                 />
 
-                <FormItem>
+                <div>
                   <FormLabel>Content</FormLabel>
                    <div className="rounded-md border border-input mt-2">
                        <div className="p-2 border-b border-input flex items-center flex-wrap gap-1">
@@ -224,15 +240,15 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                     control={form.control}
                     name="content"
                     render={({ field }) => (
-                      <>
+                      <FormItem>
                         <FormControl>
                           <input type="hidden" {...field} />
                         </FormControl>
                         <FormMessage />
-                      </>
+                      </FormItem>
                     )}
                   />
-                </FormItem>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -377,5 +393,3 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
     </motion.div>
   );
 }
-
-    
