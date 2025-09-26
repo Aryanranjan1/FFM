@@ -10,7 +10,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { MusicPlayerProvider } from '@/context/music-player-context';
 import MusicPlayer from '@/components/music-player';
 import { PageTransition } from '@/components/page-transition';
-import { Particles } from '@/components/particles';
 import { usePathname } from 'next/navigation';
 import type { SiteSettingsFormValues } from '@/app/actions';
 import { getSiteSettings } from '@/app/actions';
@@ -21,28 +20,6 @@ import { Cinzel, Inter } from 'next/font/google';
 
 const cinzel = Cinzel({ subsets: ['latin'], variable: '--font-cinzel' });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-
-function ClientOnly({ children }: { children: React.ReactNode }) {
-  const [hasMounted, setHasMounted] = useState(false);
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
-  if (!hasMounted) {
-    return null;
-  }
-  return <>{children}</>;
-}
-
-function Orbs() {
-  return (
-    <div className="floating-orbs">
-      <div className="orb" style={{ width: '300px', height: '300px', top: '10%', left: '20%', animationDuration: '18s' }}></div>
-      <div className="orb" style={{ width: '200px', height: '200px', top: '50%', left: '80%', animationDuration: '22s' }}></div>
-      <div className="orb" style={{ width: '150px', height: '150px', top: '80%', left: '10%', animationDuration: '16s' }}></div>
-    </div>
-  );
-}
-
 
 // This is the root layout component. It's a client component to allow for hooks.
 export default function RootLayout({
@@ -78,8 +55,6 @@ export default function RootLayout({
         <meta name="description" content="Official artist website for Fahmie Farhan, Epic Orchestral & Malay Gamelan Composer" />
       </head>
       <body className={cn('font-body antialiased min-h-screen flex flex-col', { 'bg-background': isAdminPage })}>
-        <Particles />
-        <Orbs />
         <MusicPlayerProvider>
           {isAdminPage ? (
             <div className="flex-1">{children}</div>
