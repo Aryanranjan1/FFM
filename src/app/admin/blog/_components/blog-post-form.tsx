@@ -175,7 +175,7 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                   )}
                 />
 
-                <div>
+                <FormItem>
                   <FormLabel>Content</FormLabel>
                    <div className="rounded-md border border-input mt-2">
                        <div className="p-2 border-b border-input flex items-center flex-wrap gap-1">
@@ -224,15 +224,15 @@ export function BlogPostForm({ post }: BlogPostFormProps) {
                     control={form.control}
                     name="content"
                     render={({ field }) => (
-                      <FormItem>
+                      <>
                         <FormControl>
                           <input type="hidden" {...field} />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
+                      </>
                     )}
                   />
-                </div>
+                </FormItem>
               </CardContent>
             </Card>
           </div>
