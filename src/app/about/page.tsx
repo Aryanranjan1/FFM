@@ -308,16 +308,14 @@ Fahmie's portfolio covers both international collaborations and competitive musi
                               <div className="flex-grow mb-4">
                                 <p className="text-muted-foreground italic">"{testimonial.quote}"</p>
                               </div>
-                              <div className="flex items-center">
-                                <div className="flex-shrink-0">
-                                  <div className="flex">
-                                    {[...Array(5)].map((_, i) => (
-                                      <Star key={i} className="w-5 h-5 text-primary fill-current" />
-                                    ))}
-                                  </div>
-                                  <p className="font-bold mt-2">{testimonial.author}</p>
-                                  <p className="text-sm text-muted-foreground">{testimonial.publication}</p>
+                              <div className="mt-auto">
+                                <div className="flex">
+                                  {[...Array(5)].map((_, i) => (
+                                    <Star key={i} className="w-5 h-5 text-primary fill-current" />
+                                  ))}
                                 </div>
+                                <p className="font-bold mt-2">{testimonial.author}</p>
+                                <p className="text-sm text-muted-foreground">{testimonial.publication}</p>
                               </div>
                             </Card>
                         ))
@@ -354,4 +352,3 @@ Fahmie's portfolio covers both international collaborations and competitive musi
     </div>
   );
 }
-
