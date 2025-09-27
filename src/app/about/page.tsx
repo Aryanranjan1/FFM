@@ -9,7 +9,6 @@ import { ExternalLink, MapPin, Music, ArrowRight, Star } from 'lucide-react';
 import type { Collaboration, Achievement } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { TestimonialCard } from '@/components/testimonial-card';
 import { db } from '@/lib/firebase';
 import { collection, query, orderBy, getDocs, Timestamp } from "firebase/firestore";
 import type { Testimonial as TestimonialType } from "@/lib/admin-types";
@@ -80,18 +79,23 @@ export default function AboutPage() {
   useEffect(() => {
     const fetchTestimonials = async () => {
         setLoadingTestimonials(true);
-        const testimonialsQuery = query(collection(db, "testimonials"), orderBy("createdAt", "desc"));
-        const testimonialsSnapshot = await getDocs(testimonialsQuery);
-        const testimonialsData = testimonialsSnapshot.docs.map(doc => {
-            const data = doc.data();
-            return { 
-                id: doc.id,
-                 ...data,
-                 createdAt: (data.createdAt as Timestamp)?.toDate ? (data.createdAt as Timestamp).toDate().toISOString() : new Date().toISOString(),
-            } as TestimonialType
-        });
-        setTestimonials(testimonialsData);
-        setLoadingTestimonials(false);
+        try {
+            const testimonialsQuery = query(collection(db, "testimonials"), orderBy("createdAt", "desc"));
+            const testimonialsSnapshot = await getDocs(testimonialsQuery);
+            const testimonialsData = testimonialsSnapshot.docs.map(doc => {
+                const data = doc.data();
+                return { 
+                    id: doc.id,
+                     ...data,
+                     createdAt: (data.createdAt as Timestamp)?.toDate ? (data.createdAt as Timestamp).toDate() : new Date(),
+                } as TestimonialType
+            });
+            setTestimonials(testimonialsData);
+        } catch (error) {
+            console.error("Failed to fetch testimonials:", error);
+        } finally {
+            setLoadingTestimonials(false);
+        }
     };
 
     fetchTestimonials();
@@ -281,11 +285,18 @@ Fahmie's portfolio covers both international collaborations and competitive musi
                      {loadingTestimonials ? (
                         Array.from({ length: 3 }).map((_, index) => (
                            <Card key={index} className="bg-background/50 border-border/50 h-full flex flex-col p-6">
-                               <Skeleton className="h-4 w-3/4 mb-4" />
-                               <Skeleton className="h-4 w-1/2 mb-auto" />
+                                <div className="flex-grow mb-4 space-y-2">
+                                   <Skeleton className="h-4 w-full" />
+                                   <Skeleton className="h-4 w-5/6" />
+                                </div>
                                <div className="flex items-center mt-4">
-                                   <div className="flex-shrink-0">
-                                       <Skeleton className="h-5 w-24 mb-2" />
+                                   <div className="flex-shrink-0 w-full">
+                                       <div className="flex">
+                                          {[...Array(5)].map((_, i) => (
+                                              <Skeleton key={i} className="w-5 h-5 rounded-full mr-1" />
+                                          ))}
+                                       </div>
+                                       <Skeleton className="h-5 w-24 mt-2 mb-2" />
                                        <Skeleton className="h-4 w-20" />
                                    </div>
                                </div>
