@@ -49,12 +49,12 @@ export default function RootLayout({
   }, []);
 
   return (
-    <html lang="en" className={cn("dark", cinzel.variable, inter.variable)}>
+    <html lang="en" className={cn("dark", cinzel.variable, inter.variable)} suppressHydrationWarning>
       <head>
         <title>Fahmie Farhan</title>
         <meta name="description" content="Official artist website for Fahmie Farhan, Epic Orchestral & Malay Gamelan Composer" />
       </head>
-      <body className={cn('font-body antialiased min-h-screen flex flex-col', { 'bg-background': isAdminPage })}>
+      <body className={cn('font-body antialiased min-h-screen flex flex-col', { 'bg-background': isAdminPage })} suppressHydrationWarning>
         <MusicPlayerProvider>
           {isAdminPage ? (
             <div className="flex-1">{children}</div>
