@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -8,8 +9,11 @@ import { ExternalLink, MapPin, Music, ArrowRight, Star } from 'lucide-react';
 import type { Collaboration, Achievement } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { bio } from '@/lib/data';
 import { TestimonialCard } from '@/components/testimonial-card';
+import { db } from '@/lib/firebase';
+import { collection, query, orderBy, getDocs, Timestamp } from "firebase/firestore";
+import type { Testimonial as TestimonialType } from "@/lib/admin-types";
+import { Skeleton } from '@/components/ui/skeleton';
 
 const collaborations: Collaboration[] = [
     {
@@ -70,6 +74,28 @@ const achievements: Achievement[] = [
 
 export default function AboutPage() {
   const artistImage = PlaceHolderImages.find(p => p.id === 'about-artist');
+  const [testimonials, setTestimonials] = useState<TestimonialType[]>([]);
+  const [loadingTestimonials, setLoadingTestimonials] = useState(true);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+        setLoadingTestimonials(true);
+        const testimonialsQuery = query(collection(db, "testimonials"), orderBy("createdAt", "desc"));
+        const testimonialsSnapshot = await getDocs(testimonialsQuery);
+        const testimonialsData = testimonialsSnapshot.docs.map(doc => {
+            const data = doc.data();
+            return { 
+                id: doc.id,
+                 ...data,
+                 createdAt: (data.createdAt as Timestamp)?.toDate ? (data.createdAt as Timestamp).toDate().toISOString() : new Date().toISOString(),
+            } as TestimonialType
+        });
+        setTestimonials(testimonialsData);
+        setLoadingTestimonials(false);
+    };
+
+    fetchTestimonials();
+  }, []);
 
   const bioContent = {
     name: 'FAHMIE FARHAN ARIFFIN',
@@ -252,13 +278,39 @@ Fahmie's portfolio covers both international collaborations and competitive musi
                     What My Clients Say
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {bio.pressReleases.slice(0, 3).map((testimonial, index) => (
-                        <div
-                            key={index}
-                        >
-                            <TestimonialCard testimonial={testimonial} />
-                        </div>
-                    ))}
+                     {loadingTestimonials ? (
+                        Array.from({ length: 3 }).map((_, index) => (
+                           <Card key={index} className="bg-background/50 border-border/50 h-full flex flex-col p-6">
+                               <Skeleton className="h-4 w-3/4 mb-4" />
+                               <Skeleton className="h-4 w-1/2 mb-auto" />
+                               <div className="flex items-center mt-4">
+                                   <div className="flex-shrink-0">
+                                       <Skeleton className="h-5 w-24 mb-2" />
+                                       <Skeleton className="h-4 w-20" />
+                                   </div>
+                               </div>
+                           </Card>
+                        ))
+                    ) : (
+                        testimonials.slice(0, 3).map((testimonial) => (
+                            <Card key={testimonial.id} className="bg-background/50 border-border/50 h-full flex flex-col p-6">
+                              <div className="flex-grow mb-4">
+                                <p className="text-muted-foreground italic">"{testimonial.quote}"</p>
+                              </div>
+                              <div className="flex items-center">
+                                <div className="flex-shrink-0">
+                                  <div className="flex">
+                                    {[...Array(5)].map((_, i) => (
+                                      <Star key={i} className="w-5 h-5 text-primary fill-current" />
+                                    ))}
+                                  </div>
+                                  <p className="font-bold mt-2">{testimonial.author}</p>
+                                  <p className="text-sm text-muted-foreground">{testimonial.publication}</p>
+                                </div>
+                              </div>
+                            </Card>
+                        ))
+                    )}
                 </div>
             </div>
         </section>
@@ -291,3 +343,4 @@ Fahmie's portfolio covers both international collaborations and competitive musi
     </div>
   );
 }
+
