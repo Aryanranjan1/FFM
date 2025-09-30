@@ -50,3 +50,13 @@ export type ContactSubmission = {
     message: string;
     submittedAt: string;
 };
+
+export type Collaboration = {
+  id: string;
+  name: string;
+  role: string;
+  description: string;
+  link: string;
+  image: string;
+  createdAt: Timestamp;
+};

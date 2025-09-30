@@ -5,11 +5,11 @@ import { useEffect, useState, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { Collaboration, Achievement } from '@/lib/types';
+import type { Achievement } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { db } from "@/lib/firebase";
 import { collection, getDocs, orderBy, query, Timestamp } from "firebase/firestore";
-import type { Video, Testimonial as TestimonialType } from '@/lib/admin-types';
+import type { Video, Testimonial as TestimonialType, Collaboration as CollaborationType } from '@/lib/admin-types';
 import { useToast } from "@/hooks/use-toast";
 
 import { Badge } from '@/components/ui/badge';
@@ -18,24 +18,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink, Heart, Share2, Loader2, X, Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { FloatingNotes } from '@/components/floating-notes';
-
-
-const collaborations: Collaboration[] = [
-    {
-      name: "Diane Allen",
-      role: "Violin Virtuoso",
-      description: "Collaborated on multiple orchestral projects for live keynote performances in the United States, creating powerful musical experiences that have deeply moved audiences.",
-      link: "https://dianeallen.com/",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop"
-    },
-    {
-      name: "GEMAWAN KISAS",
-      role: "Cultural Ensemble",
-      description: "Gema Gamelan Waqafan (GEMAWAN) from Kolej Islam Sultan Alam Shah (KISAS). Collaboration includes training the ensemble and composing original modern gamelan pieces.",
-      link: "http://www.youtube.com/@gemawankisas4271",
-      image: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=400&fit=crop"
-    }
-];
   
 const achievements: Achievement[] = [
     {
@@ -80,8 +62,10 @@ export default function MusicPage() {
     const [filter, setFilter] = useState('All');
     const [videos, setVideos] = useState<Video[]>([]);
     const [testimonials, setTestimonials] = useState<TestimonialType[]>([]);
+    const [collaborations, setCollaborations] = useState<CollaborationType[]>([]);
     const [loading, setLoading] = useState(true);
     const [loadingTestimonials, setLoadingTestimonials] = useState(true);
+    const [loadingCollaborations, setLoadingCollaborations] = useState(true);
     const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
     const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
     const [likedTracks, setLikedTracks] = useState<string[]>([]);
@@ -94,6 +78,7 @@ export default function MusicPage() {
         const fetchData = async () => {
             setLoading(true);
             setLoadingTestimonials(true);
+            setLoadingCollaborations(true);
             try {
                 const videosCol = collection(db, 'videos');
                 const q = query(videosCol, orderBy("createdAt", "desc"));
@@ -120,12 +105,24 @@ export default function MusicPage() {
                 });
                 setTestimonials(testimonialsData);
 
+                const collaborationsQuery = query(collection(db, "collaborations"), orderBy("createdAt", "desc"));
+                const collaborationsSnapshot = await getDocs(collaborationsQuery);
+                const collaborationsData = collaborationsSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return { 
+                        id: doc.id,
+                         ...data,
+                    } as CollaborationType
+                });
+                setCollaborations(collaborationsData);
+
             } catch (error) {
                 console.error("Failed to fetch data:", error);
                 toast({ title: "Error", description: "Failed to load page data.", variant: "destructive" });
             } finally {
                 setLoading(false);
                 setLoadingTestimonials(false);
+                setLoadingCollaborations(false);
             }
         };
 
@@ -447,34 +444,55 @@ export default function MusicPage() {
                         </p>
                     </div>
                     <div className="grid md:grid-cols-2 gap-8">
-                        {collaborations.map((collab, index) => (
-                        <div key={index}>
-                            <Card className="bg-card border-primary/20 hover:border-primary/40 transition-all h-full">
-                            <CardHeader>
-                                <div className="flex items-center space-x-4">
-                                <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-purple-500/10 rounded-lg overflow-hidden flex-shrink-0">
-                                    <Image src={collab.image} alt={collab.name} width={64} height={64} className="w-full h-full object-cover" />
-                                </div>
-                                <div className="flex-1">
-                                    <CardTitle className="text-xl">{collab.name}</CardTitle>
-                                    <CardDescription className="text-primary">{collab.role}</CardDescription>
-                                </div>
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground mb-6 leading-relaxed">{collab.description}</p>
-                                {collab.link && collab.link !== "#" && (
-                                <Button variant="outline" className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground" asChild>
-                                    <a href={collab.link} target="_blank" rel="noopener noreferrer">
-                                    <ExternalLink className="w-4 h-4 mr-2" />
-                                    Visit {collab.name}
-                                    </a>
-                                </Button>
-                                )}
-                            </CardContent>
-                            </Card>
-                        </div>
-                        ))}
+                       {loadingCollaborations ? (
+                            Array.from({ length: 2 }).map((_, index) => (
+                                <Card key={index} className="bg-card border-primary/20 h-full">
+                                    <CardHeader>
+                                        <div className="flex items-center space-x-4">
+                                            <Skeleton className="w-16 h-16 rounded-lg" />
+                                            <div className="flex-1 space-y-2">
+                                                <Skeleton className="h-6 w-3/4" />
+                                                <Skeleton className="h-4 w-1/2" />
+                                            </div>
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <Skeleton className="h-4 w-full" />
+                                        <Skeleton className="h-4 w-5/6" />
+                                        <Skeleton className="h-10 w-full mt-2" />
+                                    </CardContent>
+                                </Card>
+                            ))
+                        ) : (
+                            collaborations.map((collab) => (
+                            <div key={collab.id}>
+                                <Card className="bg-card border-primary/20 hover:border-primary/40 transition-all h-full">
+                                <CardHeader>
+                                    <div className="flex items-center space-x-4">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-purple-500/10 rounded-lg overflow-hidden flex-shrink-0">
+                                        <Image src={collab.image} alt={collab.name} width={64} height={64} className="w-full h-full object-cover" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <CardTitle className="text-xl">{collab.name}</CardTitle>
+                                        <CardDescription className="text-primary">{collab.role}</CardDescription>
+                                    </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-muted-foreground mb-6 leading-relaxed">{collab.description}</p>
+                                    {collab.link && collab.link !== "#" && (
+                                    <Button variant="outline" className="w-full border-primary/20 text-primary hover:bg-primary hover:text-primary-foreground" asChild>
+                                        <a href={collab.link} target="_blank" rel="noopener noreferrer">
+                                        <ExternalLink className="w-4 h-4 mr-2" />
+                                        Visit {collab.name}
+                                        </a>
+                                    </Button>
+                                    )}
+                                </CardContent>
+                                </Card>
+                            </div>
+                            ))
+                       )}
                     </div>
                 </div>
             </section>

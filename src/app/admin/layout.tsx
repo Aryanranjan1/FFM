@@ -17,7 +17,7 @@ import {
   SidebarInset,
   SidebarBrand,
 } from '@/components/ui/sidebar';
-import { Home, Video, Newspaper, Link as LinkIcon, Star, Settings, User, LogOut, Mail } from 'lucide-react';
+import { Home, Video, Newspaper, Link as LinkIcon, Star, Settings, User, LogOut, Mail, Users } from 'lucide-react';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -71,6 +71,7 @@ const navLinks = [
     { href: "/admin/videos", label: "Videos", icon: Video },
     { href: "/admin/blog", label: "Blog", icon: Newspaper },
     { href: "/admin/contacts", label: "Contacts", icon: Mail },
+    { href: "/admin/collaborations", label: "Collaborations", icon: Users },
     { href: "/admin/social-links", label: "Social Links", icon: LinkIcon },
     { href: "/admin/testimonials", label: "Testimonials", icon: Star },
 ];

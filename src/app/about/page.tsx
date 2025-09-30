@@ -6,30 +6,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ExternalLink, MapPin, Music, ArrowRight, Star } from 'lucide-react';
-import type { Collaboration, Achievement } from '@/lib/types';
+import type { Achievement } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { db } from '@/lib/firebase';
 import { collection, query, orderBy, getDocs, Timestamp } from "firebase/firestore";
-import type { Testimonial as TestimonialType } from "@/lib/admin-types";
+import type { Testimonial as TestimonialType, Collaboration as CollaborationType } from "@/lib/admin-types";
 import { Skeleton } from '@/components/ui/skeleton';
-
-const collaborations: Collaboration[] = [
-    {
-      name: "Diane Allen",
-      role: "Violin Virtuoso",
-      description: "Collaborated on multiple orchestral projects for live keynote performances in the United States, creating powerful musical experiences that have deeply moved audiences.",
-      link: "https://dianeallen.com/",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop"
-    },
-    {
-      name: "GEMAWAN KISAS",
-      role: "Cultural Ensemble",
-      description: "Gema Gamelan Waqafan (GEMAWAN) from Kolej Islam Sultan Alam Shah (KISAS). Collaboration includes training the ensemble and composing original modern gamelan pieces.",
-      link: "http://www.youtube.com/@gemawankisas4271",
-      image: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=400&fit=crop"
-    }
-];
 
 const achievements: Achievement[] = [
     {
@@ -74,11 +57,14 @@ const achievements: Achievement[] = [
 export default function AboutPage() {
   const artistImage = PlaceHolderImages.find(p => p.id === 'about-artist');
   const [testimonials, setTestimonials] = useState<TestimonialType[]>([]);
+  const [collaborations, setCollaborations] = useState<CollaborationType[]>([]);
   const [loadingTestimonials, setLoadingTestimonials] = useState(true);
+  const [loadingCollaborations, setLoadingCollaborations] = useState(true);
 
   useEffect(() => {
-    const fetchTestimonials = async () => {
+    const fetchData = async () => {
         setLoadingTestimonials(true);
+        setLoadingCollaborations(true);
         try {
             const testimonialsQuery = query(collection(db, "testimonials"), orderBy("createdAt", "desc"));
             const testimonialsSnapshot = await getDocs(testimonialsQuery);
@@ -91,14 +77,27 @@ export default function AboutPage() {
                 } as TestimonialType
             });
             setTestimonials(testimonialsData);
+
+            const collaborationsQuery = query(collection(db, "collaborations"), orderBy("createdAt", "desc"));
+            const collaborationsSnapshot = await getDocs(collaborationsQuery);
+            const collaborationsData = collaborationsSnapshot.docs.map(doc => {
+                const data = doc.data();
+                return { 
+                    id: doc.id,
+                     ...data,
+                } as CollaborationType
+            });
+            setCollaborations(collaborationsData);
+
         } catch (error) {
-            console.error("Failed to fetch testimonials:", error);
+            console.error("Failed to fetch data:", error);
         } finally {
             setLoadingTestimonials(false);
+            setLoadingCollaborations(false);
         }
     };
 
-    fetchTestimonials();
+    fetchData();
   }, []);
 
   const bioContent = {
@@ -195,34 +194,56 @@ Fahmie's portfolio covers both international collaborations and competitive musi
                 </p>
             </div>
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                {collaborations.map((collab, index) => (
-                <div key={index}>
-                    <Card className="bg-transparent border border-primary/20 hover:border-primary/40 transition-all h-full flex flex-col">
-                    <CardHeader>
-                        <div className="flex items-center space-x-4">
-                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                            <Image src={collab.image} alt={collab.name} width={64} height={64} className="w-full h-full object-cover" />
-                        </div>
-                        <div className="flex-1">
-                            <CardTitle className="text-xl">{collab.name}</CardTitle>
-                            <CardDescription className="text-primary">{collab.role}</CardDescription>
-                        </div>
-                        </div>
-                    </CardHeader>
-                    <CardContent className="flex-grow flex flex-col">
-                        <p className="text-muted-foreground mb-6 leading-relaxed flex-grow">{collab.description}</p>
-                        {collab.link && collab.link !== "#" && (
-                        <Button variant="outline" className="w-full border-primary/30 text-primary hover:bg-primary/10 hover:text-primary" asChild>
-                            <a href={collab.link} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="w-4 h-4 mr-2" />
-                            Visit {collab.name}
-                            </a>
-                        </Button>
-                        )}
-                    </CardContent>
-                    </Card>
-                </div>
-                ))}
+                {loadingCollaborations ? (
+                    Array.from({ length: 2 }).map((_, index) => (
+                        <Card key={index} className="bg-transparent border border-primary/20 h-full flex flex-col">
+                            <CardHeader>
+                                <div className="flex items-center space-x-4">
+                                <Skeleton className="w-16 h-16 rounded-lg" />
+                                <div className="flex-1 space-y-2">
+                                    <Skeleton className="h-6 w-3/4" />
+                                    <Skeleton className="h-4 w-1/2" />
+                                </div>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="flex-grow flex flex-col space-y-4">
+                                <Skeleton className="h-4 w-full" />
+                                <Skeleton className="h-4 w-full" />
+                                <Skeleton className="h-4 w-5/6" />
+                                <Skeleton className="h-10 w-full mt-auto" />
+                            </CardContent>
+                        </Card>
+                    ))
+                ) : (
+                    collaborations.map((collab) => (
+                    <div key={collab.id}>
+                        <Card className="bg-transparent border border-primary/20 hover:border-primary/40 transition-all h-full flex flex-col">
+                        <CardHeader>
+                            <div className="flex items-center space-x-4">
+                            <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                                <Image src={collab.image} alt={collab.name} width={64} height={64} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="flex-1">
+                                <CardTitle className="text-xl">{collab.name}</CardTitle>
+                                <CardDescription className="text-primary">{collab.role}</CardDescription>
+                            </div>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="flex-grow flex flex-col">
+                            <p className="text-muted-foreground mb-6 leading-relaxed flex-grow">{collab.description}</p>
+                            {collab.link && collab.link !== "#" && (
+                            <Button variant="outline" className="w-full border-primary/30 text-primary hover:bg-primary/10 hover:text-primary" asChild>
+                                <a href={collab.link} target="_blank" rel="noopener noreferrer">
+                                <ExternalLink className="w-4 h-4 mr-2" />
+                                Visit {collab.name}
+                                </a>
+                            </Button>
+                            )}
+                        </CardContent>
+                        </Card>
+                    </div>
+                    ))
+                )}
             </div>
             </div>
         </section>

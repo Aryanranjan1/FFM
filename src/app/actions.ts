@@ -321,3 +321,51 @@ export async function getSiteSettings() {
         return { email: 'contact@fahmiefarhan.com', phone: '+60 11-31377753', location: 'Malaysia' }; // Default values
     }
 }
+
+// Collaboration Actions
+const collaborationSchema = z.object({
+    name: z.string().min(2, "Name is required."),
+    role: z.string().min(2, "Role is required."),
+    description: z.string().min(10, "Description must be at least 10 characters."),
+    link: z.string().url("A valid URL is required."),
+    image: z.string().url("A valid image URL is required."),
+});
+export type CollaborationFormValues = z.infer<typeof collaborationSchema>;
+
+export async function addCollaboration(values: CollaborationFormValues) {
+    try {
+        await addDoc(collection(db, 'collaborations'), { ...values, createdAt: serverTimestamp() });
+        revalidatePath('/admin/collaborations');
+        revalidatePath('/about');
+        revalidatePath('/music');
+        return { success: true, message: "Collaboration added successfully." };
+    } catch (e) {
+        return { success: false, message: "Failed to add collaboration." };
+    }
+}
+
+export async function updateCollaboration(id: string, values: CollaborationFormValues) {
+    try {
+        const collabRef = doc(db, 'collaborations', id);
+        await updateDoc(collabRef, values);
+        revalidatePath('/admin/collaborations');
+        revalidatePath(`/admin/collaborations/edit/${id}`);
+        revalidatePath('/about');
+        revalidatePath('/music');
+        return { success: true, message: "Collaboration updated successfully." };
+    } catch (e) {
+        return { success: false, message: "Failed to update collaboration." };
+    }
+}
+
+export async function deleteCollaboration(id: string) {
+    try {
+        await deleteDoc(doc(db, 'collaborations', id));
+        revalidatePath('/admin/collaborations');
+        revalidatePath('/about');
+        revalidatePath('/music');
+        return { success: true, message: "Collaboration deleted successfully." };
+    } catch (e) {
+        return { success: false, message: "Failed to delete collaboration." };
+    }
+}
