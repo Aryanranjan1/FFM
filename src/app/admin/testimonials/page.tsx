@@ -10,6 +10,7 @@ import { addTestimonial, deleteTestimonial } from "@/app/actions";
 import { db } from "@/lib/firebase";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import type { Testimonial as TestimonialType } from "@/lib/admin-types";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,7 +20,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Plus, Trash2, Loader2 } from "lucide-react";
+import { Plus, Trash2, Loader2, Edit } from "lucide-react";
 import { motion } from "framer-motion";
 
 const testimonialSchema = z.object({
@@ -172,6 +173,11 @@ export default function TestimonialsManagementPage() {
                     <TableCell className="max-w-sm truncate">{t.quote}</TableCell>
                     <TableCell>{t.publication}</TableCell>
                     <TableCell className="text-right">
+                       <Button asChild variant="ghost" size="icon">
+                          <Link href={`/admin/testimonials/edit/${t.id}`}>
+                            <Edit className="h-4 w-4" />
+                          </Link>
+                        </Button>
                        <AlertDialog>
                         <AlertDialogTrigger asChild>
                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">

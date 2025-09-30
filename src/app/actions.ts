@@ -158,9 +158,27 @@ export async function addTestimonial(values: TestimonialFormValues) {
     try {
         await addDoc(collection(db, 'testimonials'), { ...values, createdAt: serverTimestamp() });
         revalidatePath('/admin/testimonials');
+        revalidatePath('/');
+        revalidatePath('/about');
+        revalidatePath('/music');
         return { success: true, message: "Testimonial added successfully." };
     } catch (e) {
         return { success: false, message: "Failed to add testimonial." };
+    }
+}
+
+export async function updateTestimonial(id: string, values: TestimonialFormValues) {
+    try {
+        const testimonialRef = doc(db, 'testimonials', id);
+        await updateDoc(testimonialRef, values);
+        revalidatePath('/admin/testimonials');
+        revalidatePath(`/admin/testimonials/edit/${id}`);
+        revalidatePath('/');
+        revalidatePath('/about');
+        revalidatePath('/music');
+        return { success: true, message: "Testimonial updated successfully." };
+    } catch (e) {
+        return { success: false, message: "Failed to update testimonial." };
     }
 }
 
@@ -168,6 +186,9 @@ export async function deleteTestimonial(id: string) {
     try {
         await deleteDoc(doc(db, 'testimonials', id));
         revalidatePath('/admin/testimonials');
+        revalidatePath('/');
+        revalidatePath('/about');
+        revalidatePath('/music');
         return { success: true, message: "Testimonial deleted successfully." };
     } catch (e) {
         return { success: false, message: "Failed to delete testimonial." };
