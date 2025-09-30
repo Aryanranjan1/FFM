@@ -81,7 +81,8 @@ async function getRelatedPosts(currentPostId: string, category: string): Promise
 }
 
 
-export default function BlogPostPage({ params: { id } }: { params: { id: string } }) {
+export default function BlogPostPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   const [post, setPost] = useState<BlogPost | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -292,9 +293,3 @@ export default function BlogPostPage({ params: { id } }: { params: { id: string 
     </div>
   );
 }
-
-    
-
-    
-
-    
