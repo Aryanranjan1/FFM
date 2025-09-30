@@ -4,7 +4,7 @@
 import { db } from "@/lib/firebase";
 import { collection, doc, getDoc, getDocs, limit, query, where, orderBy, Timestamp } from "firebase/firestore";
 import type { BlogPost } from "@/lib/admin-types";
-import { notFound, usePathname } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -12,7 +12,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Clock, Calendar, User, Tag } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 
 async function getBlogPost(id: string): Promise<BlogPost | null> {
@@ -78,13 +77,15 @@ async function getRelatedPosts(currentPostId: string, category: string): Promise
 }
 
 
-export default function BlogPostPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default function BlogPostPage() {
+  const params = useParams();
+  const id = params.id as string;
   const [post, setPost] = useState<BlogPost | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!id) return;
     async function fetchData() {
         setLoading(true);
         const fetchedPost = await getBlogPost(id);
