@@ -19,6 +19,7 @@ const siteSettingsSchema = z.object({
     email: z.string().email("Invalid email address.").optional(),
     phone: z.string().optional(),
     location: z.string().optional(),
+    profilePictureUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
 });
 
 export default function SettingsPage() {
@@ -32,6 +33,7 @@ export default function SettingsPage() {
       email: '',
       phone: '',
       location: '',
+      profilePictureUrl: '',
     },
   });
 
@@ -125,6 +127,19 @@ export default function SettingsPage() {
                                 <FormLabel>Location</FormLabel>
                                 <FormControl>
                                     <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="profilePictureUrl"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Profile Picture URL</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="https://..." {...field} />
                                 </FormControl>
                                 <FormMessage />
                                 </FormItem>

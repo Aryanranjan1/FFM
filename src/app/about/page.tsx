@@ -13,6 +13,7 @@ import { db } from '@/lib/firebase';
 import { collection, query, orderBy, getDocs, Timestamp } from "firebase/firestore";
 import type { Testimonial as TestimonialType, Collaboration as CollaborationType } from "@/lib/admin-types";
 import { Skeleton } from '@/components/ui/skeleton';
+import { getSiteSettings, SiteSettingsFormValues } from '@/app/actions';
 
 const achievements: Achievement[] = [
     {
@@ -55,16 +56,19 @@ const achievements: Achievement[] = [
 
 
 export default function AboutPage() {
-  const artistImage = PlaceHolderImages.find(p => p.id === 'about-artist');
+  const artistImagePlaceholder = PlaceHolderImages.find(p => p.id === 'about-artist');
   const [testimonials, setTestimonials] = useState<TestimonialType[]>([]);
   const [collaborations, setCollaborations] = useState<CollaborationType[]>([]);
+  const [settings, setSettings] = useState<SiteSettingsFormValues | null>(null);
   const [loadingTestimonials, setLoadingTestimonials] = useState(true);
   const [loadingCollaborations, setLoadingCollaborations] = useState(true);
+  const [loadingSettings, setLoadingSettings] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
         setLoadingTestimonials(true);
         setLoadingCollaborations(true);
+        setLoadingSettings(true);
         try {
             const testimonialsQuery = query(collection(db, "testimonials"), orderBy("createdAt", "desc"));
             const testimonialsSnapshot = await getDocs(testimonialsQuery);
@@ -89,11 +93,15 @@ export default function AboutPage() {
             });
             setCollaborations(collaborationsData);
 
+            const siteSettings = await getSiteSettings();
+            setSettings(siteSettings);
+
         } catch (error) {
             console.error("Failed to fetch data:", error);
         } finally {
             setLoadingTestimonials(false);
             setLoadingCollaborations(false);
+            setLoadingSettings(false);
         }
     };
 
@@ -109,6 +117,8 @@ Fahmie's portfolio covers both international collaborations and competitive musi
     digital: `Fahmie is also active on YouTube, where he shares his original works with a growing international audience, and on stock music platforms where his compositions are licensed for use in films, games, and online content. Whether it's a high-energy anime-inspired battle theme or a reflective, emotionally driven score, Fahmie's focus is always on creating music that elevates the stories it accompanies.`
   };
   
+  const artistImageUrl = settings?.profilePictureUrl || artistImagePlaceholder?.imageUrl;
+
   return (
     <div className="bg-transparent text-foreground">
         <section className="py-20 text-center relative overflow-hidden">
@@ -127,14 +137,16 @@ Fahmie's portfolio covers both international collaborations and competitive musi
               <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12 items-start">
               <div className="md:col-span-1 flex flex-col items-center">
                   <div className="relative w-full max-w-xs md:max-w-full transition-transform duration-300 hover:-rotate-3">
-                  {artistImage && (
+                  {loadingSettings ? (
+                    <Skeleton className="rounded-lg object-cover w-full h-auto aspect-[5/6] shadow-lg" />
+                  ) : artistImageUrl && (
                       <Image
-                      src={artistImage.imageUrl}
-                      alt={artistImage.description}
+                      src={artistImageUrl}
+                      alt={artistImagePlaceholder?.description || 'Artist Portrait'}
                       width={500}
                       height={600}
                       className="rounded-lg object-cover w-full h-auto shadow-lg"
-                      data-ai-hint={artistImage.imageHint}
+                      data-ai-hint={artistImagePlaceholder?.imageHint}
                       />
                   )}
                   </div>

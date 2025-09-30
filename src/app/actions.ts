@@ -4,7 +4,7 @@
 
 import { z } from "zod";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp, doc, updateDoc, deleteDoc, getDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, updateDoc, deleteDoc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
 
 const contactFormSchema = z.object({
@@ -283,42 +283,34 @@ const siteSettingsSchema = z.object({
     email: z.string().email("Invalid email address.").optional(),
     phone: z.string().optional(),
     location: z.string().optional(),
+    profilePictureUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal('')),
 });
 export type SiteSettingsFormValues = z.infer<typeof siteSettingsSchema>;
 
 export async function updateSiteSettings(values: SiteSettingsFormValues) {
     try {
         const settingsRef = doc(db, 'settings', 'site');
-        await updateDoc(settingsRef, values, { merge: true });
+        await setDoc(settingsRef, values, { merge: true });
         revalidatePath('/');
+        revalidatePath('/about');
+        revalidatePath('/admin/settings');
         return { success: true, message: "Settings updated successfully." };
     } catch (error) {
-        // If the document doesn't exist, create it.
-        if ((error as any).code === 'not-found') {
-            try {
-                const settingsRef = doc(db, 'settings', 'site');
-                await addDoc(collection(db, 'settings'), values);
-                revalidatePath('/');
-                return { success: true, message: "Settings saved successfully." };
-            } catch (e) {
-                 return { success: false, message: "Failed to save settings." };
-            }
-        }
         return { success: false, message: "Failed to update settings." };
     }
 }
 
-export async function getSiteSettings() {
+export async function getSiteSettings(): Promise<SiteSettingsFormValues> {
     try {
         const settingsRef = doc(db, 'settings', 'site');
         const docSnap = await getDoc(settingsRef);
         if (docSnap.exists()) {
             return docSnap.data() as SiteSettingsFormValues;
         }
-        return { email: 'contact@fahmiefarhan.com', phone: '+60 11-31377753', location: 'Malaysia' }; // Default values
+        return { email: 'contact@fahmiefarhan.com', phone: '+60 11-31377753', location: 'Malaysia', profilePictureUrl: '' }; // Default values
     } catch (error) {
         console.error("Error fetching site settings:", error);
-        return { email: 'contact@fahmiefarhan.com', phone: '+60 11-31377753', location: 'Malaysia' }; // Default values
+        return { email: 'contact@fahmiefarhan.com', phone: '+60 11-31377753', location: 'Malaysia', profilePictureUrl: '' }; // Default values
     }
 }
 

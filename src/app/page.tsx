@@ -18,9 +18,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { submitContactForm } from "@/app/actions";
+import { submitContactForm, getSiteSettings, SiteSettingsFormValues } from "@/app/actions";
 import { FloatingNotes } from "@/components/floating-notes";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 
 import {
@@ -75,10 +76,12 @@ export default function Home() {
     const [socialLinks, setSocialLinks] = useState<SocialLinkType[]>([]);
     const [testimonials, setTestimonials] = useState<TestimonialType[]>([]);
     const [allVideos, setAllVideos] = useState<VideoType[]>([]);
-    
+    const [settings, setSettings] = useState<SiteSettingsFormValues | null>(null);
+
     // UI State
     const [showNotes, setShowNotes] = useState(false);
     const [loadingTestimonials, setLoadingTestimonials] = useState(true);
+    const [loadingSettings, setLoadingSettings] = useState(true);
 
     // Player State
     const [featuredVideo, setFeaturedVideo] = useState<VideoType | null>(null);
@@ -129,6 +132,7 @@ export default function Home() {
     useEffect(() => {
         const fetchData = async () => {
             setLoadingTestimonials(true);
+            setLoadingSettings(true);
             try {
                 // Fetch Social Links
                 const socialLinksQuery = query(collection(db, "social-links"), orderBy("createdAt", "desc"));
@@ -166,11 +170,16 @@ export default function Home() {
                         setFeaturedVideo(videosData[0]);
                     }
                 }
+                
+                // Fetch Site Settings
+                const siteSettings = await getSiteSettings();
+                setSettings(siteSettings);
 
             } catch (error) {
                 console.error("Failed to fetch data for landing page:", error);
             } finally {
                 setLoadingTestimonials(false);
+                setLoadingSettings(false);
             }
         };
         fetchData();
@@ -208,6 +217,8 @@ export default function Home() {
     };
     
     const filteredTracks = allVideos.filter(video => video.isFeatured);
+    const artistImagePlaceholder = PlaceHolderImages.find(p => p.id === 'about-artist');
+    const artistImageUrl = settings?.profilePictureUrl || artistImagePlaceholder?.imageUrl;
     
     return (
         <div className="min-h-screen bg-transparent text-foreground">
@@ -445,11 +456,17 @@ export default function Home() {
                             className="relative"
                         >
                             <div className="relative mx-auto max-w-md">
-                                <Image src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&h=400&fit=crop" 
-                                    alt="Composer at work" 
-                                    width={600}
-                                    height={400}
-                                    className="w-full rounded-xl shadow-xl" />
+                                {loadingSettings ? (
+                                    <Skeleton className="w-full aspect-[3/2] rounded-xl shadow-xl" />
+                                ): artistImageUrl && (
+                                    <Image src={artistImageUrl} 
+                                        alt="Composer at work" 
+                                        width={600}
+                                        height={400}
+                                        className="w-full rounded-xl shadow-xl" 
+                                        data-ai-hint={artistImagePlaceholder?.imageHint}
+                                        />
+                                )}
                                 <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent rounded-xl"></div>
                             </div>
                         </div>
@@ -645,7 +662,3 @@ export default function Home() {
         </div>
     );
 }
-
-    
-
-    
