@@ -15,7 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink, Heart, Share2, Loader2, X, Play, ChevronLeft, ChevronRight } from 'lucide-react';
+import { PlayCircle, ArrowRight, Music, CheckCircle, Film, Gamepad2, Star, ExternalLink, Loader2, X, Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { FloatingNotes } from '@/components/floating-notes';
   
@@ -68,7 +68,6 @@ export default function MusicPage() {
     const [loadingCollaborations, setLoadingCollaborations] = useState(true);
     const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
     const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
-    const [likedTracks, setLikedTracks] = useState<string[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [showNotes, setShowNotes] = useState(false);
     const videosPerPage = 9;
@@ -151,33 +150,6 @@ export default function MusicPage() {
         }
     };
 
-    const handleShare = async (e: React.MouseEvent, video: Video) => {
-        const shareData = {
-        title: video.title,
-        text: `Check out this track: ${video.title}`,
-        url: video.videoUrl,
-        };
-        try {
-        if (navigator.share) {
-            await navigator.share(shareData);
-        } else {
-            await navigator.clipboard.writeText(video.videoUrl);
-            toast({
-                title: "Link Copied!",
-                description: "The video URL has been copied to your clipboard.",
-            });
-        }
-        } catch (error) {
-        console.error('Error sharing:', error);
-        toast({
-                title: "Error",
-                description: "Could not share the track.",
-                variant: "destructive",
-            });
-        }
-    };
-
-
     const handlePlayVideo = (video: Video) => {
         setSelectedVideo(video);
     };
@@ -188,14 +160,6 @@ export default function MusicPage() {
       return (match && match[2].length === 11) ? match[2] : null;
     };
     
-    const toggleLike = (trackId: string) => {
-        setLikedTracks(prev => 
-            prev.includes(trackId) 
-            ? prev.filter(id => id !== trackId)
-            : [...prev, trackId]
-        );
-    };
-
     const latestRelease = useMemo(() => {
         if (videos.length === 0) return null;
         // The videos are already sorted by createdAt descending from Firestore
@@ -330,20 +294,6 @@ export default function MusicPage() {
                                             <CardContent className="p-6 flex-grow flex flex-col">
                                                 <h3 className="text-xl font-bold text-white mb-2 font-headline">{video.title}</h3>
                                                 <p className="text-primary text-sm mb-2">{video.category}</p>
-                                                <div className="flex items-center justify-between text-sm text-muted-foreground mt-auto">
-                                                    <div className="flex items-center space-x-4">
-                                                        <span className="flex items-center space-x-1"><Headphones className="w-4 h-4" /><span>{Math.floor(Math.random() * 20000)}</span></span>
-                                                        <span className="flex items-center space-x-1"><Heart className="w-4 h-4" /><span>{Math.floor(Math.random() * 5000)}</span></span>
-                                                    </div>
-                                                </div>
-                                                <div className="flex items-center justify-start space-x-2 mt-4 border-t border-primary/10 pt-4">
-                                                    <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); toggleLike(video.id); }} className={`p-2 ${likedTracks.includes(video.id) ? 'text-red-500' : 'text-primary'}`}>
-                                                        <Heart className={`w-5 h-5 ${likedTracks.includes(video.id) ? 'fill-current' : ''}`} />
-                                                    </Button>
-                                                    <Button variant="ghost" size="sm" className="text-primary p-2" onClick={(e) => handleShare(e, video)}>
-                                                        <Share2 className="w-5 h-5" />
-                                                    </Button>
-                                                </div>
                                             </CardContent>
                                         </Card>
                                     </div>
