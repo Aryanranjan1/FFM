@@ -9,16 +9,14 @@ import type { Collaboration, Achievement } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { db } from "@/lib/firebase";
 import { collection, getDocs, orderBy, query, Timestamp } from "firebase/firestore";
-import type { Video } from '@/lib/admin-types';
+import type { Video, Testimonial as TestimonialType } from '@/lib/admin-types';
 import { useToast } from "@/hooks/use-toast";
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { PlayCircle, ArrowRight, Music, CheckCircle, Headphones, Film, Gamepad2, Star, ExternalLink, Heart, Share2, Loader2, X, Play, ChevronLeft, ChevronRight } from 'lucide-react';
-import { bio } from '@/lib/data';
 import { Skeleton } from '@/components/ui/skeleton';
-import { TestimonialCard } from '@/components/testimonial-card';
 import { FloatingNotes } from '@/components/floating-notes';
 
 
@@ -81,7 +79,9 @@ const achievements: Achievement[] = [
 export default function MusicPage() {
     const [filter, setFilter] = useState('All');
     const [videos, setVideos] = useState<Video[]>([]);
+    const [testimonials, setTestimonials] = useState<TestimonialType[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadingTestimonials, setLoadingTestimonials] = useState(true);
     const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
     const [hoveredMusicCard, setHoveredMusicCard] = useState<string | null>(null);
     const [likedTracks, setLikedTracks] = useState<string[]>([]);
@@ -91,27 +91,47 @@ export default function MusicPage() {
     const { toast } = useToast();
 
     useEffect(() => {
-        const fetchVideos = async () => {
+        const fetchData = async () => {
             setLoading(true);
-            const videosCol = collection(db, 'videos');
-            const q = query(videosCol, orderBy("createdAt", "desc"));
-            const videoSnapshot = await getDocs(q);
-            const videoList = videoSnapshot.docs.map(doc => {
-                const data = doc.data();
-                return {
-                    id: doc.id,
-                    ...data,
-                    createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
-                } as Video;
-            }).filter(video => video.isPublished);
-            setVideos(videoList);
-            setLoading(false);
+            setLoadingTestimonials(true);
+            try {
+                const videosCol = collection(db, 'videos');
+                const q = query(videosCol, orderBy("createdAt", "desc"));
+                const videoSnapshot = await getDocs(q);
+                const videoList = videoSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        ...data,
+                        createdAt: (data.createdAt as Timestamp).toDate().toISOString(),
+                    } as Video;
+                }).filter(video => video.isPublished);
+                setVideos(videoList);
+
+                const testimonialsQuery = query(collection(db, "testimonials"), orderBy("createdAt", "desc"));
+                const testimonialsSnapshot = await getDocs(testimonialsQuery);
+                const testimonialsData = testimonialsSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return { 
+                        id: doc.id,
+                         ...data,
+                         createdAt: (data.createdAt as Timestamp)?.toDate ? (data.createdAt as Timestamp).toDate() : new Date(),
+                    } as TestimonialType
+                });
+                setTestimonials(testimonialsData);
+
+            } catch (error) {
+                console.error("Failed to fetch data:", error);
+                toast({ title: "Error", description: "Failed to load page data.", variant: "destructive" });
+            } finally {
+                setLoading(false);
+                setLoadingTestimonials(false);
+            }
         };
 
-        fetchVideos();
-        
+        fetchData();
         setShowNotes(true);
-    }, []);
+    }, [toast]);
     
     const videoCategories = useMemo(() => {
         const categories = new Set(videos.map(v => v.category).filter(Boolean));
@@ -509,16 +529,45 @@ export default function MusicPage() {
                     >
                         What My Clients Say
                     </h2>
-                    <div
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                    >
-                         {bio.pressReleases.slice(0, 3).map((testimonial, index) => (
-                            <div
-                                key={index}
-                            >
-                               <TestimonialCard testimonial={testimonial} />
-                            </div>
-                        ))}
+                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                         {loadingTestimonials ? (
+                            Array.from({ length: 3 }).map((_, index) => (
+                               <Card key={index} className="bg-background/50 border-border/50 h-full flex flex-col p-6">
+                                    <div className="flex-grow mb-4 space-y-2">
+                                       <Skeleton className="h-4 w-full" />
+                                       <Skeleton className="h-4 w-5/6" />
+                                    </div>
+                                   <div className="flex items-center mt-4">
+                                       <div className="flex-shrink-0 w-full">
+                                           <div className="flex">
+                                              {[...Array(5)].map((_, i) => (
+                                                  <Skeleton key={i} className="w-5 h-5 rounded-full mr-1" />
+                                              ))}
+                                           </div>
+                                           <Skeleton className="h-5 w-24 mt-2 mb-2" />
+                                           <Skeleton className="h-4 w-20" />
+                                       </div>
+                                   </div>
+                               </Card>
+                            ))
+                        ) : (
+                            testimonials.slice(0, 3).map((testimonial) => (
+                                <Card key={testimonial.id} className="bg-background/50 border-border/50 h-full flex flex-col p-6">
+                                  <div className="flex-grow mb-4">
+                                    <p className="text-muted-foreground italic">"{testimonial.quote}"</p>
+                                  </div>
+                                  <div className="mt-auto">
+                                    <div className="flex">
+                                      {[...Array(5)].map((_, i) => (
+                                        <Star key={i} className="w-5 h-5 text-primary fill-current" />
+                                      ))}
+                                    </div>
+                                    <p className="font-bold mt-2">{testimonial.author}</p>
+                                    <p className="text-sm text-muted-foreground">{testimonial.publication}</p>
+                                  </div>
+                                </Card>
+                            ))
+                        )}
                     </div>
                 </div>
             </section>
