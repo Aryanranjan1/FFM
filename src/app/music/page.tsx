@@ -152,7 +152,6 @@ export default function MusicPage() {
     };
 
     const handleShare = async (e: React.MouseEvent, video: Video) => {
-        e.stopPropagation();
         const shareData = {
         title: video.title,
         text: `Check out this track: ${video.title}`,
