@@ -12,7 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { db } from "@/lib/firebase";
-import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query, where, orderBy, Timestamp } from 'firebase/firestore';
 import type { Video as VideoType, SocialLink as SocialLinkType, Testimonial as TestimonialType } from "@/lib/admin-types";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
@@ -40,6 +40,7 @@ import {
     Diamond,
 } from "lucide-react";
 import { SoundcloudIcon, Instagram, Youtube, SpotifyIcon } from "@/components/icons";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function Orbs() {
   return (
@@ -77,6 +78,7 @@ export default function Home() {
     
     // UI State
     const [showNotes, setShowNotes] = useState(false);
+    const [loadingTestimonials, setLoadingTestimonials] = useState(true);
 
     // Player State
     const [featuredVideo, setFeaturedVideo] = useState<VideoType | null>(null);
@@ -126,6 +128,7 @@ export default function Home() {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoadingTestimonials(true);
             try {
                 // Fetch Social Links
                 const socialLinksQuery = query(collection(db, "social-links"), orderBy("createdAt", "desc"));
@@ -136,7 +139,14 @@ export default function Home() {
                 // Fetch Testimonials
                 const testimonialsQuery = query(collection(db, "testimonials"), orderBy("createdAt", "desc"));
                 const testimonialsSnapshot = await getDocs(testimonialsQuery);
-                const testimonialsData = testimonialsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as TestimonialType[];
+                const testimonialsData = testimonialsSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        ...data,
+                        createdAt: (data.createdAt as Timestamp)?.toDate ? (data.createdAt as Timestamp).toDate() : new Date(),
+                    } as TestimonialType;
+                });
                 setTestimonials(testimonialsData);
                 
                 // Fetch Videos
@@ -159,6 +169,8 @@ export default function Home() {
 
             } catch (error) {
                 console.error("Failed to fetch data for landing page:", error);
+            } finally {
+                setLoadingTestimonials(false);
             }
         };
         fetchData();
@@ -462,11 +474,31 @@ export default function Home() {
                         </p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {testimonials.map((testimonial, index) => (
-                            <div
-                                key={testimonial.id}
-                            >
-                                <Card className="bg-card backdrop-blur-sm border-border h-full">
+                        {loadingTestimonials ? (
+                           Array.from({ length: 3 }).map((_, index) => (
+                               <Card key={index} className="bg-card backdrop-blur-sm border-border h-full">
+                                   <CardContent className="p-6 flex flex-col h-full space-y-4">
+                                       <div className="flex items-center mb-4">
+                                            <div>
+                                                <Skeleton className="h-5 w-32 mb-2" />
+                                                <Skeleton className="h-4 w-24" />
+                                            </div>
+                                        </div>
+                                        <div className="flex-grow space-y-2">
+                                           <Skeleton className="h-4 w-full" />
+                                           <Skeleton className="h-4 w-5/6" />
+                                        </div>
+                                       <div className="flex mt-4">
+                                          {[...Array(5)].map((_, i) => (
+                                              <Skeleton key={i} className="w-5 h-5 rounded-full mr-1" />
+                                          ))}
+                                       </div>
+                                   </CardContent>
+                               </Card>
+                           ))
+                        ) : (
+                            testimonials.slice(0, 3).map((testimonial) => (
+                                <Card key={testimonial.id} className="bg-card backdrop-blur-sm border-border h-full flex flex-col">
                                     <CardContent className="p-6 flex flex-col h-full">
                                         <div className="flex items-center mb-4">
                                             <div>
@@ -475,15 +507,15 @@ export default function Home() {
                                             </div>
                                         </div>
                                         <p className="text-muted-foreground flex-grow">"{testimonial.quote}"</p>
-                                        <div className="flex mt-4">
+                                        <div className="flex mt-auto pt-4">
                                             {[...Array(5)].map((_, i) => (
                                                 <Star key={i} className="w-5 h-5 text-primary fill-current" />
                                             ))}
                                         </div>
                                     </CardContent>
                                 </Card>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 </div>
             </section>
@@ -613,5 +645,7 @@ export default function Home() {
         </div>
     );
 }
+
+    
 
     
