@@ -81,7 +81,7 @@ async function getRelatedPosts(currentPostId: string, category: string): Promise
 }
 
 
-export default function BlogPostPage({ params }: { params: { id: string } }) {
+export default function BlogPostPage({ params: { id } }: { params: { id: string } }) {
   const [post, setPost] = useState<BlogPost | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -91,7 +91,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     async function fetchData() {
         setLoading(true);
-        const fetchedPost = await getBlogPost(params.id);
+        const fetchedPost = await getBlogPost(id);
         if (fetchedPost) {
             setPost(fetchedPost);
             const fetchedRelatedPosts = await getRelatedPosts(fetchedPost.id, fetchedPost.category);
@@ -102,7 +102,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
         setLoading(false);
     }
     fetchData();
-  }, [params.id]);
+  }, [id]);
   
   if (loading || !post) {
       return (
@@ -292,6 +292,8 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
     </div>
   );
 }
+
+    
 
     
 
