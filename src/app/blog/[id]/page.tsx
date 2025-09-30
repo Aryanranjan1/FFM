@@ -11,12 +11,9 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Clock, Calendar, User, Tag, Heart, MessageCircle, Share2, Printer } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Clock, Calendar, User, Tag } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { motion } from "framer-motion";
 
 async function getBlogPost(id: string): Promise<BlogPost | null> {
   const postRef = doc(db, 'blog', id);
@@ -86,8 +83,6 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
   const [post, setPost] = useState<BlogPost | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
-  const pathname = usePathname();
-  const { toast } = useToast();
 
   useEffect(() => {
     async function fetchData() {
@@ -108,42 +103,10 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
   if (loading || !post) {
       return (
           <div className="flex justify-center items-center h-screen">
-              {/* You can add a loader component here */}
               <p>Loading...</p>
           </div>
       )
   }
-  
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const handleShare = async () => {
-    const shareData = {
-      title: post.title,
-      text: `Check out this article: ${post.title}`,
-      url: window.location.href,
-    };
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-      } else {
-        await navigator.clipboard.writeText(window.location.href);
-        toast({
-            title: "Link Copied!",
-            description: "The article URL has been copied to your clipboard.",
-        });
-      }
-    } catch (error) {
-      console.error('Error sharing:', error);
-       toast({
-            title: "Error",
-            description: "Could not share the article.",
-            variant: "destructive",
-        });
-    }
-  };
-
 
   return (
     <div className="bg-transparent text-foreground">
@@ -217,27 +180,6 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                     </div>
                 )}
                 
-                <Separator className="my-8" />
-                
-                {/* Actions */}
-                <div className="flex justify-between items-center text-muted-foreground">
-                    <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                            <Heart className="h-4 w-4" /> {Math.floor(Math.random()*500)}
-                        </Button>
-                        <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                            <MessageCircle className="h-4 w-4" /> {Math.floor(Math.random()*50)}
-                        </Button>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Button variant="outline" size="icon" onClick={handlePrint}>
-                            <Printer className="h-4 w-4" />
-                        </Button>
-                        <Button variant="outline" size="icon" onClick={handleShare}>
-                            <Share2 className="h-4 w-4" />
-                        </Button>
-                    </div>
-                </div>
             </article>
         </div>
 
